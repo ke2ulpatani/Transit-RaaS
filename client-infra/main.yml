@@ -1,0 +1,59 @@
+---
+- name: Ansible create client Infra playbook
+  hosts: [localhost]
+  user: root
+  vars_files:
+    - vars/base_config.yml
+    - vars/infra_config.yml
+    
+  tasks:
+    - name: install packages
+      apt:
+        name: "{{ packages }}"
+        state: present
+
+    - debug:
+        msg: Create VPC here #TODO
+
+    # - name: Create Subnet
+    #     #ROLE here
+    #   become: yes
+    #   loop: "{{ subnets }}"
+
+    - name: Create bridge
+      command: "brctl addbr {{base_name}}n{{network_id}}br"
+      become: yes
+      loop: "{{ subnets }}"
+
+    - name: Create bridge
+      command: "brctl addbr {{base_name}}n{{network_id}}br"
+      become: yes
+      loop: "{{ subnets }}"
+
+# Define the network in bridge mode and start the ovs network infra
+    - name: Define network {{network_id}}
+      virt_net:
+        command: define
+        name: "{{base_name}}n{{network_id}}"
+        xml: '{{ lookup("template", "templates/bridge-linux.xml") }}'
+      become: yes
+      loop: "{{ subnets }}"
+
+    - name: Start network {{network_id}}
+      virt_net:
+        command: start
+        name: "{{base_name}}n{{network_id}}"
+      become: yes
+      loop: "{{ subnets }}"
+
+    - name: Create Leaf gateway {{network_id}}
+      namespace:
+        name: "{{base_name}}l{{network_id}}"
+        state: present
+      become: yes
+      loop: "{{ subnets }}"
+
+    - name: Create veth pair {{network_id}}
+      command: "ip link add {{base_name}}ve{{network_id}}br type veth peer name {{base_name}}ve{{network_id}}l"
+      become: yes
+      loop: "{{ subnets }}"

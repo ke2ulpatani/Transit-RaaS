@@ -1,0 +1,5 @@
+<network>
+  <name>{{base_name}}n{{network_id}}</name>
+  <bridge name="{{base_name}}n{{network_id}}br"/>
+  <forward mode="bridge"/>
+</network>

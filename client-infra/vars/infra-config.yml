@@ -1,0 +1,10 @@
+base_name: c1v1h1
+subnets:
+ - s1:
+    network_id: 3
+    subnet_cidr: 200.0.0.0/24
+    vm_count: 2
+ - s2:
+    network_id: 4
+    subnet_cidr: 200.0.1.0/24
+    vm_count: 1
