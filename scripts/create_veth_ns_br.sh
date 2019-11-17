@@ -12,7 +12,7 @@ e1=$4
 e2=$5
 
 ip link add $e1 type veth peer name $e2
-ip link set $e1 netns $ns1
+ip link set $e1 netns $ns
 brctl addif $br $e2
 
 #configure ip of ns
