@@ -1,0 +1,9 @@
+packages: [quagga]
+cid: c1
+vpc: v1
+spines:
+  - id: 1
+    hv: h2
+  - id: 2
+    hv: h2
+
