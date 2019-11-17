@@ -1,3 +1,4 @@
+#TODO: check ns_ip
 ---
 - name: Ansible create client Infra playbook
   hosts: [localhost]
@@ -20,32 +21,8 @@
     #   become: yes
     #   loop: "{{ subnets }}"
 
-    - name: Create bridge
-      command: "brctl addbr {{base_name}}n{{network_id}}br"
-      become: yes
-      loop: "{{ subnets }}"
 
-    - name: Create bridge
-      command: "brctl addbr {{base_name}}n{{network_id}}br"
-      become: yes
-      loop: "{{ subnets }}"
-
-# Define the network in bridge mode and start the ovs network infra
-    - name: Define network {{network_id}}
-      virt_net:
-        command: define
-        name: "{{base_name}}n{{network_id}}"
-        xml: '{{ lookup("template", "templates/bridge-linux.xml") }}'
-      become: yes
-      loop: "{{ subnets }}"
-
-    - name: Start network {{network_id}}
-      virt_net:
-        command: start
-        name: "{{base_name}}n{{network_id}}"
-      become: yes
-      loop: "{{ subnets }}"
-
+    # Create the leaf namespace
     - name: Create Leaf gateway {{network_id}}
       namespace:
         name: "{{base_name}}l{{network_id}}"
@@ -53,7 +30,61 @@
       become: yes
       loop: "{{ subnets }}"
 
-    - name: Create veth pair {{network_id}}
-      command: "ip link add {{base_name}}ve{{network_id}}br type veth peer name {{base_name}}ve{{network_id}}l"
+    # Create network and bridge
+    - name: Create a network and bridge between namespace and VMs
+      script: ./scripts/create_net.sh {{base_name}}n{{network_id}} {{base_name}}n{{network_id}}br
+      loop: "{{ subnets }}"
+
+    # Create veth
+    - name: Connect bridge to namespace
+      script: ./scripts/create_veth_ns_br.sh {{base_name}}l{{network_id}} {{ subnet_cidr }} {{base_name}}n{{network_id}}br {{ cid }}
+      loop: "{{ subnets }}"
+
+    # create dnsmasq
+    - name: Adding  IP to veth interface on leaf namespace
+      command: "ip netns exec {{base_name}}l{{network_id}} ip addr add {{ subnet_cidr }} dev {{base_name}}ve{{network_id}}l"
+      ignore_errors: true
       become: yes
       loop: "{{ subnets }}"
+
+    - name: Bringing interface up of veth interface on leaf namespace
+      command: "ip netns exec {{base_name}}l{{network_id}} ip link set {{base_name}}ve{{network_id}}l up"
+      ignore_errors: true
+      become: yes
+      loop: "{{ subnets }}"
+
+    - name: Add route on leaf namespace for veth pair
+      command: "ip netns exec {{base_name}}l{{network_id}} ip route add {{ subnet_base }}/24 dev {{base_name}}ve{{network_id}}l"
+      ignore_errors: true
+      become: yes
+      loop: "{{ subnets }}"
+
+    - name: Create DHCP server for the leaf gateway
+      command: "ip netns exec {{base_name}}l{{network_id}} dnsmasq --interface={{base_name}}ve{{network_id}}l --dhcp-range={{ range }},12h --bind-interfaces --except-interface=lo"
+      ignore_errors: true
+      become: yes
+      loop: "{{ subnets }}"
+
+    # Create VMs
+    - name: Clone VMs
+      command: "virt-clone --original sampleVM -n {{item.0.base_name}}n{{item.0.network_id}}vm{{item.1.item}} --auto-clone" #need to fix that
+      become: yes
+      with_subelements: 
+        - "{{ subnets }}"
+        - vm_ids
+    
+    - name: Start VMs
+      virt:
+        name: "{{base_name}}n{{item.0.network_id}}vm{{item.1.item}}"
+        state: running
+      become: yes
+      with_subelements: 
+        - "{{ subnets }}"
+        - vm_ids
+
+    - name: Attach interface to VMs
+      command: "virsh attach-interface --domain {{base_name}}n{{item.0.network_id}}vm{{item.1.item}} --type network {{item.0.base_name}}n{{item.0.network_id}} --model virtio"
+      become: yes
+      with_subelements: 
+        - "{{ subnets }}"
+        - vm_ids
