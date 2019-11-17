@@ -1,15 +1,19 @@
 base_name: c1v1h1
 cid: c1
+vpc_id: v1
+hypervisor: h1
 subnets:
- - s1:
+  - id: s1
     network_id: 3
     subnet_base: 200.0.0.0
+    subnet_mask: 24
     subnet_cidr: 200.0.0.1
     range: 200.0.0.2,200.0.0.254
     vm_ids: [1,2]
- - s2:
+  - id: s2
     network_id: 4
     subnet_base: 200.0.1.0
+    subnet_mask: 24
     subnet_cidr: 200.0.1.1
     range: 200.0.1.2,200.0.1.254
     vm_ids: [1]

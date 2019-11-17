@@ -23,51 +23,45 @@
 
 
     # Create the leaf namespace
-    - name: Create Leaf gateway {{network_id}}
+    - name: Create Leaf gateway {{item.network_id}}
       namespace:
-        name: "{{base_name}}l{{network_id}}"
+        name: "{{base_name}}l{{item.network_id}}"
         state: present
       become: yes
       loop: "{{ subnets }}"
 
     # Create network and bridge
     - name: Create a network and bridge between namespace and VMs
-      script: ./scripts/create_net.sh {{base_name}}n{{network_id}} {{base_name}}n{{network_id}}br
+      script: "./scripts/create_net.sh {{base_name}}n{{item.network_id}} {{base_name}}n{{item.network_id}}br"
       loop: "{{ subnets }}"
 
     # Create veth
     - name: Connect bridge to namespace
-      script: ./scripts/create_veth_ns_br.sh {{base_name}}l{{network_id}} {{ subnet_cidr }} {{base_name}}n{{network_id}}br {{ cid }}
+      script: "./scripts/create_veth_ns_br.sh {{base_name}}l{{network_id}} {{ item.subnet_cidr }} {{base_name}}n{{item.network_id}}br {{ cid }}"
       loop: "{{ subnets }}"
 
     # create dnsmasq
     - name: Adding  IP to veth interface on leaf namespace
-      command: "ip netns exec {{base_name}}l{{network_id}} ip addr add {{ subnet_cidr }} dev {{base_name}}ve{{network_id}}l"
-      ignore_errors: true
-      become: yes
-      loop: "{{ subnets }}"
-
-    - name: Bringing interface up of veth interface on leaf namespace
-      command: "ip netns exec {{base_name}}l{{network_id}} ip link set {{base_name}}ve{{network_id}}l up"
+      command: "ip netns exec {{base_name}}l{{item.network_id}} ip addr add {{ item.subnet_cidr }} dev {{base_name}}ve{{item.network_id}}l"
       ignore_errors: true
       become: yes
       loop: "{{ subnets }}"
 
     - name: Add route on leaf namespace for veth pair
-      command: "ip netns exec {{base_name}}l{{network_id}} ip route add {{ subnet_base }}/24 dev {{base_name}}ve{{network_id}}l"
+      command: "ip netns exec {{base_name}}l{{item.network_id}} ip route add {{ item.subnet_base }}/{{ item.subnet_mask }} dev {{base_name}}ve{{item.network_id}}l"
       ignore_errors: true
       become: yes
       loop: "{{ subnets }}"
 
     - name: Create DHCP server for the leaf gateway
-      command: "ip netns exec {{base_name}}l{{network_id}} dnsmasq --interface={{base_name}}ve{{network_id}}l --dhcp-range={{ range }},12h --bind-interfaces --except-interface=lo"
+      command: "ip netns exec {{base_name}}l{{item.network_id}} dnsmasq --interface={{base_name}}ve{{item.network_id}}l --dhcp-range={{ item.range }},12h --bind-interfaces --except-interface=lo"
       ignore_errors: true
       become: yes
       loop: "{{ subnets }}"
 
     # Create VMs
     - name: Clone VMs
-      command: "virt-clone --original sampleVM -n {{item.0.base_name}}n{{item.0.network_id}}vm{{item.1.item}} --auto-clone" #need to fix that
+      command: "virt-clone --original sampleVM -n {{base_name}}n{{item.0.network_id}}vm{{item.1}} --auto-clone"
       become: yes
       with_subelements: 
         - "{{ subnets }}"
@@ -75,7 +69,7 @@
     
     - name: Start VMs
       virt:
-        name: "{{base_name}}n{{item.0.network_id}}vm{{item.1.item}}"
+        name: "{{base_name}}n{{item.0.network_id}}vm{{item.1}}"
         state: running
       become: yes
       with_subelements: 
@@ -83,7 +77,7 @@
         - vm_ids
 
     - name: Attach interface to VMs
-      command: "virsh attach-interface --domain {{base_name}}n{{item.0.network_id}}vm{{item.1.item}} --type network {{item.0.base_name}}n{{item.0.network_id}} --model virtio"
+      command: "virsh attach-interface --domain {{base_name}}n{{item.0.network_id}}vm{{item.1}} --type network {{base_name}}n{{item.0.network_id}} --model virtio"
       become: yes
       with_subelements: 
         - "{{ subnets }}"
