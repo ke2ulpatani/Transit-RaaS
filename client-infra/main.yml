@@ -28,16 +28,10 @@
 
     # Create veth
     - name: Connect bridge to namespace
-      script: "scripts/create_veth_ns_br.sh {{base_name}}l{{item.network_id}} {{ item.subnet_cidr }} {{base_name}}n{{item.network_id}}br {{ cid }}"
+      script: "scripts/create_veth_ns_br.sh {{base_name}}l{{item.network_id}} {{ item.ns_ip }} {{base_name}}n{{item.network_id}}br {{base_name}}ve{{item.network_id}}l {{base_name}}ve{{item.network_id}}br"
       loop: "{{ subnets }}"
 
     # create dnsmasq
-    - name: Adding  IP to veth interface on leaf namespace
-      command: "ip netns exec {{base_name}}l{{item.network_id}} ip addr add {{ item.subnet_cidr }} dev {{base_name}}ve{{item.network_id}}l"
-      ignore_errors: true
-      become: yes
-      loop: "{{ subnets }}"
-
     - name: Add route on leaf namespace for veth pair
       command: "ip netns exec {{base_name}}l{{item.network_id}} ip route add {{ item.subnet_base }}/{{ item.subnet_mask }} dev {{base_name}}ve{{item.network_id}}l"
       ignore_errors: true
