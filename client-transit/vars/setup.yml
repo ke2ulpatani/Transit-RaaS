@@ -1,0 +1,18 @@
+cid: c1
+#transit_count: 2
+
+transits:
+  - id: 1
+    bgp_loopback: 10.1.98.1
+    hv: 1
+  - id: 2
+    bgp_loopback: 10.1.98.2
+    hv: 1
+  - id: 3
+    bgp_loopback: 10.1.98.3
+    hv: 2
+  - id: 4
+    bgp_loopback: 10.1.98.4
+    hv: 2
+
+mask: /32

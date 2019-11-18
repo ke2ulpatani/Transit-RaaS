@@ -23,7 +23,7 @@
       become: yes
       loop: "{{mgmt_conns}}"
 
-    - name: Create veth link
+    - name: Create veth link with bridge
       script: scripts/create_veth_ns_br.sh {{cid}}_mns {{item.ip}} {{cid}}mbr_{{item.id}} {{cid}}mve1_{{item.id}} {{cid}}mve2_{{item.id}}
       become: yes
       loop: "{{mgmt_conns}}"
@@ -34,18 +34,17 @@
       become: yes
       loop: "{{ mgmt_conns }}"
 
-    # - name: Create veth pair {{network_id}}
-    #   command: "ip link add {{cid}}mve1_{{item}} type veth peer name {{cid}}mve2_{{item}}"
-    #   become: yes
-    #   loop: ['s','t']
-    #   ignore_errors: yes
+    - name: Create veth pair with hypervisor
+      shell: "{{ lookup('template', 'scripts/mveth.j2') }}"
+      args:
+        executable: /bin/bash
+      become: yes
+      ignore_errors: yes
 
-    # - name: Link veth to namespace
-    #   command: "ip link set {{cid}}mve1_{{item}} netns {{cid}}_mns"
-    #   become: yes
-    #   loop: ['s','t']
-    #   ignore_errors: yes
-
+    - name: configure static route
+      command: "ip route add {{item.cidr}}.0/24 via {{cmip[1]}}"      
+      loop: "{{ mgmt_conns }}"
+      become: yes
     # - name: Link veth to bridge
     #   command: "brctl addif {{cid}}mbr_{{item}} {{cid}}mve1_{{item}}"
     #   become: yes

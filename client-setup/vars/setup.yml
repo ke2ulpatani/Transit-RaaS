@@ -1,11 +1,14 @@
 packages: [qemu-kvm,libvirt-bin,bridge-utils,openvswitch-switch,libxml2-dev,libxslt-dev,python-dev,python-lxml,dnsmasq]
 cid: c1
+cmip: [10.1.99.1,10.1.99.2]
 mgmt_conns:
   - id: s
     name: spine
-    ip: 10.0.1.1/24
-    range: 10.0.1.2,10.0.1.254
+    cidr: 10.1.100
+    ip: 10.1.100.1/24
+    range: 10.1.100.2,10.1.100.254
   - id: t
+    cidr: 10.1.200
     name: transit
-    ip: 10.0.2.1/24
-    range: 10.0.2.2,10.0.2.254
+    ip: 10.1.200.1/24
+    range: 10.1.200.2,10.1.200.254

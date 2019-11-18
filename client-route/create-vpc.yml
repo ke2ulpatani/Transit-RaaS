@@ -1,0 +1,62 @@
+---
+- name: Ansible create VPC
+  hosts: [hypervisors]
+  user: root
+  vars_files:
+    - vars/setup.yml
+    
+  tasks:
+    - name: Create spines
+      command: "virt-clone --original routingVM -n {{cid}}_{{vpc}}_s{{ item.id }} --auto-clone"
+      become: yes    
+      loop: "{{spines}}"
+      ignore_errors: true        
+
+    - name: Start all VMs
+      virt:
+        name: "{{cid}}_{{vpc}}_s{{ item.id }}"
+        command: start
+        state: running
+      ignore_errors: true
+      become: yes
+      loop: "{{ spines }}"
+
+    - name: Attach management interface to spine
+      command: "virsh attach-interface --domain {{cid}}_{{vpc}}_s{{ item.id }} --type network --source {{cid}}mnw_s --model virtio --config --live"
+      become: yes
+      loop: "{{spines}}"
+
+    - name: Wait for VMs to be started
+      pause:
+        seconds: 30
+
+    - name: Fetch spine VM IPs
+      script: "scripts/getIP.py {{cid}}_{{vpc}}_s{{ item.id }}"
+      args:
+        executable: python
+      register: spine_ips
+      loop: "{{spines}}"
+
+    - debug:
+        msg: "{{item.stdout}}"
+      loop: "{{spine_ips.results}}"
+
+    - name: Add Spines to host
+      add_host:
+        hostname: "{{item.stdout}}"
+        ansible_ssh_pass: yashrocks
+        groups:
+          - hv2_hosts
+      loop: "{{spine_ips.results}}"
+
+- name: Ansible create VM playbook
+  hosts: [hv2_hosts]
+  user: root
+  vars_files:
+    - vars/setup.yml
+
+  tasks:
+    - name: Configure Quagga suite
+      script: "scripts/quagga_setup.sh"
+
+#TODODOD

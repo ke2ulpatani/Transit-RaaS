@@ -1,0 +1,6 @@
+ ip link add {{cid}}_veth_mns_h type veth peer name {{cid}}_veth_h_mns
+ ip link set {{cid}}_veth_mns_h netns {{cid}}_mns
+ ip netns exec {{cid}}_mns ip addr add {{cmip[1]}}/30 dev {{cid}}_veth_mns_h
+ ip netns exec {{cid}}_mns ip link set {{cid}}_veth_mns_h up
+ ip addr add {{cmip[0]}}/30 dev {{cid}}_veth_h_mns
+ ip link set {{cid}}_veth_h_mns up
