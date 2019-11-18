@@ -1,0 +1,27 @@
+cid: c1
+vpc: v2
+hypervisor: h1
+
+
+
+leaf:
+  - name: l1
+    spine: 
+      - id: s1
+        ip: 10.1.95.17
+      - id: s2
+        ip: 10.1.95.21
+    ip_mask: 30
+    ad_subnet: 150.0.0.0/24 
+
+spine:
+  - name: s1
+    leaf:
+      - id: l1
+        ip: 10.1.95.18
+    ip_mask: 30
+  - name: s2
+    leaf:
+      - id: l1
+        ip: 10.1.95.22
+    ip_mask: 30
