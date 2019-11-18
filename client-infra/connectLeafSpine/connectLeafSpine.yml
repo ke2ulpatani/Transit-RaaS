@@ -3,7 +3,7 @@
   hosts: [hypervisors]
   user: root
   vars_files:
-    - vars/leaf-spine-config.yml
+    # - vars/leaf-spine-config.yml
   
   tasks:
     - name: create bridge and network between leaf and spine
@@ -41,7 +41,7 @@
   hosts: {{hypervisor}}
   user: root
   vars_files:
-    - vars/leaf-spine-config.yml
+    # - vars/leaf-spine-config.yml
 
   tasks:
     - name: Fetch spine VM IPs
