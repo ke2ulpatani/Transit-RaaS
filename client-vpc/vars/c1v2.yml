@@ -1,5 +1,5 @@
 cid: c1
-vpc: v1
+vpc: v2
 hypervisor: h1
 spines:
   - id: 1

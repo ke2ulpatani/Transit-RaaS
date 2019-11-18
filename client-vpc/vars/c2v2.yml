@@ -1,0 +1,7 @@
+cid: c2
+vpc: v2
+hypervisor: h2
+spines:
+  - id: 1
+  - id: 2
+

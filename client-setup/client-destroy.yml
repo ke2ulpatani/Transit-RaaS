@@ -2,8 +2,6 @@
 - name: Ansible create client Infra playbook
   hosts: [hypervisors]
   user: root
-  vars_files:
-    - vars/setup.yml
     
   tasks:
 #    - name: install packages

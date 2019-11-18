@@ -11,3 +11,6 @@ systemctl enable bgpd
 
 chmod -R 777 /etc/quagga/
 sysctl net.ipv4.ip_forward=1
+
+iptables -F
+

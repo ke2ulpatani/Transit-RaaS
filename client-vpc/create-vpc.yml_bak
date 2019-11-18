@@ -1,7 +1,9 @@
 ---
 - name: Ansible create VPC
-  hosts: "{{hypervisor}}"
+  hosts: [hypervisors]
   user: root
+  vars_files:
+    - vars/setup.yml
     
   tasks:
     - name: Create spines
@@ -44,14 +46,17 @@
         hostname: "{{item.stdout}}"
         ansible_ssh_pass: yashrocks
         groups:
-          - "{{hypervisor}}_hosts"
+          - h1_hosts
       loop: "{{spine_ips.results}}"
 
 - name: Ansible create VM playbook
-  hosts: ["{{hypervisor}}_hosts"]
+  hosts: [h1_hosts]
   user: root
+  vars_files:
+    - vars/setup.yml
 
   tasks:
     - name: Configure Quagga suite
       script: "scripts/quagga_setup.sh"
 
+#TODODOD

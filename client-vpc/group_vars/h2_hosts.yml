@@ -1,0 +1,1 @@
+ansible_ssh_common_args: '-o ProxyCommand="ssh -i ~/keys/id_raas ece792@172.16.2.2 nc %h %p"'
