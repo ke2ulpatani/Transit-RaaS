@@ -4,11 +4,12 @@
   user: root
     
   tasks:
+
     - name: Create spines
       command: "virt-clone --original routingVM -n {{cid}}_t{{ item.id }} --auto-clone"
-      become: yes   
-      loop: "{{transits}}" 
-      ignore_errors: true        
+      become: yes
+      loop: "{{transits}}"
+      ignore_errors: true
 
     - name: Start all VMs
       virt:
@@ -46,7 +47,7 @@
       pause:
         seconds: 30
 
-    - name: Fetch spine VM IPs
+    - name: Fetch transit VM IPs
       script: "scripts/getIP.py {{cid}}_t{{ item.id }}"
       args:
         executable: python
@@ -57,10 +58,10 @@
         msg: "{{item.stdout}}"
       loop: "{{transit_ips.results}}"
 
-    - name: Add Spines to host
+    - name: Add Transits to host
       add_host:
         hostname: "{{item.stdout}}"
-        ansible_ssh_pass: yashrocks
+        ansible_ssh_private_key_file: ~/keys/id_raas
         groups:
           - "{{hypervisor}}_hosts"
       loop: "{{transit_ips.results}}"
@@ -75,6 +76,7 @@
 
     - name: Configure loopback address
       command: "ip addr add {{transits[play_hosts.index(inventory_hostname)].bgp_loopback}}{{lo_mask}} dev lo"
+    
+    - name: Set static IP on transit to HV interface
+      script: "scripts/last_dev_assn_ip.sh {{transits[play_hosts.index(inventory_hostname)].tr_hv_ip}}{{tr_mask}}"
 
-    - name: Set transit to hypervisor L3 connection
-      command: "ip addr add {{transits[play_hosts.index(inventory_hostname)].tr_hv_ip}}{{tr_mask}} dev lo"

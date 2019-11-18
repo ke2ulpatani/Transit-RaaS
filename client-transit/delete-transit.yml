@@ -1,0 +1,23 @@
+---
+- name: Ansible delete Transit
+  hosts: "{{hypervisor}}"
+  user: root
+    
+  tasks:
+    - name: Delete network
+      script: "scripts/destroy_net.sh {{cid}}_t{{item.id}}_nw {{cid}}_t{{item.id}}_br"
+      become: yes
+      loop: "{{transits}}"
+      ignore_errors: yes
+
+    - name: Delete vm
+      script: "scripts/vm_destroy.sh {{cid}}_t{{item.id}}"
+      become: yes
+      loop: "{{transits}}"
+      ignore_errors: yes
+
+    - name: Delete veth pair
+      script: "scripts/destroy_veth_hyp.sh {{cid}}_veth_h_t{{item.id}}"
+      become: yes
+      loop: "{{transits}}"
+      ignore_errors: yes
