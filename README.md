@@ -15,3 +15,10 @@ sudo ansible-playbook main.yml -i inventory/hosts.yml
 
 Connect leaf gateway to spine gateways:
 Update all the leaf's yml config file in leaf folder then run: sudo sh run.sh
+
+1. conf_spine_bgp.sh - Configures BGP on spine router VMs
+2. conf_transit_bgp.sh - Configures BGP on transit router VMs
+3. gre_endpoint_setup_bgp.sh - Configures GRE related underlay configuration on hypervisors
+4. gre_endpoint_setup_transit.sh - Configures GRE related underlay configuration on transit VMs
+5. gre_setup_transit.sh - Configures GRE devices on transit VMs
+6. conf_inter_transit_bgp.sh - Configures BGP between transit VMs across hypervisors.
