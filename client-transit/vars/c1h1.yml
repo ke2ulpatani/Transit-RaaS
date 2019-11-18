@@ -1,0 +1,16 @@
+cid: c1
+#transit_count: 2
+hypervisor: h1
+transits:
+  - id: 1
+    bgp_loopback: 10.1.98.1
+    hv_tr_ip: 10.1.96.1
+    tr_hv_ip: 10.1.96.2
+  - id: 2
+    bgp_loopback: 10.1.98.2
+    hv_tr_ip: 10.1.96.5
+    tr_hv_ip: 10.1.96.6
+
+tr_mask: /30 #Transit VM to hypervisor connectivity
+lo_mask: /32
+

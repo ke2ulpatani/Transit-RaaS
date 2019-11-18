@@ -1,0 +1,4 @@
+ip link add {{cid}}_veth_t{{item.id}}_h type veth peer name {{cid}}_veth_h_t{{item.id}}
+brctl addif {{cid}}_t{{item.id}}_br {{cid}}_veth_t{{item.id}}_h
+ip addr add {{item.hv_tr_ip}}{{tr_mask}} dev {{cid}}_veth_h_t{{item.id}}
+ip link set {{cid}}_veth_h_t{{item.id}} up
