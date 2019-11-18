@@ -9,3 +9,9 @@ sudo ansible-playbook create-vpc.yml -i inventory/hosts.yml -K --extra-vars @var
 
 sudo ansible-playbook create-transit.yml -i inventory/hosts.yml -K --extra-vars @vars/c1h1.yml
 sudo ansible-playbook configure-transit.yml -i inventory/hosts.yml -K --extra-vars @vars/c1h1.yml
+
+Create subnet:
+sudo ansible-playbook main.yml -i inventory/hosts.yml
+
+Connect leaf gateway to spine gateways:
+Update all the leaf's yml config file in leaf folder then run: sudo sh run.sh
