@@ -1,0 +1,75 @@
+---
+- name: Ansible connect leaf spine
+  hosts: [hypervisors]
+  user: root
+  vars_files:
+    - vars/leaf-spine-config.yml
+  
+  tasks:
+    - name: create bridge and network between leaf and spine
+      script: "scripts/create_net.sh {{cid}}{{vpc}}{{hypervisor}}n{{item.0.name}}{{item.1.id}} {{cid}}{{vpc}}{{hypervisor}}br{{item.0.name}}{{item.1.id}}"
+      become: yes
+      with_subelements: 
+        - "{{ leaf }}"
+        - spine
+
+    - name: Attach interface to spine VMs
+      command: "virsh attach-interface --domain {{cid}}_{{vpc}}_{{item.0.name}} --type network {{cid}}{{vpc}}{{hypervisor}}n{{item.1.id}}{{item.0.name}} --model virtio"
+      become: yes
+      with_subelements: 
+        - "{{ spine }}"
+        - leaf
+
+    - name: Connect bridge to namespace
+        script: "scripts/create_veth_ns_br.sh {{cid}}{{vpc}}{{hypervisor}}{{item.0.name}}  {{item.1.ip}}/{{item.0.ip_mask}} {{cid}}{{vpc}}{{hypervisor}}br{{item.0.name}}{{item.1.id}} {{cid}}{{vpc}}{{hypervisor}}ve{{item.0.name}}{{item.1.id}} {{cid}}{{vpc}}{{hypervisor}}ve{{item.1.id}}{{item.0.name}}"
+        become: yes
+        with_subelements: 
+          - "{{ leaf }}"
+          - spine
+
+    - name: Assign to Spine VMs
+      command: "virsh attach-interface --domain {{cid}}_{{vpc}}_{{item.0.name}} --type network {{cid}}{{vpc}}{{hypervisor}}n{{item.1.id}}{{item.0.name}} --model virtio"
+      become: yes
+      with_subelements: 
+        - "{{ spine }}"
+        - leaf
+
+
+####################################################################################
+
+- name: Ansible connect leaf spine
+  hosts: {{hypervisor}}
+  user: root
+  vars_files:
+    - vars/leaf-spine-config.yml
+
+  tasks:
+    - name: Fetch spine VM IPs
+      script: "scripts/getIP.py {{cid}}_{{vpc}}_{{ item.name }}"
+      args:
+        executable: python
+      register: spine_ips
+      loop: "{{spine}}"
+
+    - debug:
+        msg: "{{item.stdout}}"
+      loop: "{{spine_ips.results}}"
+
+    - name: Add Spines to host
+      add_host:
+        hostname: "{{item.stdout}}"
+        ansible_ssh_pass: yashrocks
+        groups:
+          - "{{hypervisor}}_hosts"
+      loop: "{{spine_ips.results}}"
+
+- name: Ansible create VM playbook
+  hosts: ["{{hypervisor}}_hosts"]
+  user: root
+
+  tasks:
+    - name: Assign IPs to spine VMs
+      script: "last_dev.sh {{item.1.ip}}/{{item.0.ip_mask}}"
+      with_subelements: 
+        - "{{ spine }}"
+        - leaf

@@ -1,0 +1,7 @@
+---
+- name: Ansible create client Infra playbook
+  hosts: [hypervisors]
+  user: root
+  vars_files:
+    - vars/base-config.yml
+    - vars/infra-config.yml
