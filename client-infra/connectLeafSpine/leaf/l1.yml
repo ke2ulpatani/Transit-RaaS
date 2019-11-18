@@ -2,6 +2,8 @@ cid: c1
 vpc: v1
 hypervisor: h1
 
+
+
 leaf:
   - name: l1
     spine: 
@@ -10,6 +12,7 @@ leaf:
       - id: s2
         ip: 10.1.95.5
     ip_mask: 30
+    ad_subnet: 200.0.0.0/24 
 
 spine:
   - name: s1

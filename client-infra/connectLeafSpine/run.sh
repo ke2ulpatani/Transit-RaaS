@@ -1,5 +1,5 @@
 for entry in "leaf"/*
 do
-  ansible-playbook connectLeafSpine.yml --extra-vars "@$entry"
+  ansible-playbook -i ../inventory/hosts.yml connectLeafSpine.yml --extra-vars "@$entry" -vv
 done
 

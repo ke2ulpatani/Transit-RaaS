@@ -1,8 +1,12 @@
 #!/bin/bash
 
-ip=$1
+ipp=$1
+ad_ip=$2
+next_hop=$3
 
-if=$(ip addr | tail -n 2 | head -n 1 | cut -d ' ' -f 2 | cut -d ':' -f 1)
-ip link set $if down
-ip link add $ip dev $if
-ip link set $if up
+iff=$(ip addr | tail -n 4 | head -n 1 | cut -d ' ' -f 2 | cut -d ':' -f 1)
+ip link set $iff down
+ip addr add $ipp dev $iff
+ip link set $iff up
+
+ip route add $ad_ip via $next_hop
