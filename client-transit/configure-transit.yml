@@ -1,0 +1,39 @@
+---
+- name: Ansible create VPC
+  hosts: "{{hypervisor}}"
+  user: root
+    
+  tasks:
+    - name: Fetch transit VM IPs
+      script: "scripts/getIP.py {{cid}}_t{{ item.id }}"
+      args:
+        executable: python
+      register: transit_ips
+      loop: "{{transits}}"
+
+    - debug:
+        msg: "{{item.stdout}}"
+      loop: "{{transit_ips.results}}"
+
+    - name: Add Transits to host
+      add_host:
+        hostname: "{{item.stdout}}"
+        ansible_ssh_private_key_file: ~/keys/id_raas
+        groups:
+          - "{{hypervisor}}_hosts"
+      loop: "{{transit_ips.results}}"
+
+- name: Ansible configure transit
+  hosts: ["{{hypervisor}}_hosts"]
+  user: root
+
+  tasks:
+    - name: Configure Quagga suite
+      script: "scripts/quagga_setup.sh"
+
+    - name: Configure loopback address
+      command: "ip addr add {{transits[play_hosts.index(inventory_hostname)].bgp_loopback}}{{lo_mask}} dev lo"
+    
+    - name: Set static IP on transit to HV interface
+      script: "scripts/last_dev_assn_ip.sh {{transits[play_hosts.index(inventory_hostname)].tr_hv_ip}}{{tr_mask}}"
+
