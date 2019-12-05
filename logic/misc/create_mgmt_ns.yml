@@ -5,16 +5,16 @@
     
   tasks:
     - name: Create management namespace
-        command: "ip netns add {{ nsm }}"
-        become: yes
+      command: "ip netns add {{ nsm }}"
+      become: yes
 
     - name: Create network
-        script: ../scripts/create_net.sh {{ b_net }} {{ b }}
-        become: yes
+      script: ../scripts/create_net.sh {{ b_net }} {{ b }}
+      become: yes
     
     - name: Create veth link with bridge
-        script: ../scripts/create_veth_ns_br.sh {{ nsm }} {{ nsm_b_ip }} {{ b }} {{ ve_nsm_b }} {{ b_nsm }}
-        become: yes
+      script: ../scripts/create_veth_ns_br.sh {{ nsm }} {{ nsm_b_ip }} {{ b }} {{ ve_nsm_b }} {{ b_nsm }}
+      become: yes
 
     - name: Assign IP for dhcp server
       command: "ip netns exec {{ nsm }} ip addr add {{ b_ip }} dev {{ nsm_b }}"

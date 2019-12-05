@@ -20,7 +20,7 @@ management namespace: nsm
 metadata_file="../var/metadata.json"
 cid_file="../var/cid"
 mgmt_net_file = "../etc/networks/mgmt_net.json"
-hypervisors_file = "../misc/hypervisors.json"
+hypervisors_file = "../etc/misc/hypervisors.json"
 brid_file="../var/brid"
 h1_nsm_ip_file="../var/h1_nsm_ip"
 nsm_h1_ip_file="../var/nsm_h1_ip"
