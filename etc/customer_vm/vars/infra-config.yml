@@ -1,0 +1,19 @@
+cid: c1
+vpc_id: v1
+hypervisor: h1
+subnets:
+  - id: sub1
+    network_id: 1
+    subnet_base: 1.1.1.0
+    subnet_mask: 24
+    ns_ip: 1.1.1.1
+    range: 1.1.1.2,1.1.1.254
+    vm_ids: [1,2]
+  
+  - id: sub2
+    network_id: 2
+    subnet_base: 1.1.2.0
+    subnet_mask: 24
+    ns_ip: 1.1.2.1
+    range: 1.1.2.2,1.1.2.254
+    vm_ids: [1,2]

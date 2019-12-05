@@ -1,0 +1,71 @@
+---
+- name: Create customer vm, subnet and leaf namespace
+  hosts: [hypervisors]
+  user: root
+  vars_files:
+    - vars/base-config.yml
+    - vars/infra-config.yml
+    
+  tasks:
+    - debug:
+        msg: Create VPC here
+    
+    # Create leaf namespace
+    - name: Create Leaf gateways
+      command: "ip netns add {{ cid }}{{ vpc_id }}{{ hypervisor }}l{{ item.network_id }}"
+      become: yes
+      ignore_errors: true
+      loop: "{{ subnets }}"
+
+    # Create network and bridge
+    - name: Create a network and bridge between namespace and VMs
+      script: "scripts/create_net.sh {{ cid }}{{ vpc_id }}{{ hypervisor }}n{{item.network_id}} {{ cid }}{{ vpc_id }}{{ hypervisor }}n{{item.network_id}}br"
+      become: yes
+      ignore_errors: true
+      loop: "{{ subnets }}"
+
+    # Create veth
+    - name: Connect bridge to namespace
+      script: "scripts/create_veth_ns_br.sh {{ cid }}{{ vpc_id }}{{ hypervisor }}l{{item.network_id}} {{ item.ns_ip }}/{{ item.subnet_mask }} {{ cid }}{{ vpc_id }}{{ hypervisor }}n{{item.network_id}}br {{ cid }}{{ vpc_id }}{{ hypervisor }}ve{{item.network_id}}l {{ cid }}{{ vpc_id }}{{ hypervisor }}ve{{item.network_id}}br"
+      become: yes
+      ignore_errors: true
+      loop: "{{ subnets }}"
+
+    # create dnsmasq
+   # - name: Add route on leaf namespace for veth pair
+   #   command: "ip netns exec {{base_name}}l{{item.network_id}} ip route add {{ item.subnet_base }}/{{ item.subnet_mask }} dev {{base_name}}ve{{item.network_id}}l"
+   #   become: yes
+   #   loop: "{{ subnets }}"
+
+    - name: Create DHCP server for the leaf gateway
+      command: "ip netns exec {{ cid }}{{ vpc_id }}{{ hypervisor }}l{{item.network_id}} dnsmasq --interface={{ cid }}{{ vpc_id }}{{ hypervisor }}ve{{item.network_id}}l --dhcp-range={{ item.range }},12h --bind-interfaces --except-interface=lo"
+      become: yes
+      ignore_errors: true
+      loop: "{{ subnets }}"
+
+    # Create VMs
+    - name: Clone VMs
+      command: "virt-clone --original sampleVM -n {{ cid }}{{ vpc_id }}{{ hypervisor }}n{{item.0.network_id}}vm{{item.1}} --auto-clone"
+      become: yes
+      ignore_errors: true
+      with_subelements: 
+        - "{{ subnets }}"
+        - vm_ids
+    
+    - name: Start VMs
+      virt:
+        name: "{{ cid }}{{ vpc_id }}{{ hypervisor }}n{{item.0.network_id}}vm{{item.1}}"
+        state: running
+      become: yes
+      ignore_errors: true
+      with_subelements: 
+        - "{{ subnets }}"
+        - vm_ids
+
+    - name: Attach interface to VMs
+      command: "virsh attach-interface --domain {{ cid }}{{ vpc_id }}{{ hypervisor }}n{{item.0.network_id}}vm{{item.1}} --type network {{ cid }}{{ vpc_id }}{{ hypervisor }}n{{item.0.network_id}} --model virtio"
+      become: yes
+      ignore_errors: true
+      with_subelements: 
+        - "{{ subnets }}"
+        - vm_ids

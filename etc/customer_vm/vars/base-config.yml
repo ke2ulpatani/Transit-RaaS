@@ -1,0 +1,1 @@
+packages: [qemu-kvm,libvirt-bin,ubuntu-vm-builder,bridge-utils,openvswitch-switch,libxml2-dev,libxslt-dev,python-dev,python-lxml,dnsmasq]
