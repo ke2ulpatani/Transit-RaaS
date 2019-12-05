@@ -1,0 +1,6 @@
+ ip link add {{ nsm_hyp }} type veth peer name {{ hyp_nsm }}
+ ip link set {{ nsm_hyp }} netns {{ nsm }}
+ ip netns exec {{ nsm }} ip addr add {{nsm_hyp_ip}} dev {{ nsm_hyp }}
+ ip netns exec {{ nsm }} ip link set {{ nsm_hyp }} up
+ ip addr add {{hyp_nsm_ip}} dev {{hyp_nsm}}
+ ip link set {{hyp_nsm}} up

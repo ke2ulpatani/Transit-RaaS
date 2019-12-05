@@ -1,0 +1,32 @@
+---
+- name: Ansible create client Infra playbook
+  hosts: [hypervisors]
+  user: root
+    
+  tasks:
+    - name: Create management namespace
+        command: "ip netns add {{ nsm }}"
+        become: yes
+
+    - name: Create network
+        script: ../scripts/create_net.sh {{ br_net }} {{ br_name }}
+        become: yes
+    
+    - name: Create veth link with bridge
+        script: ../scripts/create_veth_ns_br.sh {{ nsm }} {{ nsm_br_ip }} {{ br_name }} {{ nsm_br }} {{ br_nsm }}
+        become: yes
+
+    - name: Create DHCP server for the bridge
+      command: "ip netns exec {{ nsm }} dnsmasq --interface={{ nsm_br }} --dhcp-range={{ network_id }},12h --bind-interfaces --except-interface=lo"
+      ignore_errors: true
+      become: yes
+
+    - name: Create veth pair with hypervisor
+      shell: "{{ lookup('template', '../scripts/mveth.j2') }}"
+      args:
+        executable: /bin/bash
+      become: yes
+      ignore_errors: yes
+
+    - name: configure static route
+      command: "ip route add {{ network_id }} via {{ nsm_hyp_ip }}"      
