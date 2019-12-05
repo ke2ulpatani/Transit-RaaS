@@ -50,10 +50,11 @@ if __name__=="__main__":
         dhcp_range = "dhcp_range=" + str(ipaddress.ip_address(subnet[0])+2)+','+ \
                 str(ipaddress.ip_address(subnet[0])+254)
 
-        extra_vars = ansible_become_pass + " " + nsm + " " + b_net + " " + b + " " + \
+        extra_vars = constants.ansible_become_pass + " " + nsm + " " + b_net + " " + b + " " + \
                 nid + " " + ve_h_nsm + " " + ve_nsm_h + " " + \
                 ve_nsm_b + " " + ve_b_nsm + " " + h_nsm_ip + \
                 " " + nsm_h_ip + " " + b_ip + " " + dhcp_range
 
-        print(os.system("ansible-playbook misc/create_mgmt_ns.yml -i inventory/hosts.yml --extra-vars '"+extra_vars+"'"))
-        raas_utils.add_mgmt_ns(hypervisor)
+        ec = os.system("ansible-playbook logic/misc/create_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+        if ec == 0:
+            raas_utils.add_mgmt_ns(hypervisor)

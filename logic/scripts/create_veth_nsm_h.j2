@@ -1,6 +1,8 @@
  ip link add {{ ve_nsm_h }} type veth peer name {{ ve_h_nsm }}
  ip link set {{ ve_nsm_h }} netns {{ nsm }}
+ ip netns exec {{ nsm }} ip link set {{ ve_nsm_h }} down
  ip netns exec {{ nsm }} ip addr add {{nsm_h_ip}} dev {{ ve_nsm_h }}
  ip netns exec {{ nsm }} ip link set {{ ve_nsm_h }} up
+ ip link set {{ve_h_nsm}} down
  ip addr add {{h_nsm_ip}} dev {{ve_h_nsm}}
  ip link set {{ve_h_nsm}} up
