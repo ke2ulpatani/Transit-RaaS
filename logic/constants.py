@@ -17,6 +17,7 @@ manamgement: m
 management namespace: nsm
 """
 
+ansible_become_pass="ansible_become_pass=yashrocks"
 metadata_file="../var/metadata.json"
 cid_file="../var/cid"
 mgmt_net_file = "../etc/networks/mgmt_net.json"
