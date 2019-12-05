@@ -1,0 +1,5 @@
+{
+    "hypervisor_name" : "h1",
+    "network_id" : "10.0.0.0/24",
+    "subnet_name" : "management_network"
+}
