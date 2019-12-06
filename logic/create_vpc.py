@@ -82,6 +82,7 @@ if __name__=="__main__":
                 raise
 
         vpc_id = hyp_utils.get_vpc_id(hypervisor)
+        hyp_utils.write_vpc_id(vpc_id+1, hypervisor)
         #print(vpc_id, cid)
 
         hyp_vpc_name = "c" + cid + "_" + "v" + str(vpc_id)

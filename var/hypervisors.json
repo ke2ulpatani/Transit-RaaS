@@ -11,13 +11,10 @@
         },
         "l2_transit": {},
         "nsm_br": "c1_m_b",
-        "nsm_exists": "True",
+        "nsm_exists": "False",
         "nsm_h_ip": "10.1.99.2/30",
         "vpc": {
-            "id": "1",
-            "vpc_1": {
-                "name": "c1_v1"
-            }
+            "id": "1"
         }
     },
     "h2": {
