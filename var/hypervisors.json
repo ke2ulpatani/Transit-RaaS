@@ -1,41 +1,25 @@
 {
+    "customer_id": "1",
     "h1": {
-        "ip": "172.16.2.1", 
-        "nsm_exists": "True", 
-        "h_nsm_ip": "10.1.99.1", 
+        "ip": "172.16.2.1",
+        "nsm_exists": "False",
         "nsm_h_ip": "10.1.99.2",
-        "vpc": {
-            "id": "1",
-            "vpc1": {
-                "spine": {
-                    "id": "1",
-                    "s1": {
-                    }
-                },
-                "leaf": {
-                    "id": "1"
-
-                },
-                "vms": {
-                    "id": "1"
-                }
-            } 
-        },
+        "h_nsm_ip": "10.1.99.1",
+	"vpc": {
+	    "id": "1"
+	},
         "l1_transit": {
             "id": "1",
             "t1": {
-                "name":""
-            } 
-
+                "name": ""
+            }
         },
-        "l2_transit": {
-
-        }
-    }, 
+        "l2_transit": {}
+    },
     "h2": {
-        "ip": "172.16.2.2", 
-        "nsm_exists": "True", 
-        "h_nsm_ip": "10.1.99.1", 
+        "h_nsm_ip": "10.1.99.1",
+        "ip": "172.16.2.2",
+        "nsm_exists": "True",
         "nsm_h_ip": "10.1.99.2"
     }
 }
