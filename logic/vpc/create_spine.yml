@@ -14,7 +14,7 @@
       virt:
         name: "{{ s_name }}"
         command: define
-        xml: "{{ lookup('template', '../misc/create_spine.xml.j2' ) }}"
+        xml: "{{ lookup('template', '../scripts/create_spine.xml.j2' ) }}"
         uri: 'qemu:///system'
 
     - name: Start spine VM
