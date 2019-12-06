@@ -45,6 +45,7 @@
         ansible_ssh_pass: yashrocks
         groups:
           - "{{hypervisor}}_spines"
+      loop: "{{spine_ips.results}}"
 
 - name: Ansible create VM playbook
   hosts: ["{{ hypervisor }}_spines"]

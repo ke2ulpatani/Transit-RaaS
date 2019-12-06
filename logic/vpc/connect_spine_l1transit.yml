@@ -1,0 +1,14 @@
+---
+- name: Ansible attach leaf to spine
+  hosts: "{{ hypervisor }}"
+  user: root
+    
+  tasks:
+    - name: Create network and bridge between l1transit and spine
+      script: "../scripts/create_net.sh {{ s_l1_net }} {{ s_l1_br }}"
+    
+    - name: Attach it to spine vm
+      command: "virsh attach-interface --domain {{ s_name }} --type network {{ s_l1_net }} --model virtio"
+    
+    - name: Attach it to l1 transit vm
+      command: "virsh attach-interface --domain {{ l1_name }} --type network {{ s_l1_net }} --model virtio"
