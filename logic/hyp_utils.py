@@ -170,3 +170,7 @@ def hyp_add_vpc(hypervisor, cust_vpc_name, hyp_vpc_name):
     new_vpc_data = {}
     write_vpc_data(new_vpc_data, cust_vpc_name, hypervisor)
     write_hyp_vpc_name(hyp_vpc_name, cust_vpc_name, hypervisor)
+    new_spines_data = {}
+    write_spines_data(new_spines_data, cust_vpc_name, hypervisor)
+    new_spine_id = "1"
+    write_spine_id(new_spine_id, cust_vpc_name, hypervisor)
