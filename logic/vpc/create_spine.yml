@@ -19,7 +19,7 @@
 
     - name: Start spine VM
       virt:
-        name: "{{ t_name }}"
+        name: "{{ s_name }}"
         command: start
         state: running
       become: yes
