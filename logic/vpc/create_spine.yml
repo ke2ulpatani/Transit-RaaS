@@ -24,10 +24,6 @@
         state: running
       become: yes
     
-    - name: Wait for VMs to be started
-      pause:
-        seconds: 30
-
     - name: Attach management interface to spine
       command: "virsh attach-interface --domain {{ s_name }} --type network --source {{ mgt_net }} --model virtio --config --live"
       become: yes
