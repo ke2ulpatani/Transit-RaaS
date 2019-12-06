@@ -83,8 +83,7 @@ if __name__=="__main__":
                     " " + c_s_image_path_arg + " " +  hypervisor_arg
 
             #print("here2")
-            print("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            raise
+            #print("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             rc = os.system("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             if (rc != 0):
                 raise
@@ -99,7 +98,7 @@ if __name__=="__main__":
         except:
             print("create spine failed")
             print("ansible-playbook logic/vpc/delete_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            #os.system("ansible-playbook logic/vpc/delete_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            os.system("ansible-playbook logic/vpc/delete_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             raise
         #print("ansible-playbook logic/vpc/delete_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
 
@@ -138,10 +137,10 @@ if __name__=="__main__":
 
             print("ansible-playbook logic/misc/quagga_install.yml -i \""+spine_ip+",\" -v --extra-vars '"+extra_vars+"'"\
                     + " --ssh_common_args='"+ssh_common_args+"'")
-            #rc = os.system("ansible-playbook logic/misc/quagga_install.yml -i \""+spine_ip+",\" -v --extra-vars '"+extra_vars+"'"\
-            #        + " --ssh_common_args='"+ssh_common_args+"'")
-            #if (rc != 0):
-            #    raise
+            rc = os.system("ansible-playbook logic/misc/quagga_install.yml -i \""+spine_ip+",\" -v --extra-vars '"+extra_vars+"'"\
+                    + " --ssh_common_args='"+ssh_common_args+"'")
+            if (rc != 0):
+                raise
         except:
             print("quagga_install playbook failed")
     except:
