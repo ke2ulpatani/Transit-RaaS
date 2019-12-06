@@ -1,6 +1,5 @@
 import os
-import sys
-import do_json
+import sys import do_json
 import raas_utils
 import constants
 import ipaddress
@@ -45,10 +44,10 @@ if __name__=="__main__":
             b = "c" + cid + "_m_b"
             b_arg = "b=c" + cid + "_m_b"
             nid = "nid=" + mgmt_nid
-            ve_h_nsm = "ve_h_nsm=c" + cid + "ve_h_nsm"
-            ve_nsm_h = "ve_nsm_h=c" + cid + "ve_nsm_h"
-            ve_nsm_b = "ve_nsm_b=c" + cid + "ve_nsm_b"
-            ve_b_nsm = "ve_b_nsm=c" + cid + "ve_b_nsm"
+            ve_h_nsm = "ve_h_nsm=c" + cid + "_ve_h_nsm"
+            ve_nsm_h = "ve_nsm_h=c" + cid + "_ve_nsm_h"
+            ve_nsm_b = "ve_nsm_b=c" + cid + "_ve_nsm_b"
+            ve_b_nsm = "ve_b_nsm=c" + cid + "_ve_b_nsm"
             h_nsm_ip = "h_nsm_ip=" + hyp_utils.get_h_nsm_ip(hypervisor)
             nsm_h_ip = hyp_utils.get_nsm_h_ip(hypervisor)
             nsm_h_ip_arg = "nsm_h_ip=" + nsm_h_ip

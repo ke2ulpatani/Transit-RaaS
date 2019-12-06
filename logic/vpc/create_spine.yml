@@ -3,6 +3,7 @@
   hosts: "{{ hypervisor }}"
   user: root
   become: yes
+  ignore_errors: yes
 
   tasks:
     - name: Copy Spine VM image
@@ -37,20 +38,26 @@
       script: "../scripts/getIP.py {{ s_name }}"
       args:
         executable: python
-      register: spine_ips
+      register: spine_ip
+
+    - debug:
+        msg: "{{ spine_ip.stdout | trim }}"
 
     - name: Add Spines to inventory
       add_host:
-        hostname: "{{item.stdout}}"
+        hostname: "{{ spine_ip.stdout | trim }}"
         ansible_ssh_pass: yashrocks
         groups:
-          - "{{hypervisor}}_spines"
-      loop: "{{spine_ips.results}}"
+          - "{{hypervisor}}_hosts"
 
 - name: Ansible create VM playbook
-  hosts: ["{{ hypervisor }}_spines"]
+  hosts: ["{{hypervisor}}_hosts"]
   user: root
+  gather_facts: no
 
   tasks:
+    - debug:
+        msg: "Inside the guest vm"
+
     - name: Configure Quagga suite
       script: "../scripts/quagga_setup.sh"

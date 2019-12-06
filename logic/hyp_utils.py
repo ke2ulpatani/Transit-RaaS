@@ -174,3 +174,18 @@ def hyp_add_vpc(hypervisor, cust_vpc_name, hyp_vpc_name):
     write_spines_data(new_spines_data, cust_vpc_name, hypervisor)
     new_spine_id = "1"
     write_spine_id(new_spine_id, cust_vpc_name, hypervisor)
+
+def get_hyp_spine_name(hypervisor, vpc, spine):
+    spine_data = get_spine_data(hypervisor, vpc, spine)
+    hyp_spine_name = spine_data["name"]
+    return hyp_spine_name
+
+def write_hyp_spine_name(hyp_spine_name, spine, vpc, hypervisor):
+    spine_data = get_spine_data(hypervisor, vpc, spine)
+    spine_data["name"] = hyp_spine_name 
+    write_spine_data(spine_data, spine, vpc, hypervisor)
+
+def vpc_add_spine(hypervisor, vpc, cust_spine_name, hyp_spine_name):
+    new_spine_data = {}
+    write_spine_data(new_spine_data, cust_spine_name, vpc, hypervisor)
+    write_hyp_spine_name(hyp_spine_name, cust_spine_name, vpc, hypervisor)

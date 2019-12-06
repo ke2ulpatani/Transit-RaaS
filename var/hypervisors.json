@@ -1,1 +1,25 @@
-{"h2": {"h_nsm_ip": "10.1.99.1", "ip": "172.16.2.2", "nsm_h_ip": "10.1.99.2", "nsm_exists": "True"}, "h1": {"h_nsm_ip": "10.1.99.1/30", "nsm_h_ip": "10.1.99.2/30", "nsm_exists": "True", "l2_transit": {}, "ip": "172.16.2.1", "l1_transit": {"id": "1", "t1": {"name": ""}}, "vpc": {"vpc_1": {"spine": {"id": "1"}, "name": "c1_v1"}, "id": "2"}, "nsm_br": "c1_m_b"}, "customer_id": "1"}
+{
+    "customer_id": "1",
+    "h1": {
+        "h_nsm_ip": "10.1.99.1/30",
+        "ip": "172.16.2.1",
+        "l1_transit": {
+            "id": "1",
+            "t1": {
+                "name": ""
+            }
+        },
+        "l2_transit": {},
+        "nsm_exists": "False",
+        "nsm_h_ip": "10.1.99.2/30",
+        "vpc": {
+            "id": "1"
+        }
+    },
+    "h2": {
+        "h_nsm_ip": "10.1.99.1",
+        "ip": "172.16.2.2",
+        "nsm_exists": "True",
+        "nsm_h_ip": "10.1.99.2"
+    }
+}
