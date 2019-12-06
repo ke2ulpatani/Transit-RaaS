@@ -1,0 +1,9 @@
+- name: Install quagga in spine
+  hosts: "{{ vm_ip }}"
+  user: root
+  gather_facts: yes
+
+  tasks:
+    - debug:
+        msg: "Inside the guest vm"
+
