@@ -1,9 +1,9 @@
 ---
 - name: Ansible create client Infra playbook
-  hosts: "{{ hypervisor_ip }}"
-  user: ece792
+  hosts: "{{ hypervisor }}"
+  user: root
   become: yes
-  ignore_errors: yes
+  #  ignore_errors: yes
     
   tasks:
     - name: Create management namespace
@@ -24,4 +24,4 @@
         executable: /bin/bash
 
     - name: configure static route
-      command: "ip route add {{ nid }} via {{ nsm_h_ip }}"      
+      command: "ip route add {{ nid }} via {{ nsm_h_route }}"      
