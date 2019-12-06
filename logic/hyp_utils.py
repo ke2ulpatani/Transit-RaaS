@@ -46,6 +46,9 @@ def add_mgmt_ns(hypervisor):
     hyp_data["nsm_exists"] = "True"
     write_hyp_data(hyp_data, hypervisor)
 
+def get_mgmt_net(cid):
+    return "c"+cid+"_m_net"
+
 def get_nsm_br(hypervisor):
     hyp_data = get_hyp_data(hypervisor)
     nsm_br = hyp_data["nsm_br"]
