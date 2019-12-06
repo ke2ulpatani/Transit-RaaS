@@ -13,4 +13,4 @@
       register: vm_ip
 
     - name: Write IP to file
-      copy: content="{{ vm_ip.stdout | trim }}" dest="{{ ip_path }}"
+      local_action: copy content="{{ vm_ip.stdout | trim }}" dest="{{ ip_path }}"
