@@ -6,10 +6,10 @@ or other application using the libvirt API.
 -->
 
 <domain type='kvm'>
-  <name>{{ item.name }}</name>
-  <memory unit='KiB'>{{ item.ram | default('2097152') }}</memory>
-  <currentMemory unit='KiB'>{{ item.ram | default('2097152') }}</currentMemory>
-  <vcpu placement='static'>{{ item.vcpu | default('2') }}</vcpu>
+  <name>{{ s_name }}</name>
+  <memory unit='KiB'>{{ s_ram }}</memory>
+  <currentMemory unit='KiB'>{{ s_ram }}</currentMemory>
+  <vcpu placement='static'>{{ s_vcpu }}</vcpu>
   <os>
     <type arch='x86_64' machine='pc-i440fx-bionic'>hvm</type>
     <boot dev='hd'/>
@@ -38,7 +38,7 @@ or other application using the libvirt API.
     <emulator>/usr/bin/kvm-spice</emulator>
     <disk type='file' device='disk'>
       <driver name='qemu' type='qcow2'/>
-      <source file='/var/lib/libvirt/images/{{ item.name }}.img'/>
+      <source file='/var/lib/libvirt/images/{{ s_name }}.img'/>
       <target dev='vda' bus='virtio'/>
       <address type='pci' domain='0x0000' bus='0x00' slot='0x07' function='0x0'/>
     </disk>

@@ -20,10 +20,6 @@ if __name__=="__main__":
 
     spine_name = spine_config_file.split('/')[-1].split('.')[0]
 
-    if raas_utils.client_exists_spine(spine_name):
-        print("Spine already exists")
-        exit(1)
-
     #Assumed customer always gives correct config file
     spine_data = do_json.json_read(spine_config_file)
 
@@ -38,6 +34,10 @@ if __name__=="__main__":
 
     if not raas_utils.client_exists_vpc(vpc_name):
         print("VPC does not exist")
+        exit(1)
+
+    if raas_utils.client_exists_spine(vpc_name, spine_name):
+        print("Spine already exists")
         exit(1)
     
     #All prereq checks done at this point
@@ -59,27 +59,20 @@ if __name__=="__main__":
         mem = constants.f1_mem
     
     cid = hyp_utils.get_client_id()
-    print(cid)
 
     try:
-        print("here1", hypervisor, vpc_name)
         sid = hyp_utils.get_spine_id(hypervisor, vpc_name)
-        print("sid=",sid)
         image_arg = "image_path="+constants.img_path + \
                 constants.spine_vm_img
-        print("i=", image_arg)
         spine_name_ansible = "c" + str(cid) + "_" + "s" + str(sid)
-        print("s_name=", spine_name_ansible)
         spine_name_ansible_arg = "s_name="+spine_name_ansible
         c_s_image_path_arg = "c_s_image_path="+constants.img_path+ \
                 spine_name_ansible + ".img"
-        print("c_i_arg=", c_s_image_path_arg)
 
         s_ram_arg = "s_ram=" + str(mem)
         s_vcpu_arg = "s_vcpu=" + str(vcpu)
 
         mgt_net_arg = "mgt_net=" + hyp_utils.get_mgmt_net(cid)
-        print("mgmt=", mgt_net_arg)
 
         extra_vars = constants.ansible_become_pass + " " + \
                 image_arg + " " +  \
@@ -87,18 +80,28 @@ if __name__=="__main__":
                 mgt_net_arg + " " + spine_name_ansible_arg + \
                 " " + c_s_image_path_arg + " " +  hypervisor_arg
 
-        print("here2")
+        #print("here2")
         try:
-            #os.system("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             print("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            raise
+            rc = os.system("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            if (rc != 0):
+                raise
+            #raise
             #raas_utils.add_mgmt_ns(hypervisor)
         except:
             #os.system("ansible-playbook logic/vpc/delete_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             print("ansible-playbook logic/vpc/delete_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
 
-    #raas_utils.add_vpc(vpc_name) 
-        print("here3")
+        #print("here3", sid+1, vpc_name, hypervisor)
+
+        #print(hyp_utils.write_spine_id(sid+1, vpc_name, hypervisor))
+
+        #print("here4", spine_name, vpc_name, hypervisor, spine_name_ansible)
+        hyp_utils.vpc_add_spine(hypervisor, vpc_name, spine_name, spine_name_ansible)
+
+        #print("here5", spine_name, vpc_name)
+
+        raas_utils.client_add_spine(vpc_name, spine_name)
 
     except:
-        print("Cannot create spine")
+        print("create spine failed")
