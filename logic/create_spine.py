@@ -72,7 +72,7 @@ if __name__=="__main__":
         print("s_name=", spine_name_ansible)
         spine_name_ansible_arg = "s_name="+spine_name_ansible
         c_s_image_path_arg = "c_s_image_path="+constants.img_path+ \
-                spine_name_ansible
+                spine_name_ansible + ".img"
         print("c_i_arg=", c_s_image_path_arg)
 
         s_ram_arg = "s_ram=" + str(mem)
