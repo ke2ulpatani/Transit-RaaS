@@ -1,6 +1,6 @@
 ---
 - name: Ansible create spine
-  hosts: "{{ hypervisors }}"
+  hosts: "{{ hypervisor }}"
   user: root
     
   tasks:
@@ -14,7 +14,7 @@
       virt:
         name: "{{ s_name }}"
         command: define
-        xml: "{{ lookup('template', '../misc/create_vm.xml.j2' ) }}"
+        xml: "{{ lookup('template', '../misc/create_spine.xml.j2' ) }}"
         uri: 'qemu:///system'
 
     - name: Start spine VM
@@ -27,3 +27,28 @@
     - name: Attach management interface to spine
       command: "virsh attach-interface --domain {{ s_name }} --type network --source {{ mgt_net }} --model virtio --config --live"
       become: yes
+
+    - name: Wait for VMs to be started
+      pause:
+        seconds: 30
+
+    - name: Fetch spine VM IPs
+      script: "../scripts/getIP.py {{ s_name }}"
+      args:
+        executable: python
+      register: spine_ips
+
+    - name: Add Spines to inventory
+      add_host:
+        hostname: "{{item.stdout}}"
+        ansible_ssh_pass: yashrocks
+        groups:
+          - "{{hypervisor}}_spines"
+
+- name: Ansible create VM playbook
+  hosts: ["{{ hypervisor }}_spines"]
+  user: root
+
+  tasks:
+    - name: Configure Quagga suite
+      script: "../scripts/quagga_setup.sh"

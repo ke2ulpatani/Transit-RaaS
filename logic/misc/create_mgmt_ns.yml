@@ -1,6 +1,6 @@
 ---
 - name: Ansible create client Infra playbook
-  hosts: [hypervisors]
+  hosts: "{{ hypervisor_ip }}"
   user: ece792
   become: yes
   ignore_errors: yes

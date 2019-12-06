@@ -1,0 +1,79 @@
+---
+- name: Ansible create transit
+  hosts: "{{ hypervisor }}"
+  user: root
+    
+  tasks:
+    - name: Copy transit VM image
+      copy:
+        src: "{{ image_path }}"
+        dest: "{{ c_t_image_path }}"
+        remote_src: yes
+    
+    - name: Define a transit VM
+      virt:
+        name: "{{ t_name }}"
+        command: define
+        xml: "{{ lookup('template', '../misc/create_transit.xml.j2' ) }}"
+        uri: 'qemu:///system'
+
+    - name: Start transit VM
+      virt:
+        name: "{{ t_name }}"
+        command: start
+        state: running
+      become: yes
+    
+    - name: Attach management interface to transit
+      command: "virsh attach-interface --domain {{ t_name }} --type network --source {{ mgt_net }} --model virtio --config --live"
+      become: yes
+    
+    - name: Create network
+      script: "../scripts/create_net.sh {{ t_h_nw }} {{ t_h_br }}"
+      become: yes
+
+    - name: Attach hypervisor interface to transit
+      command: "virsh attach-interface --domain {{ t_name }} --type network --source {{ t_h_nw }} --model virtio --config --live"
+      become: yes
+
+    - name: Create veth pair with hypervisor
+      shell: "{{ lookup('template', 'scripts/t_h_connect.j2') }}"
+      args:
+        executable: /bin/bash
+      become: yes
+
+    - name: Wait for VMs to be started
+      pause:
+        seconds: 30
+
+    - name: Fetch transit VM IPs
+      script: "scripts/getIP.py {{ t_name }}"
+      args:
+        executable: python
+      register: transit_ips
+
+    - debug:
+        msg: "{{item.stdout}}"
+      loop: "{{transit_ips.results}}"
+
+    - name: Add Transits to host
+      add_host:
+        hostname: "{{item.stdout}}"
+        ansible_ssh_private_key_file: ~/keys/id_raas
+        groups:
+          - "{{hypervisor}}_transits"
+      loop: "{{transit_ips.results}}"
+
+- name: Ansible configure transit
+  hosts: ["{{hypervisor}}_transits"]
+  user: root
+
+  tasks:
+    - name: Configure Quagga suite
+      script: "scripts/quagga_setup.sh"
+
+    - name: Configure loopback address
+      command: "ip addr add {{ t_loopback_ip }} dev lo"
+    
+    - name: Set static IP on transit to HV interface
+      script: "scripts/last_dev_assn_ip.sh {{transits[play_hosts.index(inventory_hostname)].tr_hv_ip}}{{tr_mask}}"

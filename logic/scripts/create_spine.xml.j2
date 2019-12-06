@@ -7,9 +7,9 @@ or other application using the libvirt API.
 
 <domain type='kvm'>
   <name>{{ s_name }}</name>
-  <memory unit='KiB'>{{ s_ram | default('2097152') }}</memory>
-  <currentMemory unit='KiB'>{{ s_ram | default('2097152') }}</currentMemory>
-  <vcpu placement='static'>{{ s_vcpu | default('2') }}</vcpu>
+  <memory unit='KiB'>{{ s_ram }}</memory>
+  <currentMemory unit='KiB'>{{ s_ram }}</currentMemory>
+  <vcpu placement='static'>{{ s_vcpu }}</vcpu>
   <os>
     <type arch='x86_64' machine='pc-i440fx-bionic'>hvm</type>
     <boot dev='hd'/>
