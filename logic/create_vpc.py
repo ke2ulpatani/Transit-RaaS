@@ -64,21 +64,23 @@ if __name__=="__main__":
             extra_vars = constants.ansible_become_pass + " " + nsm + " " + b_net + " " + b_arg + " " + \
                     nid + " " + ve_h_nsm + " " + ve_nsm_h + " " + \
                     ve_nsm_b + " " + ve_b_nsm + " " + h_nsm_ip + \
-                    " " + nsm_h_ip + " " + b_ip + " " + dhcp_range + " " + hypervisor_arg + " " + nsm_h_route_arg
+                    " " + nsm_h_ip_arg + " " + b_ip + " " + dhcp_range + " " + hypervisor_arg + " " + nsm_h_route_arg
             #print("here2")
 
             try:
-                #print("ansible-playbook logic/misc/create_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-                subprocess.call(["ansible-playbook", "logic/misc/create_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'"])
-                #os.system("ansible-playbook logic/misc/create_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+                print("ansible-playbook logic/misc/create_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+                #subprocess.call(["ansible-playbook", "logic/misc/create_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'"])
+                rc = os.system("ansible-playbook logic/misc/create_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+                if (rc != 0):
+                    raise
                 #p = Popen(subproc, stdin=PIPE, stdout=PIPE, stderr=PIPE)
                 #output, err = p.communicate(b"input data that is passed to subprocess' stdin")
                 hyp_utils.add_mgmt_ns(hypervisor)
                 hyp_utils.add_nsm_br(b, hypervisor)
             except Exception:
                 print("create mgmt ns failed")
-                #print("ansible-playbook logic/misc/delete_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-                subprocess.call("ansible-playbook logic/misc/delete_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+                print("ansible-playbook logic/misc/delete_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+                os.system("ansible-playbook logic/misc/delete_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
                 raise
 
         vpc_id = hyp_utils.get_vpc_id(hypervisor)
