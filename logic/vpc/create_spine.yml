@@ -2,7 +2,7 @@
 - name: Ansible create spine
   hosts: "{{ hypervisor }}"
   user: root
-    
+
   tasks:
     - name: Copy Spine VM image
       copy:
