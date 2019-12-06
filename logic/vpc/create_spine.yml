@@ -1,5 +1,5 @@
 ---
-- name: Ansible create VPC
+- name: Ansible create spine
   hosts: "{{ hypervisors }}"
   user: root
     
@@ -29,5 +29,5 @@
         seconds: 30
 
     - name: Attach management interface to spine
-      command: "virsh attach-interface --domain {{ t_name }} --type network --source {{ mgt_net }} --model virtio --config --live"
+      command: "virsh attach-interface --domain {{ s_name }} --type network --source {{ mgt_net }} --model virtio --config --live"
       become: yes

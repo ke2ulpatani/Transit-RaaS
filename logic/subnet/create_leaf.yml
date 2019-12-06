@@ -1,0 +1,23 @@
+---
+- name: Ansible create leaf
+  hosts: "{{ hypervisors }}"
+  user: root
+    
+  tasks:
+    - name: Create leaf namespace
+      command: "ip netns add {{ l_name }}"
+      become: yes
+    
+    - name: Create a network and bridge between leaf namespace and customer VMs
+      script: "scripts/create_net.sh {{ subnet_net }} {{ subnet_br }}"
+      become: yes
+    
+    - name: Connect bridge to leaf namespace
+      script: "scripts/create_veth_ns_br.sh {{ l_name }} {{ l_ip }} {{ subnet_br }} {{ ve_l_br }} {{ ve_br_l }}"
+      become: yes
+
+    - name: Create DHCP server for the leaf namespace
+      command: "ip netns exec {{base_name}}l{{item.network_id}} dnsmasq --interface={{base_name}}ve{{item.network_id}}l --dhcp-range={{ item.range }},12h --bind-interfaces --except-interface=lo"
+      become: yes
+      ignore_errors: true
+      loop: "{{ subnets }}"
