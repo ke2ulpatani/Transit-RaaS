@@ -1,0 +1,33 @@
+---
+- name: Ansible create VPC
+  hosts: "{{ hypervisors }}"
+  user: root
+    
+  tasks:
+    - name: Copy Spine VM image
+      copy:
+        src: "{{ image_path }}"
+        dest: "{{ c_s_image_path }}"
+        remote_src: yes
+    
+    - name: Define a spine VM
+      virt:
+        name: "{{ s_name }}"
+        command: define
+        xml: "{{ lookup('template', '../misc/create_vm.xml.j2' ) }}"
+        uri: 'qemu:///system'
+
+    - name: Start spine VM
+      virt:
+        name: "{{ t_name }}"
+        command: start
+        state: running
+      become: yes
+    
+    - name: Wait for VMs to be started
+      pause:
+        seconds: 30
+
+    - name: Attach management interface to spine
+      command: "virsh attach-interface --domain {{ t_name }} --type network --source {{ mgt_net }} --model virtio --config --live"
+      become: yes
