@@ -94,7 +94,7 @@ if __name__=="__main__":
 
         #print("here3", sid+1, vpc_name, hypervisor)
 
-        #print(hyp_utils.write_spine_id(sid+1, vpc_name, hypervisor))
+        hyp_utils.write_spine_id(sid+1, vpc_name, hypervisor)
 
         #print("here4", spine_name, vpc_name, hypervisor, spine_name_ansible)
         hyp_utils.vpc_add_spine(hypervisor, vpc_name, spine_name, spine_name_ansible)

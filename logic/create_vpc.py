@@ -1,5 +1,6 @@
 import os
-import sys import do_json
+import sys
+import do_json
 import raas_utils
 import constants
 import ipaddress
