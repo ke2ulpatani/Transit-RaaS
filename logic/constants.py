@@ -18,7 +18,7 @@ management namespace: nsm
 """
 
 ssh_file = "~/.ssh/id_raas"
-ansible_become_pass="ansible_become_pass=yashrocks"
+ansible_become_pass="ansible_ssh_pass=yashrocks ansible_become_pass=yashrocks"
 ansible_ssh_private_key_file="ansible_ssh_private_key_file="+ssh_file
 
 #etc
@@ -45,4 +45,4 @@ var_spines="/var/spines/"
 f1_mem = 976562
 f2_mem = 1953125
 f3_mem = 3906250
-temp_file = "/var/temp"
+temp_file = "var/temp"

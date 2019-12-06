@@ -83,7 +83,7 @@ if __name__=="__main__":
                     " " + c_s_image_path_arg + " " +  hypervisor_arg
 
             #print("here2")
-            #print("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            print("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             rc = os.system("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             if (rc != 0):
                 raise
@@ -108,19 +108,21 @@ if __name__=="__main__":
         #get spine ip and store to some file
         try:
             vm_name_arg = "vm_name="+spine_name_ansible
-            ip_file_path_arg = "ip_path="+temp_file
+            ip_file_path_arg = "ip_path=../../"+constants.temp_file
             extra_vars = constants.ansible_become_pass + " " + \
-                    " " + vm_name_arg + " " +  hypervisor_arg + ip_file_path_arg
+                    " " + vm_name_arg + " " +  hypervisor_arg + " " + ip_file_path_arg
 
             print("ansible-playbook logic/misc/get_vm_ip.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             rc = os.system("ansible-playbook logic/misc/get_vm_ip.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             if (rc != 0):
+                print ("get_vm_ip playbook failed")
                 raise
 
             spine_ip = raas_utils.read_temp_file()
+            print(spine_ip)
             raas_utils.write_spine_ip(vpc_name, spine_name, spine_ip)
         except:
-            print ("get_vm_ip playbook failed")
+            print("spine ip get and store failed")
             raise
 
         #instal quagga
