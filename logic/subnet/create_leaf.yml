@@ -1,6 +1,6 @@
 ---
 - name: Ansible create leaf
-  hosts: "{{ hypervisors }}"
+  hosts: "{{ hypervisor }}"
   user: root
   become: yes
     
@@ -9,10 +9,10 @@
       command: "ip netns add {{ l_name }}"
     
     - name: Create a network and bridge between leaf namespace and customer VMs
-      script: "../scripts/create_net.sh {{ subnet_net }} {{ subnet_br }}"
+      script: "../scripts/create_net.sh {{ l_net }} {{ l_br }}"
     
     - name: Connect bridge to leaf namespace
-      script: "../scripts/create_veth_ns_br.sh {{ l_name }} {{ l_ip }} {{ subnet_br }} {{ ve_l_br }} {{ ve_br_l }}"
+      script: "../scripts/create_veth_ns_br.sh {{ l_name }} {{ l_ip }} {{ l_br }} {{ ve_l_br }} {{ ve_br_l }}"
 
     - name: Create DHCP server for the leaf namespace
       command: "ip netns exec {{ l_name }} dnsmasq --interface={{ ve_l_br }} --dhcp-range={{ subnet_range }},12h --bind-interfaces --except-interface=lo"

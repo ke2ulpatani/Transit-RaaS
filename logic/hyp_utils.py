@@ -126,6 +126,36 @@ def write_spine_id(spine_id, vpc, hypervisor):
     spines_data["id"] = str(spine_id)
     write_spines_data(spines_data, vpc, hypervisor)
 
+def get_leafs_data(hypervisor, vpc):
+    vpc_data = get_vpc_data(hypervisor, vpc)
+    leafs_data = vpc_data["leaf"]
+    return leafs_data
+
+def write_leafs_data(leafs_data, vpc, hypervisor):
+    vpc_data = get_vpc_data(hypervisor, vpc)
+    vpc_data["leaf"] = leafs_data
+    write_vpc_data(vpc_data, vpc, hypervisor)
+
+def get_leaf_data(hypervisor, vpc, leaf):
+    leafs_data = get_leafs_data(hypervisor, vpc)
+    leaf_data = leafs_data[leaf]
+    return leaf_data
+
+def write_leaf_data(leaf_data, leaf, vpc, hypervisor):
+    leafs_data = get_leafs_data(hypervisor, vpc)
+    leafs_data[leaf] = leaf_data
+    write_leafs_data(leafs_data, vpc, hypervisor)
+
+def get_leaf_id(hypervisor, vpc):
+    leafs_data = get_leafs_data(hypervisor, vpc)
+    leaf_id = int(leafs_data["id"])
+    return leaf_id
+
+def write_leaf_id(leaf_id, vpc, hypervisor):
+    leafs_data = get_leafs_data(hypervisor, vpc)
+    leafs_data["id"] = str(leaf_id)
+    write_leafs_data(leafs_data, vpc, hypervisor)
+
 def get_bridges_data(hypervisor, vpc):
     vpc_data = get_vpc_data(hypervisor, vpc)
     bridges_data = vpc_data["bridges"]
@@ -170,10 +200,16 @@ def hyp_add_vpc(hypervisor, cust_vpc_name, hyp_vpc_name):
     new_vpc_data = {}
     write_vpc_data(new_vpc_data, cust_vpc_name, hypervisor)
     write_hyp_vpc_name(hyp_vpc_name, cust_vpc_name, hypervisor)
+
     new_spines_data = {}
     write_spines_data(new_spines_data, cust_vpc_name, hypervisor)
     new_spine_id = "1"
     write_spine_id(new_spine_id, cust_vpc_name, hypervisor)
+
+    new_leafs_data = {}
+    write_leafs_data(new_leafs_data, cust_vpc_name, hypervisor)
+    new_leaf_id = "1"
+    write_leaf_id(new_leaf_id, cust_vpc_name, hypervisor)
 
 def get_hyp_spine_name(hypervisor, vpc, spine):
     spine_data = get_spine_data(hypervisor, vpc, spine)
@@ -189,3 +225,18 @@ def vpc_add_spine(hypervisor, vpc, cust_spine_name, hyp_spine_name):
     new_spine_data = {}
     write_spine_data(new_spine_data, cust_spine_name, vpc, hypervisor)
     write_hyp_spine_name(hyp_spine_name, cust_spine_name, vpc, hypervisor)
+
+def get_hyp_leaf_name(hypervisor, vpc, leaf):
+    leaf_data = get_leaf_data(hypervisor, vpc, leaf)
+    hyp_leaf_name = leaf_data["name"]
+    return hyp_leaf_name
+
+def write_hyp_leaf_name(hyp_leaf_name, leaf, vpc, hypervisor):
+    leaf_data = get_leaf_data(hypervisor, vpc, leaf)
+    leaf_data["name"] = hyp_leaf_name 
+    write_leaf_data(leaf_data, leaf, vpc, hypervisor)
+
+def vpc_add_spine(hypervisor, vpc, cust_leaf_name, hyp_leaf_name):
+    new_leaf_data = {}
+    write_leaf_data(new_leaf_data, cust_leaf_name, vpc, hypervisor)
+    write_hyp_leaf_name(hyp_leaf_name, cust_leaf_name, vpc, hypervisor)
