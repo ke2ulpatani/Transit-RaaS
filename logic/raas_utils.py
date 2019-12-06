@@ -12,12 +12,13 @@ def client_exists_vpc(vpc_name):
 
 def client_add_vpc(vpc_name):
     vpc_dir = constants.var_vpc + vpc_name + "/"
+    file_path = vpc_dir + vpc_name + ".json"
 
     if not os.path.exists(vpc_dir):
         os.makedirs(vpc_dir)
 
     new_vpc_data = {"name": vpc_name}
-    do_json.json_write(new_vpc_data, f)
+    do_json.json_write(new_vpc_data, file_path)
 
     vpc_spines_dir = vpc_dir + constants.vpc_spines
     if not os.path.exists(vpc_spines_dir):
@@ -42,7 +43,7 @@ def client_add_spine(vpc_name, spine_name):
             constants.vpc_spines + spine_name + ".json"
 
     new_spine_data = {"name": spine_name}
-    do_json.json_write(new_spine_data, f)
+    do_json.json_write(new_spine_data, file_path)
 
 def client_exists_leaf(vpc_name, leaf_name):
     file_path = constants.var_vpc + vpc_name + \
@@ -54,7 +55,7 @@ def client_add_leaf(vpc_name, leaf_name):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_leafs + leaf_name + ".json"
     new_leaf_data = {"name": leaf_name}
-    do_json.json_write(new_leaf_data, f)
+    do_json.json_write(new_leaf_data, file_path)
 
 def client_exists_pc(vpc_name, pc_name):
     file_path = constants.var_vpc + vpc_name + \
@@ -67,7 +68,7 @@ def client_add_pc(vpc_name, pc_name):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_pcs + pc_name + ".json"
     new_pc_data = {"name": pc_name}
-    do_json.json_write(new_pc_data, f)
+    do_json.json_write(new_pc_data, file_path)
 
 def write_spine_ip(vpc, spine, spine_ip):
     file_path = constants.var_vpc + vpc_name + \
