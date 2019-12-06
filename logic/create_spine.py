@@ -84,6 +84,7 @@ if __name__=="__main__":
 
             #print("here2")
             print("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            raise
             rc = os.system("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             if (rc != 0):
                 raise
@@ -132,7 +133,6 @@ if __name__=="__main__":
             extra_vars = constants.ansible_become_pass + " " + \
                     " " + constants.ansible_ssh_private_key + " " + spine_ip_arg
 
-            --ssh-common-args='-o ProxyCommand="ssh -i ~/.ssh/id_raas ece792@172.16.2.1 -W %h:%p"'
             ssh_common_args = "-o ProxyCommand=\"ssh -i" + constants.ansible_ssh_private_key + " ece792@" + hypervisor_ip + " " +\
                     "-W %h:%p\""
 
