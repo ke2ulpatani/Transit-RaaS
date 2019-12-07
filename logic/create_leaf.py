@@ -74,13 +74,12 @@ if __name__=="__main__":
 
             print("ansible-playbook logic/subnet/create_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             rc = os.system("ansible-playbook logic/subnet/create_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            #raise
             if (rc != 0):
                 raise
 
-            #hyp_utils.write_leaf_id(lid+1, vpc_name, hypervisor)
-            #hyp_utils.vpc_add_leaf(hypervisor, vpc_name, leaf_name, leaf_name_hyp)
-            #raas_utils.client_add_leaf(vpc_name, leaf_name)
+            hyp_utils.write_leaf_id(lid+1, vpc_name, hypervisor)
+            hyp_utils.vpc_add_leaf(hypervisor, vpc_name, leaf_name, leaf_name_hyp)
+            raas_utils.client_add_leaf(vpc_name, leaf_name)
 
         except:
             os.system("ansible-playbook logic/subnet/delete_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")

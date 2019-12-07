@@ -1,7 +1,8 @@
 ---
 - name: Ansible add vm to subnet
-  hosts: "{{ hypervisors }}"
+  hosts: "{{ hypervisor }}"
   user: root
+  become: yes
     
   tasks:
     - name: Attach VM to subnet

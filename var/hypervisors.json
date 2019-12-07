@@ -3,7 +3,8 @@
     "h1": {
         "h_nsm_ip": "10.1.99.1/30",
         "ip": "172.16.2.1",
-        "l1_transit": { "id": "1",
+        "l1_transit": {
+            "id": "1",
             "t1": {
                 "name": ""
             }
@@ -16,36 +17,18 @@
             "id": "2",
             "vpc_1": {
                 "leaf": {
-                    "id": "1",
-                    "spine1": {
-                        "name": "c1_s1"
-                    },
-                    "spine11": {
-                        "name": "c1_s10"
-                    },
-                    "spine2": {
-                        "name": "c1_s2"
-                    },
-                    "spine3": {
-                        "name": "c1_s3"
-                    },
-                    "spine5": {
-                        "name": "c1_s4"
-                    },
-                    "spine6": {
-                        "name": "c1_s5"
-                    },
-                    "spine7": {
-                        "name": "c1_s6"
-                    },
-                    "spine8": {
-                        "name": "c1_s9"
-                    },
-                    "spine9": {
-                        "name": "c1_s8"
+                    "id": "2",
+                    "leaf3": {
+                        "name": "c1_l1"
                     }
                 },
                 "name": "c1_v1",
+                "pc": {
+                    "c1_vm1": {
+                        "name": "c1_vm2"
+                    },
+                    "id": "3"
+                },
                 "spine": {
                     "id": "14",
                     "spine12": {
@@ -57,10 +40,7 @@
                     "spine14": {
                         "name": "c1_s13"
                     }
-                },
-		"pc" : {
-		   "id": "1"
-		}
+                }
             }
         }
     },
