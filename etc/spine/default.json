@@ -1,6 +1,0 @@
-{
-    "hypervisor_name" : "h1",
-    "spine_name" : "leaf1",
-    "vpc_name": "vpc_1",
-    "capacity": ""
-}

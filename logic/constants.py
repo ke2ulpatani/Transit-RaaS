@@ -56,12 +56,15 @@ new_vpc_data = {
     "hypervisor_name": "",
     "vpc_name": ""
 }
+
 new_pc_data = {
     "hypervisor_name":"",
     "vpc_name":"",
     "pc_name": "",
     "capacity":""
 }
+new_pc_data["leafs"]=[]
+
 new_leaf_data = {
     "hypervisor_name" : "",
     "network_id" : "",

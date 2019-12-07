@@ -2,24 +2,20 @@
 - name: Ansible attach leaf to spine
   hosts: "{{ hypervisor }}"
   user: root
+  become: yes
     
   tasks:
-  - name: Create bridge and network between leaf and spine
+    - name: Create bridge and network between leaf and spine
       script: "../scripts/create_net.sh {{ l_s_net }} {{ l_s_br }}"
-      become: yes
 
     - name: Attach interface to spine VMs
       command: "virsh attach-interface --domain {{ s_name }} --type network {{ l_s_net }} --model virtio"
-      become: yes
 
     - name: Connect bridge to leaf namespace
-      script: "../scripts/create_veth_ns_br.sh {{ l_name }} {{ l_s_br }} {{ ve_l_br }} {{ ve_br_l }}"
-      become: yes
+      script: "../scripts/create_veth_ns_br_noip.sh {{ l_name }} {{ l_s_br }} {{ ve_l_s }} {{ ve_s_l }}"
 
     - name: Assign IP to bridge network between lead and spine
-      commnad: "ip addr add {{ subnet_ip }} dev {{ l_s_br }}"
-      become: yes
+      command: "ip addr add {{ subnet_ip }} dev {{ l_s_br }}"
 
     - name: Create DHCP server to connect leaf to spine
       command: "dnsmasq --interface={{ l_s_br }} --dhcp-range={{ subnet_range }},infinite --bind-interfaces --except-interface=lo"
-      become: yes

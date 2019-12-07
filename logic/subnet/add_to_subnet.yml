@@ -6,5 +6,5 @@
     
   tasks:
     - name: Attach VM to subnet
-      command: "virsh attach-interface --domain {{ vm_name }} --type network {{ subnet_network }} --model virtio"
+      command: "virsh attach-interface --domain {{ pc_name }} --type network {{ net_name }} --model virtio"
       become: yes

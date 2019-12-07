@@ -90,7 +90,7 @@ if __name__=="__main__":
             hyp_utils.write_pc_id(pcid+1, vpc_name, hypervisor)
             #print("here4", pc_name, vpc_name, hypervisor, pc_name_ansible)
             hyp_utils.vpc_add_pc(hypervisor, vpc_name, pc_name, pc_name_ansible)
-            raas_utils.client_add_pc(vpc_name, pc_name)
+            raas_utils.client_add_pc(hypervisor, vpc_name, pc_name, pc_capacity)
 
             #raise
             #raas_utils.add_mgmt_ns(hypervisor)

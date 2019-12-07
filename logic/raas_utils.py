@@ -5,6 +5,10 @@ import os
 from os import listdir
 from os.path import isfile, join
 
+def run_shell_script(my_script):
+    print(my_script)
+    os.system(my_script)
+
 def get_mgmt_nid():
     json_data = do_json.json_read(constants.mgmt_net_file)
     return json_data["network_id"]
@@ -57,7 +61,7 @@ def get_all_spines(vpc_name):
     dir_path=constants.var_vpc + vpc_name + \
             constants.vpc_spines
     spines = [f.split('.')[0] for f in listdir(dir_path) if isfile(join(dir_path, f))]
-    print(spines)
+    return spines
 
 
 def client_add_leaf(vpc_name, leaf_name):
@@ -70,12 +74,19 @@ def client_exists_pc(vpc_name, pc_name):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_pcs + pc_name + ".json"
 
+    print(file_path)
+
     return os.path.exists(file_path)
 
-def client_add_pc(vpc_name, pc_name):
+def client_add_pc(hypervisor_name,vpc_name, pc_name, capacity):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_pcs + pc_name + ".json"
-    new_pc_data = {"name": pc_name}
+    print(constants.new_vpc_data)
+    new_pc_data = constants.new_vpc_data
+    new_pc_data["hypervisor_name"] = hypervisor_name
+    new_pc_data["vpc_name"] = vpc_name
+    new_pc_data["pc_name"] = pc_name
+    new_pc_data["capacity"] = capacity
     do_json.json_write(new_pc_data, file_path)
 
 def write_spine_ip(vpc, spine, spine_ip):
@@ -98,6 +109,27 @@ def read_temp_file():
         data = f.read()
 
     return data
+    
+def get_new_veth_subnet(subnet_name):
+    file_path = "var/reserved_subnets.json"
+    subnet_data = do_json.json_read(file_path)
+    return subnet_data[subnet_name]
+
+def update_veth_subnet(subnet_name,new_subnet):
+    file_path = "var/reserved_subnets.json"
+    subnet_data = do_json.json_read(file_path)
+    subnet_data[subnet_name]=new_subnet
+    do_json.json_write(subnet_data, file_path)
+
+def client_add_leaf_pc(vpc_name, pc_name, leaf_name):
+    file_path = constants.var_vpc + vpc_name + \
+            constants.vpc_pcs + pc_name + ".json"
+
+    pc_data = do_json.json_read(file_path) 
+    leafs = pc_data["leafs"]
+    leafs.append(leaf_name)
+    pc_data["leafs"] = leafs
+    do_json.json_write(pc_data, file_path) 
 
 #def client_exists_bridge(vpc_name, bridge_name):
 #    file_path = constants.var_vpc + vpc_name + \

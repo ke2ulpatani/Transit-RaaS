@@ -1,0 +1,6 @@
+{
+    "hypervisor_name":"h1",
+    "vpc_name":"vpc_1",
+    "pc_name": "pc2",
+    "capacity":"f1"
+}
