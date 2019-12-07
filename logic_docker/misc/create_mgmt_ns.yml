@@ -1,0 +1,13 @@
+---
+- name: Ansible create client Infra playbook
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+  #  ignore_errors: yes
+    
+  tasks:
+    - name: "Create network {{ nsm }}"
+      docker_network:
+        name: "{{ nsm }}"
+        ipam_config:
+          - subnet: "{{ nsm_subnet }}""
