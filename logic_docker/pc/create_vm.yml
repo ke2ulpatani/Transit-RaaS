@@ -1,0 +1,42 @@
+---
+- name: Ansible create customer
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+  ignore_errors: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    default_container_image: centos:7
+    
+  tasks:
+    # Pull image specified by variable default_image from the Docker Hub
+    - name: Pull default Docker image
+      docker_image:
+        name: "{{ default_container_image }}"
+        source: pull
+
+    - name: Create default containers
+      docker_container:
+        name: "{{ vm_name }}"
+        image: "{{ default_container_image }}"
+        state: started
+        privileged: yes
+        command: sleep infinity
+      register: result
+
+    - name: Create symbolic link to network namespace
+      file:
+        src: "/proc/{{ result.container['State']['Pid'] }}/ns/net" 
+        dest: "/var/run/netns/{{ vm_name }}"
+        state: link 
+
+    - name: Add transit to management network
+      docker_network:
+        name: "{{ mns }}"
+        connected:
+          - "{{ vm_name }}"
+        appends: yes
+
+    - name: Wait for VMs to be started
+      pause:
+        seconds: 30

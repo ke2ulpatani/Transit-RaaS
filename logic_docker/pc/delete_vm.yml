@@ -1,0 +1,12 @@
+---
+- name: Ansible delete customer vm
+  hosts: "{{ hypervisor }}"
+  user: root
+  ignore_errors: yes
+  become: yes
+    
+  tasks:
+    - name: Create default containers
+      docker_container:
+        name: "{{ vm_name }}"
+        state: absent
