@@ -4,7 +4,7 @@
   user: root
     
   tasks:
-  - name: Create bridge and network between leaf and spine
+    - name: Create bridge and network between leaf and spine
       script: "../scripts/create_net.sh {{ s_t_net }} {{ t_t_br }}"
       become: yes
 
