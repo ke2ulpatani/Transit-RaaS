@@ -88,9 +88,31 @@ if __name__=="__main__":
 
 
         #connect to available spines
-        spines_data = hyp_utils.get_spines_data(hypervisor, vpc_name)
-
-        for each in spines_data:
-            print(each)
+        spines_data = raas_utils.get_all_spines(vpc_name)
+        #l_s_net,l_s_br,ve_l_s,ve_s_l,s_name,l_name,subnet_ip,subnet_range
+        #c1_br_l1_s1,c1_net_l1_s1,c1_ve_l1_s1,c1_ve_s1_l1,
+        for spine in spines_data:
+            spine_id=hyp_utils.get_hyp_spine_name(hypervisor,vpc_name,spine)
+        
+            network=raas_utils.get_new_lns_spine_subnet()
+            subnet = network.split('/')
+            b_ip = "b_ip=" + str(ipaddress.ip_address(subnet[0])+1) + '/' + subnet[1]
+            dhcp_range = "dhcp_range=" + str(ipaddress.ip_address(subnet[0])+2)+','+ \
+                    str(ipaddress.ip_address(subnet[0])+6)
+            
+             
+            l_s_net=" l_s_net=c" + str(cid) + "_net_l" + str(lid)+"_" + spine_id.split('_')[1]
+            l_s_br=" l_s_br=c" + str(cid) + "_br_l" + str(lid)+"_" + spine_id.split('_')[1]
+            ve_l_s=" ve_l_s=c" + str(cid) + "_ve_l" + str(lid)+"_" + spine_id.split('_')[1]
+            ve_s_l=" ve_s_l=c" + str(cid) + "_ve_" + spine_id.split('_')[1]+"_l" + str(lid)
+            s_name="s_name="+spine_id
+            l_name="l_name="+leaf_name_hyp
+            subnet_ip="subnet_ip="+b_ip
+            subnet_range="subnet_range="+dhcp_range
+            
+            extra_vars = constants.ansible_become_pass + " " + \
+            
+            
+            raas_utils.update_lns_spine_subnet(ipaddress.ip_address(subnet[0])+8) + '/' + subnet[1])
     except:
         print("create leaf failed")

@@ -2,6 +2,8 @@ import sys
 import do_json
 import constants
 import os
+from os import listdir
+from os.path import isfile, join
 
 def get_mgmt_nid():
     json_data = do_json.json_read(constants.mgmt_net_file)
@@ -50,6 +52,13 @@ def client_exists_leaf(vpc_name, leaf_name):
             constants.vpc_leafs + leaf_name + ".json"
 
     return os.path.exists(file_path)
+
+def get_all_spines(vpc_name):
+    dir_path=constants.var_vpc + vpc_name + \
+            constants.vpc_spines
+    spines = [f.split('.')[0] for f in listdir(dir_path) if isfile(join(dir_path, f))]
+    print(spines)
+
 
 def client_add_leaf(vpc_name, leaf_name):
     file_path = constants.var_vpc + vpc_name + \
