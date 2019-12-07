@@ -93,9 +93,5 @@ if __name__=="__main__":
 
         for each in spines_data:
             print(each)
-
-
-
-
     except:
         print("create leaf failed")

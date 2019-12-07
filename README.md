@@ -1,30 +1,35 @@
-# Transit_RaaS
+# Multi Cloud Transit_RaaS
 
-## Run below playbook steps to configure a client, more than one vpcs, transit vpc
 
-### Setup Tenant 1:
-sudo ansible-playbook client-setup.yml -i inventory/hosts.yml -K --extra-vars @vars/c1_setup.yml
+## /etc :
+This directory is where tenants place their config files (We have populated this directory for demo purposes)
 
-### Create VPC 1 for Tenant 1:
-sudo ansible-playbook create-vpc.yml -i inventory/hosts.yml -K --extra-vars @vars/c1v1.yml  
+## /var : 
+This directory is where any run time information and logs are placed
 
-### Create VPC 2 for Tenant 1:
-sudo ansible-playbook create-vpc.yml -i inventory/hosts.yml -K --extra-vars @vars/c1v2.yml 
+## /logic :
+This directory is where all the core processing logic and Ansible playbooks
 
-### Create and configure Transit for Tenant 1 on hypervisor 2:
-sudo ansible-playbook create-transit.yml -i inventory/hosts.yml -K --extra-vars @vars/c1h1.yml
-sudo ansible-playbook configure-transit.yml -i inventory/hosts.yml -K --extra-vars @vars/c1h1.yml
+## execute.sh that is used to run as the driver code in order to create VPCs, Spines, Leaves, L1 Transits or L2 Transit Nodes.
 
-### Create subnet:
-sudo ansible-playbook main.yml -i inventory/hosts.yml
+### constants.py :
+Has a set of pre defined constants and paths
 
-### Connect leaf gateway to spine gateways:
-Update all the leaf's yml config file in leaf folder then run: sudo sh run.sh
+### create-vms.yml :
+Define, Start and Attach interface to VMs  
 
-## GRE and BGP configuration
-1. conf_spine_bgp.sh - Configures BGP on spine router VMs
-2. conf_transit_bgp.sh - Configures BGP on transit router VMs
-3. gre_endpoint_setup_bgp.sh - Configures GRE related underlay configuration on hypervisors
-4. gre_endpoint_setup_transit.sh - Configures GRE related underlay configuration on transit VMs
-5. gre_setup_transit.sh - Configures GRE devices on transit VMs
-6. conf_inter_transit_bgp.sh - Configures BGP between transit VMs across hypervisors.
+### create_leaf.py : 
+Used to create leaf nodes that hosts a subnet with one or more multiple PCs 
+
+### create_spine.py :
+Used to create spines, L1 transits and L2 transits nodes
+
+### create_vpc.py :
+Used to create a VPC
+
+### hyp_utils.py :
+Utitlity functions that are built to work on the JSON file stored on the hypervisor, which is used to keep track of all nodes that are owned by all tenants.
+
+## raas_utils.py :
+Utility functions that are built to work on the JSON file stored in the /var directory of every tenant, that is used to keep track of all nodes that are owned by the said tenant.
+

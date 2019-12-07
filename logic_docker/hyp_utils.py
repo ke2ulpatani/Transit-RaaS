@@ -156,36 +156,6 @@ def write_leaf_id(leaf_id, vpc, hypervisor):
     leafs_data["id"] = str(leaf_id)
     write_leafs_data(leafs_data, vpc, hypervisor)
 
-def get_pcs_data(hypervisor, vpc):
-    vpc_data = get_vpc_data(hypervisor, vpc)
-    pcs_data = vpc_data["pc"]
-    return pcs_data
-
-def write_pcs_data(pcs_data, vpc, hypervisor):
-    vpc_data = get_vpc_data(hypervisor, vpc)
-    vpc_data["pc"] = pcs_data
-    write_vpc_data(vpc_data, vpc, hypervisor)
-
-def get_pc_data(hypervisor, vpc, pc):
-    pcs_data = get_pcs_data(hypervisor, vpc)
-    pc_data = pcs_data[pc]
-    return pc_data
-
-def write_pc_data(pc_data, pc, vpc, hypervisor):
-    pcs_data = get_pcs_data(hypervisor, vpc)
-    pcs_data[pc] = pc_data
-    write_pcs_data(pcs_data, vpc, hypervisor)
-
-def get_pc_id(hypervisor, vpc):
-    pcs_data = get_pcs_data(hypervisor, vpc)
-    pc_id = int(pcs_data["id"])
-    return pc_id
-
-def write_pc_id(pc_id, vpc, hypervisor):
-    pcs_data = get_pcs_data(hypervisor, vpc)
-    pcs_data["id"] = str(pc_id)
-    write_pcs_data(pcs_data, vpc, hypervisor)
-
 def get_bridges_data(hypervisor, vpc):
     vpc_data = get_vpc_data(hypervisor, vpc)
     bridges_data = vpc_data["bridges"]
@@ -241,11 +211,6 @@ def hyp_add_vpc(hypervisor, cust_vpc_name, hyp_vpc_name):
     new_leaf_id = "1"
     write_leaf_id(new_leaf_id, cust_vpc_name, hypervisor)
 
-    new_pcs_data = {}
-    write_pcs_data(new_pcs_data, cust_vpc_name, hypervisor)
-    new_pc_id = "1"
-    write_pc_id(new_pc_id, cust_vpc_name, hypervisor)
-
 def get_hyp_spine_name(hypervisor, vpc, spine):
     spine_data = get_spine_data(hypervisor, vpc, spine)
     hyp_spine_name = spine_data["name"]
@@ -271,22 +236,7 @@ def write_hyp_leaf_name(hyp_leaf_name, leaf, vpc, hypervisor):
     leaf_data["name"] = hyp_leaf_name 
     write_leaf_data(leaf_data, leaf, vpc, hypervisor)
 
-def vpc_add_leaf(hypervisor, vpc, cust_leaf_name, hyp_leaf_name):
+def vpc_add_spine(hypervisor, vpc, cust_leaf_name, hyp_leaf_name):
     new_leaf_data = {}
     write_leaf_data(new_leaf_data, cust_leaf_name, vpc, hypervisor)
     write_hyp_leaf_name(hyp_leaf_name, cust_leaf_name, vpc, hypervisor)
-
-def get_hyp_pc_name(hypervisor, vpc, pc):
-    pc_data = get_pc_data(hypervisor, vpc, pc)
-    hyp_pc_name = pc_data["name"]
-    return hyp_pc_name
-
-def write_hyp_pc_name(hyp_pc_name, pc, vpc, hypervisor):
-    pc_data = get_pc_data(hypervisor, vpc, pc)
-    pc_data["name"] = hyp_pc_name 
-    write_pc_data(pc_data, pc, vpc, hypervisor)
-
-def vpc_add_pc(hypervisor, vpc, cust_pc_name, hyp_pc_name):
-    new_pc_data = {}
-    write_pc_data(new_pc_data, cust_pc_name, vpc, hypervisor)
-    write_hyp_pc_name(hyp_pc_name, cust_pc_name, vpc, hypervisor)

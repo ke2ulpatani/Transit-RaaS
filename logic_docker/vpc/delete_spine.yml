@@ -1,0 +1,20 @@
+---
+- name: Ansible create spine
+  hosts: "{{ hypervisor }}"
+  user: root
+  ignore_errors: yes
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    
+  tasks:
+    # Pull image specified by variable default_image from the Docker Hub
+    - name: Pull default Docker image
+      docker_image:
+        name: "{{ default_container_image }}"
+        source: pull
+
+    - name: Create default containers
+      docker_container:
+        name: "{{ s_name }}"
+        state: absent
