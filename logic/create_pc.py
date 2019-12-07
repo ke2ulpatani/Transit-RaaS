@@ -65,13 +65,13 @@ if __name__=="__main__":
             pcid = hyp_utils.get_pc_id(hypervisor, vpc_name)
             image_arg = "image_path="+constants.img_path + \
                     constants.pc_vm_img
-            pc_name_ansible = "c" + str(cid) + "_" + "s" + str(pcid)
-            pc_name_ansible_arg = "s_name="+pc_name_ansible
-            c_s_image_path_arg = "c_s_image_path="+constants.img_path+ \
+            pc_name_ansible = "c" + str(cid) + "_" + "vm" + str(pcid)
+            pc_name_ansible_arg = "vm_name="+pc_name_ansible
+            c_s_image_path_arg = "c_vm_image_path="+constants.img_path+ \
                     pc_name_ansible + ".img"
 
-            s_ram_arg = "s_ram=" + str(mem)
-            s_vcpu_arg = "s_vcpu=" + str(vcpu)
+            s_ram_arg = "vm_ram=" + str(mem)
+            s_vcpu_arg = "vm_vcpu=" + str(vcpu)
 
             mgt_net_arg = "mgt_net=" + hyp_utils.get_mgmt_net(cid)
 
@@ -83,8 +83,7 @@ if __name__=="__main__":
 
             #print("here2")
             print("ansible-playbook logic/vpc/create_pc.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            raise
-            #rc = os.system("ansible-playbook logic/vpc/create_pc.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            rc = os.system("ansible-playbook logic/vpc/create_pc.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             if (rc != 0):
                 raise
                 
@@ -98,7 +97,7 @@ if __name__=="__main__":
         except:
             print("create pc failed")
             print("ansible-playbook logic/vpc/delete_pc.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            #os.system("ansible-playbook logic/vpc/delete_pc.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            os.system("ansible-playbook logic/vpc/delete_pc.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             raise
         #print("ansible-playbook logic/vpc/delete_pc.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
 
