@@ -11,8 +11,8 @@ import ipaddress
 """
 
 if __name__=="__main__":
-    if (len(sys.argv) < 2):
-        print("Please give vpc config file")
+    if (len(sys.argv) < 3):
+        print("Please give vm and subnet")
         exit(1)
 
     pc_config_file = sys.argv[1]
