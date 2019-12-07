@@ -23,8 +23,6 @@ if [ $action = "add" ]; then
 	#at ns1
 	sudo ip tunnel add $name mode $mode local $local_ip remote $remote_ip
 	sudo ip link set dev $name up
-	sudo ip route add $remote_subnet dev $name
-
 elif [ $action = "del" ]; then
 	sudo ip tunnel del $name mode $mode local $local_ip remote $remote_ip
 fi
