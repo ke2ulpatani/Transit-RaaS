@@ -39,7 +39,7 @@
       become: yes
 
     - name: Create veth pair with hypervisor
-      shell: "{{ lookup('template', 'scripts/t_h_connect.j2') }}"
+      shell: "{{ lookup('template', '../scripts/t_h_connect.j2') }}"
       args:
         executable: /bin/bash
       become: yes
