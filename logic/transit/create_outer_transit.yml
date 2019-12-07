@@ -9,33 +9,33 @@
     - name: Copy transit VM image
       copy:
         src: "{{ image_path }}"
-        dest: "{{ c_t_outer_image_path }}"
+        dest: "{{ c_t_image_path }}"
         remote_src: yes
     
     - name: Define a transit VM
       virt:
-        name: "{{ t_outer_name }}"
+        name: "{{ t_name }}"
         command: define
         xml: "{{ lookup('template', '../scripts/create_transit.xml.j2' ) }}"
         uri: 'qemu:///system'
 
     - name: Start transit VM
       virt:
-        name: "{{ t_outer_name }}"
+        name: "{{ t_name }}"
         command: start
         state: running
       become: yes
     
     - name: Attach management interface to spine
-      command: "virsh attach-interface --domain {{ t_outer_name }} --type network --source {{ mgt_net }} --model virtio --config --live"
+      command: "virsh attach-interface --domain {{ t_name }} --type network --source {{ mgt_net }} --model virtio --config --live"
       become: yes
 
     - name: Create network between trasnit and hypervisor
-      script: "../scripts/create_net.sh {{ t_outer_h_nw }} {{ t_outer_h_br }}"
+      script: "../scripts/create_net.sh {{ t_h_nw }} {{ t_h_br }}"
       become: yes
 
     - name: Attach hypervisor interface to transit
-      command: "virsh attach-interface --domain {{ t_outer_name }} --type network --source {{ t_outer_h_nw }} --model virtio --config --live"
+      command: "virsh attach-interface --domain {{ t_name }} --type network --source {{ t_h_nw }} --model virtio --config --live"
       become: yes
 
     - name: Create veth pair with hypervisor
