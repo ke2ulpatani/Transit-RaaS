@@ -15,28 +15,3 @@
     - name: Connect bridge to leaf namespace
       script: "../scripts/create_veth_ns_br.sh {{ l_name }}  {{ l_ip }} {{ l_s_br }} {{ ve_l_br }} {{ ve_br_l }}"
       become: yes
-
-    - name: Fetch spine VM IPs
-      script: "../scripts/getIP.py {{ s_name }}"
-      args:
-        executable: python
-      register: spine_ip
-
-    - debug:
-        msg: "{{ spine_ip.stdout | trim }}"
-      loop: "{{spine_ips.results}}"
-
-    - name: Add Spines to host
-      add_host:
-        hostname: "{{ spine_ip.stdout | trim }}"
-        ansible_ssh_pass: yashrocks
-        groups:
-          - "{{hypervisor}}_hosts"
-
-- name: Ansible playbook to assign ip to spine
-  hosts: ["{{hypervisor}}_hosts"]
-  user: root
-
-  tasks:
-    - name: Assign IPs to spine VMs and VMs routes
-      script: "last_dev.sh {{ s_ip }} {{ l_adv_ip }} {{ l_ip }}"
