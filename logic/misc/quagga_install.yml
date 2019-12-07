@@ -8,5 +8,5 @@
     - debug:
         msg: "Inside the guest vm"
 
-        #   - name: Configure Quagga suite
-        # script: "../scripts/quagga_setup.sh"
+    - name: Configure Quagga suite
+      script: "../scripts/quagga_setup.sh"

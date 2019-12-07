@@ -41,35 +41,48 @@ if __name__=="__main__":
     
     #All prereq checks done at this point
     leaf_name = leaf_data["leaf_name"]
+    network_id = leaf_data["network_id"]
 
     cid = hyp_utils.get_client_id()
 
     try:
         #create leaf
         try:
+            #l_name: leaf_name, l_net: network_name_br: L_br: name_br; 
+            #hypervisor: hyp_name, l_ip, ve_l_br, ve_br_l, dhcp_range
             lid = hyp_utils.get_leaf_id(hypervisor, vpc_name)
-            leaf_name_hyp = "c" + str(cid) + "_" + "l" + str(sid)
+            leaf_name_hyp = "c" + str(cid) + "_" + "l" + str(lid)
             leaf_name_hyp_arg = "l_name="+leaf_name_hyp
 
-            extra_vars = constants.ansible_become_pass + " " + \
-                    image_arg + " " +  \
-                    s_ram_arg + " " + s_vcpu_arg + " " + \
-                    mgt_net_arg + " " + leaf_name_ansible_arg + \
-                    " " + c_s_image_path_arg + " " +  hypervisor_arg
+            subnet = network_id.split('/')
+            l_ip_arg = "l_ip=" + str(ipaddress.ip_address(subnet[0])+1) + '/' + subnet[1]
+            dhcp_range_arg = "dhcp_range=" + str(ipaddress.ip_address(subnet[0])+2)+','+ \
+                    str(ipaddress.ip_address(subnet[0])+254)
+            l_br_arg = "l_br=" + leaf_name_hyp + "_br"
+            l_net_arg = "l_net=" + leaf_name_hyp + "_net"
+            ve_l_br_arg = "ve_l_br=c" + str(cid) + "ve_" + "l" + str(lid) + "_br"
+            ve_br_l_arg = "ve_br_l=c" + str(cid) + "ve_" + "br_l" + str(lid)
 
-            print("ansible-playbook logic/vpc/create_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            rc = 1
+            extra_vars = constants.ansible_become_pass + " " + \
+                    leaf_name_hyp_arg + " " + l_ip_arg + " " + \
+                    dhcp_range_arg + " " + l_br_arg + " " + \
+                    l_net_arg + " " + ve_l_br_arg + " " + \
+                    ve_br_l_arg + " " + hypervisor_arg
+
+
+            print("ansible-playbook logic/subnet/create_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             #rc = os.system("ansible-playbook logic/vpc/create_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            raise
             if (rc != 0):
                 raise
 
-            hyp_utils.write_leaf_id(lid+1, vpc_name, hypervisor)
-            hyp_utils.vpc_add_leaf(hypervisor, vpc_name, leaf_name, leaf_name_hyp)
-            raas_utils.client_add_leaf(vpc_name, leaf_name)
+            #hyp_utils.write_leaf_id(lid+1, vpc_name, hypervisor)
+            #hyp_utils.vpc_add_leaf(hypervisor, vpc_name, leaf_name, leaf_name_hyp)
+            #raas_utils.client_add_leaf(vpc_name, leaf_name)
 
         except:
             #os.system("ansible-playbook logic/vpc/delete_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            print("ansible-playbook logic/vpc/delete_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            print("ansible-playbook logic/subnet/delete_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
 
 
         #connect to available spines

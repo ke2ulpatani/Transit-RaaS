@@ -13,5 +13,13 @@
       become: yes
 
     - name: Connect bridge to leaf namespace
-      script: "../scripts/create_veth_ns_br.sh {{ l_name }}  {{ l_ip }} {{ l_s_br }} {{ ve_l_br }} {{ ve_br_l }}"
+      script: "../scripts/create_veth_ns_br_noip.sh {{ l_name }} {{ l_s_br }} {{ ve_l_br }} {{ ve_br_l }}"
+      become: yes
+
+    - name: Assign IP to bridge network between lead and spine
+      commnad: "ip addr add {{ subnet_ip }} dev {{ l_s_br }}"
+      become: yes
+
+    - name: Create DHCP server to connect leaf to spine
+      command: "dnsmasq --interface={{ l_s_br }} --dhcp-range={{ subnet_range }},infinite --bind-interfaces --except-interface=lo"
       become: yes

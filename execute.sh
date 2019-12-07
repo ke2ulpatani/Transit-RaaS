@@ -11,3 +11,7 @@ fi
 if [ $cmd == "create_spine" ]; then
 	python3 logic/create_spine.py $config_file
 fi
+
+if [ $cmd == "create_leaf" ]; then
+	python3 logic/create_leaf.py $config_file
+fi
