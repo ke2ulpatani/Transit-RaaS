@@ -41,6 +41,7 @@ vpc_bridges="/bridges/"
 vpc_pcs="/pcs/"
 img_path="/var/lib/libvirt/images/"
 spine_vm_img="routerVM.img"
+pc_vm_img="sampleBuild.img"
 var_spines="/var/spines/"
 f1_mem = 976562
 f2_mem = 1953125

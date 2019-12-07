@@ -63,7 +63,6 @@ def client_exists_pc(vpc_name, pc_name):
 
     return os.path.exists(file_path)
 
-
 def client_add_pc(vpc_name, pc_name):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_pcs + pc_name + ".json"
@@ -90,6 +89,7 @@ def read_temp_file():
         data = f.read()
 
     return data
+
 #def client_exists_bridge(vpc_name, bridge_name):
 #    file_path = constants.var_vpc + vpc_name + \
 #            constants.vpc_bridges + bridge_name
