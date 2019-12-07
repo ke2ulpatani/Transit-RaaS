@@ -1,15 +1,15 @@
 ---
-- name: Ansible create transit
+- name: Ansible create spine
   hosts: "{{ hypervisor }}"
   user: root
   become: yes
   ignore_errors: yes
 
   tasks:
-    - name: Copy transit VM image
+    - name: Copy Transit VM image
       copy:
         src: "{{ image_path }}"
-        dest: "{{ c_s_image_path }}"
+        dest: "{{ c_t_image_path }}"
         remote_src: yes
     
     - name: Define a transit VM
@@ -26,22 +26,8 @@
         state: running
       become: yes
     
-    - name: Attach management interface to spine
+    - name: Attach management interface to transit
       command: "virsh attach-interface --domain {{ t_name }} --type network --source {{ mgt_net }} --model virtio --config --live"
-      become: yes
-
-    - name: Create network between trasnit and hypervisor
-      script: "../scripts/create_net.sh {{ t_h_nw }} {{ t_h_br }}"
-      become: yes
-
-    - name: Attach hypervisor interface to transit
-      command: "virsh attach-interface --domain {{ t_name }} --type network --source {{ t_h_nw }} --model virtio --config --live"
-      become: yes
-
-    - name: Create veth pair with hypervisor
-      shell: "{{ lookup('template', 'scripts/t_h_connect.j2') }}"
-      args:
-        executable: /bin/bash
       become: yes
 
     - name: Wait for VMs to be started

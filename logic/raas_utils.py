@@ -71,14 +71,16 @@ def client_add_pc(vpc_name, pc_name):
     do_json.json_write(new_pc_data, file_path)
 
 def write_spine_ip(vpc, spine, spine_ip):
-    file_path = constants.var_vpc + vpc_name + \
-            constants.vpc_spines + spine_name + ".json"
+    file_path = constants.var_vpc + vpc + \
+            constants.vpc_spines + spine + ".json"
 
     spine_data = do_json.json_read(file_path)
     spine_data["ip"] = spine_ip
     do_json.json_write(spine_data, file_path)
 
 def get_spine_ip(vpc, spine):
+    file_path = constants.var_vpc + vpc + \
+            constants.vpc_spines + spine + ".json"
     spine_data = do_json.json_read(file_path)
     spine_ip = spine_data["ip"]
     return spine_ip

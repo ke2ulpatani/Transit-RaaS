@@ -1,5 +1,5 @@
 ---
-- name: Ansible configure tranist
+- name: Ansible configure outer tranist
   hosts: "{{ vm_ip }}"
   user: root
   become: yes

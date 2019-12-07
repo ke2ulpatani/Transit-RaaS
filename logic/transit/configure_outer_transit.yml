@@ -1,0 +1,15 @@
+---
+- name: Ansible configure outer tranist
+  hosts: "{{ vm_ip }}"
+  user: root
+  become: yes
+    
+  tasks:
+    - name: Configure Quagga suite
+      script: "../scripts/quagga_setup.sh"
+
+    - name: Configure loopback address
+      command: "ip addr add {{ t_loopback_ip }} dev lo"
+    
+    - name: Set static IP on transit to HV interface
+      script: "../scripts/last_dev_assn_ip.sh {{ t_last_dev_ip }}"

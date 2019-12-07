@@ -119,7 +119,7 @@ if __name__=="__main__":
                 raise
 
             spine_ip = raas_utils.read_temp_file()
-            print(spine_ip)
+            print(spine_ip, vpc_name, spine_name)
             raas_utils.write_spine_ip(vpc_name, spine_name, spine_ip)
         except:
             print("spine ip get and store failed")
@@ -128,19 +128,23 @@ if __name__=="__main__":
         #instal quagga
         try:
             spine_ip = raas_utils.get_spine_ip(vpc_name, spine_name)
+            print("here1")
             spine_ip_arg = "vm_ip="+spine_ip
+            print("here2", spine_ip_arg)
 
             ######
             extra_vars = constants.ansible_become_pass + " " + \
-                    " " + constants.ansible_ssh_private_key + " " + spine_ip_arg
+                    " " + spine_ip_arg
 
-            ssh_common_args = "-o ProxyCommand=\"ssh -i" + constants.ansible_ssh_private_key + " ece792@" + hypervisor_ip + " " +\
+            print(extra_vars, "here2.3")
+            ssh_common_args = "-o ProxyCommand=\"ssh -i " + constants.ssh_file + " ece792@" + hypervisor_ip + " " +\
                     "-W %h:%p\""
+            print("here3", ssh_common_args)
 
             print("ansible-playbook logic/misc/quagga_install.yml -i \""+spine_ip+",\" -v --extra-vars '"+extra_vars+"'"\
-                    + " --ssh_common_args='"+ssh_common_args+"'")
+                    + " --ssh-common-args='"+ssh_common_args+"'")
             rc = os.system("ansible-playbook logic/misc/quagga_install.yml -i \""+spine_ip+",\" -v --extra-vars '"+extra_vars+"'"\
-                    + " --ssh_common_args='"+ssh_common_args+"'")
+                    + " --ssh-common-args='"+ssh_common_args+"'")
             if (rc != 0):
                 raise
         except:
