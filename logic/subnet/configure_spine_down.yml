@@ -1,0 +1,9 @@
+---
+- name: Ansible configure tranist
+  hosts: "{{ vm_ip }}"
+  user: root
+  become: yes
+  
+tasks:
+    - name: Assign IPs to spine VMs and VMs routes
+      script: "../scripts/last_dev.sh {{ s_ip }} {{ l_adv_ip }} {{ l_ip }}"
