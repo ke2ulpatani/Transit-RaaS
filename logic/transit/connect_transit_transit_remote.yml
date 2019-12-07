@@ -5,4 +5,4 @@
     
   tasks:
     - name: GRE config on loca hosts
-      script: "../scripts/gre_tunnel.sh add {{ gre_tunnel_name }} {{ o_t_ip }} {{ r_i_t_ip }} {{ r_vm_subnet }}"
+      script: "../scripts/gre_tunnel.sh add {{ gre_tunnel_name }} {{ outer_transit_ip }} {{ remote_inner_transit_ip }}"

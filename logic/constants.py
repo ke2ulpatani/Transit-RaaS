@@ -47,3 +47,40 @@ f1_mem = 976562
 f2_mem = 1953125
 f3_mem = 3906250
 temp_file = "var/temp"
+new_mgmt_net_data = {
+    "hypervisor_name" : "",
+    "network_id" : "",
+    "subnet_name" : ""
+}
+new_vpc_data = {
+    "hypervisor_name": "",
+    "vpc_name": ""
+}
+new_pc_data = {
+    "hypervisor_name":"",
+    "vpc_name":"",
+    "pc_name": "",
+    "capacity":""
+}
+new_leaf_data = {
+    "hypervisor_name" : "",
+    "network_id" : "",
+    "leaf_name" : "",
+    "vpc_name": ""
+}
+new_spine_data = {
+    "hypervisor_name" : "h1",
+    "spine_name" : "leaf1",
+    "vpc_name": "vpc_1",
+    "capacity": ""
+}
+new_l1_transit_data = {
+    "hypervisor_name" :"",
+    "l1_transit_name" :"",
+    "capacity": ""
+}
+new_l2_transit_data = {
+    "hypervisor_name" :"",
+    "l2_transit_name" :"",
+    "capacity": ""
+}
