@@ -50,7 +50,9 @@ if __name__=="__main__":
         try:
             #l_name: leaf_name, l_net: network_name_br: L_br: name_br; 
             #hypervisor: hyp_name, l_ip, ve_l_br, ve_br_l, dhcp_range
+            print("here")
             lid = hyp_utils.get_leaf_id(hypervisor, vpc_name)
+            print(lid)
             leaf_name_hyp = "c" + str(cid) + "_" + "l" + str(lid)
             leaf_name_hyp_arg = "l_name="+leaf_name_hyp
 
@@ -60,8 +62,8 @@ if __name__=="__main__":
                     str(ipaddress.ip_address(subnet[0])+254)
             l_br_arg = "l_br=" + leaf_name_hyp + "_br"
             l_net_arg = "l_net=" + leaf_name_hyp + "_net"
-            ve_l_br_arg = "ve_l_br=c" + str(cid) + "ve_" + "l" + str(lid) + "_br"
-            ve_br_l_arg = "ve_br_l=c" + str(cid) + "ve_" + "br_l" + str(lid)
+            ve_l_br_arg = "ve_l_br=c" + str(cid) + "_ve_" + "l" + str(lid) + "_br"
+            ve_br_l_arg = "ve_br_l=c" + str(cid) + "_ve_" + "br_l" + str(lid)
 
             extra_vars = constants.ansible_become_pass + " " + \
                     leaf_name_hyp_arg + " " + l_ip_arg + " " + \
@@ -71,8 +73,8 @@ if __name__=="__main__":
 
 
             print("ansible-playbook logic/subnet/create_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            #rc = os.system("ansible-playbook logic/vpc/create_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            raise
+            rc = os.system("ansible-playbook logic/subnet/create_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            #raise
             if (rc != 0):
                 raise
 
@@ -81,15 +83,16 @@ if __name__=="__main__":
             #raas_utils.client_add_leaf(vpc_name, leaf_name)
 
         except:
-            #os.system("ansible-playbook logic/vpc/delete_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            os.system("ansible-playbook logic/subnet/delete_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             print("ansible-playbook logic/subnet/delete_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            raise
 
 
         #connect to available spines
         spines_data = hyp_utils.get_spines_data(hypervisor, vpc_name)
 
         for each in spines_data:
-            print each
+            print(each)
 
 
 

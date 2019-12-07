@@ -126,35 +126,35 @@ def write_spine_id(spine_id, vpc, hypervisor):
     spines_data["id"] = str(spine_id)
     write_spines_data(spines_data, vpc, hypervisor)
 
-#def get_leafs_data(hypervisor, vpc):
-#    vpc_data = get_vpc_data(hypervisor, vpc)
-#    leafs_data = vpc_data["leaf"]
-#    return leafs_data
-#
-#def write_leafs_data(leafs_data, vpc, hypervisor):
-#    vpc_data = get_vpc_data(hypervisor, vpc)
-#    vpc_data["leaf"] = leafs_data
-#    write_vpc_data(vpc_data, vpc, hypervisor)
-#
-#def get_leaf_data(hypervisor, vpc, leaf):
-#    leafs_data = get_leafs_data(hypervisor, vpc)
-#    leaf_data = leafs_data[leaf]
-#    return leaf_data
-#
-#def write_leaf_data(leaf_data, leaf, vpc, hypervisor):
-#    leafs_data = get_leafs_data(hypervisor, vpc)
-#    leafs_data[leaf] = leaf_data
-#    write_leafs_data(leafs_data, vpc, hypervisor)
-#
-#def get_leaf_id(hypervisor, vpc):
-#    leafs_data = get_leafs_data(hypervisor, vpc)
-#    leaf_id = int(leafs_data["id"])
-#    return leaf_id
-#
-#def write_leaf_id(leaf_id, vpc, hypervisor):
-#    leafs_data = get_leafs_data(hypervisor, vpc)
-#    leafs_data["id"] = str(leaf_id)
-#    write_leafs_data(leafs_data, vpc, hypervisor)
+def get_leafs_data(hypervisor, vpc):
+    vpc_data = get_vpc_data(hypervisor, vpc)
+    leafs_data = vpc_data["leaf"]
+    return leafs_data
+
+def write_leafs_data(leafs_data, vpc, hypervisor):
+    vpc_data = get_vpc_data(hypervisor, vpc)
+    vpc_data["leaf"] = leafs_data
+    write_vpc_data(vpc_data, vpc, hypervisor)
+
+def get_leaf_data(hypervisor, vpc, leaf):
+    leafs_data = get_leafs_data(hypervisor, vpc)
+    leaf_data = leafs_data[leaf]
+    return leaf_data
+
+def write_leaf_data(leaf_data, leaf, vpc, hypervisor):
+    leafs_data = get_leafs_data(hypervisor, vpc)
+    leafs_data[leaf] = leaf_data
+    write_leafs_data(leafs_data, vpc, hypervisor)
+
+def get_leaf_id(hypervisor, vpc):
+    leafs_data = get_leafs_data(hypervisor, vpc)
+    leaf_id = int(leafs_data["id"])
+    return leaf_id
+
+def write_leaf_id(leaf_id, vpc, hypervisor):
+    leafs_data = get_leafs_data(hypervisor, vpc)
+    leafs_data["id"] = str(leaf_id)
+    write_leafs_data(leafs_data, vpc, hypervisor)
 
 def get_bridges_data(hypervisor, vpc):
     vpc_data = get_vpc_data(hypervisor, vpc)
