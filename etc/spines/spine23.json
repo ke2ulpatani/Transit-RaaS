@@ -1,0 +1,6 @@
+{
+	"hypervisor_name": "h1" ,
+	"vpc_name": "vpc_1" ,
+	"spine_name": "spine23" ,
+	"capacity": "f1"
+}

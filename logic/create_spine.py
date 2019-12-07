@@ -105,13 +105,14 @@ if __name__=="__main__":
         #print("here3", sid+1, vpc_name, hypervisor)
 
 
-        #get spine ip and store to some file
+        #get spine management ip
         try:
             vm_name_arg = "vm_name="+spine_name_ansible
             ip_file_path_arg = "ip_path=../../"+constants.temp_file
+            net_name_arg = "net_name=c" + str(cid) + "_m_net"
             extra_vars = constants.ansible_become_pass + " " + \
-                    " " + vm_name_arg + " " +  hypervisor_arg + " " + ip_file_path_arg
-
+                    " " + vm_name_arg + " " +  hypervisor_arg + " " + ip_file_path_arg + " " + net_name_arg
+ 
             print("ansible-playbook logic/misc/get_vm_ip.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             rc = os.system("ansible-playbook logic/misc/get_vm_ip.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             if (rc != 0):
@@ -120,14 +121,14 @@ if __name__=="__main__":
 
             spine_ip = raas_utils.read_temp_file()
             print(spine_ip, vpc_name, spine_name)
-            raas_utils.write_spine_ip(vpc_name, spine_name, spine_ip)
+            #raas_utils.write_spine_ip(vpc_name, spine_name, spine_ip)
         except:
             print("spine ip get and store failed")
             raise
 
         #instal quagga
         try:
-            spine_ip = raas_utils.get_spine_ip(vpc_name, spine_name)
+            #spine_ip = raas_utils.get_spine_ip(vpc_name, spine_name)
             print("here1")
             spine_ip_arg = "vm_ip="+spine_ip
             print("here2", spine_ip_arg)
