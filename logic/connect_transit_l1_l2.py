@@ -7,20 +7,20 @@ import constants
 import ipaddress
 
 """@params:
-    param1 = vpc config file (required)
+    param1 = connection config name (required)
 """
 
 if __name__=="__main__":
-    if (len(sys.argv) < 3):
-        print("Please give vm and subnet")
+    if (len(sys.argv) < 2):
+        print("Please give connection config file")
         exit(1)
 
-    pc_config_file = sys.argv[1]
+    connection_config_file = sys.argv[1]
+    connection_name = connection_config_file.split('/')[-1].split('.')[0]
+    cid = hyp_utils.get_client_id()
 
-    pc_name = pc_config_file.split('/')[-1].split('.')[0]
-
-    #Assumed customer always gives correct config file
-    pc_data = do_json.json_read(pc_config_file)
+    connection_data = do_json.json_read(connection_config_file)
+    print(connection_data)
 
     hypervisor = pc_data["hypervisor_name"]
     hypervisor_arg = "hypervisor="+hypervisor

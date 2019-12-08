@@ -58,48 +58,79 @@ if __name__=="__main__":
         mem = constants.f1_mem
     
     cid = hyp_utils.get_client_id()
-
     try:
-        #create_pc
+        #connect to available spines
         try:
-            pcid = hyp_utils.get_pc_id(hypervisor, vpc_name)
-            image_arg = "image_path="+constants.img_path + \
-                    constants.pc_vm_img
-            pc_name_ansible = "c" + str(cid) + "_" + "vm" + str(pcid)
-            pc_name_ansible_arg = "vm_name="+pc_name_ansible
-            c_s_image_path_arg = "c_vm_image_path="+constants.img_path+ \
-                    pc_name_ansible + ".img"
+          spines_data = raas_utils.get_all_spines(vpc_name)
+          spine_ips=[]
+          
+          for spine in spines_data:
+              spine_id=hyp_utils.get_hyp_spine_name(hypervisor,vpc_name,spine)
+          
+              network=raas_utils.get_new_veth_subnet('lns_spine')
+              subnet = network.split('/')
+              l_ip = str(ipaddress.ip_address(subnet[0])+1) + '/' + subnet[1]
+              s_ip = str(ipaddress.ip_address(subnet[0])+2) + '/' + subnet[1]
+              l_ip_arg = " ns1_ip=" + l_ip
+              s_ip_arg = " ns2_ip=" + s_ip              
+              
+              ve_l_s = vpc_id + "_ve_l" + str(lid)+"_" + spine_id.split('_')[2]
+              ve_l_s_arg=" ve_ns1_ns2=" + ve_l_s
+              ve_s_l = vpc_id + "_ve_" + spine_id.split('_')[2] +"_l" + str(lid)
+              ve_s_l_arg=" ve_ns2_ns1=" + ve_s_l
 
-            s_ram_arg = "vm_ram=" + str(mem)
-            s_vcpu_arg = "vm_vcpu=" + str(vcpu)
+              l_name_arg=" ns1="+leaf_name_hyp
+              s_name_arg=" ns2="+spine_id
 
-            mgt_net_arg = "mgt_net=" + hyp_utils.get_mgmt_net(cid)
+              
+              extra_vars = constants.ansible_become_pass + l_ip_arg + s_ip_arg + \
+                      ve_l_s_arg + ve_s_l_arg + s_name_arg + l_name_arg + \
+                      " " + hypervisor_arg
+              
+              raas_utils.run_shell_script("ansible-playbook logic/misc/connect_ns_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+              
+              #update reserved_ip
+              new_subnet=str(ipaddress.ip_address(subnet[0])+8) + '/' + subnet[1]
+              raas_utils.update_veth_subnet('lns_spine',new_subnet)
+              
+              spine_ip=raas_utils.get_ns_ip(hypervisor,spine_id, ve_s_l)
+              spine_ips.append(spine_ip)
 
-            extra_vars = constants.ansible_become_pass + " " + \
-                    image_arg + " " +  \
-                    s_ram_arg + " " + s_vcpu_arg + " " + \
-                    mgt_net_arg + " " + pc_name_ansible_arg + \
-                    " " + c_s_image_path_arg + " " +  hypervisor_arg
+              #Add route for leaf on spine only if dhcp_flag is true
+              if (dhcp_flag):
+                  leaf_ip=raas_utils.get_ns_ip(hypervisor,leaf_name_hyp,ve_l_s)
+                  ns_name_arg=" ns_name="+spine_id
+                  route_cmd_arg=" route_cmd=\"add "+network_id+ " via "+leaf_ip+"\""
+                  extra_vars=constants.ansible_become_pass+ns_name_arg+route_cmd_arg+ " " + hypervisor_arg
+                  raas_utils.run_shell_script("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+             
 
-            #print("here2")
-            print("ansible-playbook logic/pc/create_vm.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            rc = os.system("ansible-playbook logic/pc/create_vm.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            if (rc != 0):
-                raise
-                
-            hyp_utils.write_pc_id(pcid+1, vpc_name, hypervisor)
-            #print("here4", pc_name, vpc_name, hypervisor, pc_name_ansible)
-            hyp_utils.vpc_add_pc(hypervisor, vpc_name, pc_name, pc_name_ansible)
-            raas_utils.client_add_pc(vpc_name, pc_name)
+          ns_name_arg=" ns_name="+leaf_name_hyp
+    
+          #delete default arg
+          route_cmd_arg=" route_cmd=\"delete default\""
+          extra_vars=constants.ansible_become_pass+ns_name_arg+route_cmd_arg+ " " + hypervisor_arg
+          raas_utils.run_shell_script("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
 
-            #raise
-            #raas_utils.add_mgmt_ns(hypervisor)
-        except:
-            print("create pc failed")
-            print("ansible-playbook logic/pc/delete_vm.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            os.system("ansible-playbook logic/pc/delete_vm.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+          #add weightet default arg
+          route_weight="add default scope global" 
+          for curr_ip in spine_ips:
+               route_weight+=" nexthop via "+curr_ip+" weight 1"
+          route_weight='"'+route_weight+'"'
+          print(route_weight)
+
+          route_cmd_arg=" route_cmd="+route_weight
+          extra_vars=constants.ansible_become_pass+ns_name_arg+route_cmd_arg+ " " + hypervisor_arg
+          raas_utils.run_shell_script("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+    
+        except Exception as e:
+            print("Connecting leaf to spines failed: ",e)
             raise
-        #print("ansible-playbook logic/vpc/delete_pc.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
 
-    except:
-        print("create pc failed python failed")
+        hyp_utils.write_leaf_id(lid+1, vpc_name, hypervisor)
+        hyp_utils.vpc_add_leaf(hypervisor, vpc_name, leaf_name, leaf_name_hyp)
+        raas_utils.client_add_leaf(hypervisor, vpc_name, leaf_name, network_id)
+
+    except Exception as e:
+        extra_vars=constants.ansible_become_pass + " " + leaf_name_hyp_arg +  " " + hypervisor_arg
+        raas_utils.run_shell_script("ansible-playbook logic/misc/delete_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
