@@ -36,12 +36,16 @@ h2_nsm_ip_file="var/h2_nsm_ip"
 nsm_h2_ip_file="var/nsm_h2_ip"
 var_vpc="var/vpc/"
 vpc_spines="/spines/"
+l1_transits="var/l1_transits/"
+l2_transits="var/l2_transits/"
 vpc_leafs="/leafs/"
 vpc_bridges="/bridges/"
 vpc_pcs="/pcs/"
 img_path="/var/lib/libvirt/images/"
 spine_vm_img="routerVM.img"
 pc_vm_img="sampleBuild.img"
+l1_transit_vm_img="routerVM.img"
+l2_transit_vm_img="routerVM.img"
 var_spines="/var/spines/"
 f1_mem = 976562
 f2_mem = 1953125
@@ -56,6 +60,7 @@ new_vpc_data = {
     "hypervisor_name": "",
     "vpc_name": ""
 }
+new_vpc_data["peering"] = False
 
 new_pc_data = {
     "hypervisor_name":"",

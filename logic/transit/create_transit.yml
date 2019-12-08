@@ -26,23 +26,24 @@
         state: running
       become: yes
     
-    - name: Attach management interface to spine
+    - name: Attach management interface to trasit
       command: "virsh attach-interface --domain {{ t_name }} --type network --source {{ mgt_net }} --model virtio --config --live"
       become: yes
 
     - name: Create network between trasnit and hypervisor
-      script: "../scripts/create_net.sh {{ t_h_nw }} {{ t_h_br }}"
+      script: "../scripts/create_net.sh {{ t_h_net }} {{ t_h_br }}"
       become: yes
+
+    - name: Assign IP to bridge network between lead and spine
+      command: "ip addr add {{ b_ip }} dev {{ t_h_br }}"
+
+    - name: Create DHCP server to connect leaf to spine
+      command: "dnsmasq --interface={{ t_h_br }} --dhcp-range={{ dhcp_range }},infinite --bind-interfaces --except-interface=lo"
 
     - name: Attach hypervisor interface to transit
-      command: "virsh attach-interface --domain {{ t_name }} --type network --source {{ t_h_nw }} --model virtio --config --live"
+      command: "virsh attach-interface --domain {{ t_name }} --type network --source {{ t_h_net }} --model virtio --config --live"
       become: yes
 
-    - name: Create veth pair with hypervisor
-      shell: "{{ lookup('template', '../scripts/t_h_connect.j2') }}"
-      args:
-        executable: /bin/bash
-      become: yes
 
     - name: Wait for VMs to be started
       pause:

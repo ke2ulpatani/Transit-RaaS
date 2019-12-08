@@ -6,8 +6,32 @@ from os import listdir
 from os.path import isfile, join
 
 def run_shell_script(my_script):
+    #This can run a shell script only on the management VM
     print(my_script)
-    os.system(my_script)
+    return os.system(my_script)
+
+def run_playbook(my_script):
+    #This can run a playbook only on the management VM
+    print(my_script)
+    return os.system(my_script)
+
+def get_vm_ip(hypervisor,vm_name,net_name):
+    try:
+        vm_name_arg = " vm_name="+vm_name
+        ip_file_path_arg = " ip_path=../../"+constants.temp_file
+        net_name_arg = " net_name=" + net_name
+        hypervisor_arg = " hypervisor="+hypervisor
+        extra_vars = constants.ansible_become_pass + vm_name_arg +  hypervisor_arg + ip_file_path_arg + net_name_arg
+
+        rc = run_shell_script("ansible-playbook logic/misc/get_vm_ip.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+        if (rc != 0):
+            raise
+
+        return read_temp_file()
+    except:
+        print("IP fetch failed for machine: "+vm_name+" of network "+net_name)
+        raise
+    
 
 def get_mgmt_nid():
     json_data = do_json.json_read(constants.mgmt_net_file)
@@ -57,6 +81,40 @@ def client_add_spine(hypervisor, vpc_name, spine_name, capacity):
     new_spine_data["capacity"] = capacity
     do_json.json_write(new_spine_data, file_path)
 
+def client_exists_l1_transit(l1_transit_name):
+    file_path = constants.l1_transits + l1_transit_name + ".json"
+    return os.path.exists(file_path)
+
+def client_add_l1_transit(hypervisor, l1_transit_name, capacity):
+    dir_path = constants.l1_transits;
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+
+    file_path = dir_path + l1_transit_name + ".json"
+
+    new_l1_transit_data = constants.new_l1_transit_data
+    new_l1_transit_data["hypervisor_name"] = hypervisor
+    new_l1_transit_data["l1_transit_name"] = l1_transit_name
+    new_l1_transit_data["capacity"] = capacity
+    do_json.json_write(new_l1_transit_data, file_path)
+
+def client_exists_l2_transit(l2_transit_name):
+    file_path = constants.l2_transits + l2_transit_name + ".json"
+    return os.path.exists(file_path)
+
+def client_add_l2_transit(hypervisor, l2_transit_name, capacity):
+    dir_path = constants.l2_transits;
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+
+    file_path = dir_path + l2_transit_name + ".json"
+
+    new_l2_transit_data = constants.new_l2_transit_data
+    new_l2_transit_data["hypervisor_name"] = hypervisor
+    new_l2_transit_data["l2_transit_name"] = l2_transit_name
+    new_l2_transit_data["capacity"] = capacity
+    do_json.json_write(new_l2_transit_data, file_path)
+
 def client_exists_leaf(vpc_name, leaf_name):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_leafs + leaf_name + ".json"
@@ -68,6 +126,12 @@ def get_all_spines(vpc_name):
             constants.vpc_spines
     spines = [f.split('.')[0] for f in listdir(dir_path) if isfile(join(dir_path, f))]
     return spines
+
+def get_all_leafs(vpc_name):
+    dir_path=constants.var_vpc + vpc_name + \
+            constants.vpc_leafs
+    leafs = [f.split('.')[0] for f in listdir(dir_path) if isfile(join(dir_path, f))]
+    return leafs
 
 
 def client_add_leaf(hypervisor, vpc_name, leaf_name, network_id):
@@ -140,16 +204,4 @@ def client_add_leaf_pc(vpc_name, pc_name, leaf_name):
     leafs.append(leaf_name)
     pc_data["leafs"] = leafs
     do_json.json_write(pc_data, file_path) 
-
-#def client_exists_bridge(vpc_name, bridge_name):
-#    file_path = constants.var_vpc + vpc_name + \
-#            constants.vpc_bridges + bridge_name
-#
-#    return os.path.exists(file_path)
-#
-#def client_add_bridge(vpc_name, bridge_name):
-#    file_path = constants.var_vpc + vpc_name + \
-#            constants.vpc_bridges + bridge_name
-#    with open(file_path, "w") as f:
-#        f.write(bridge_name)
 
