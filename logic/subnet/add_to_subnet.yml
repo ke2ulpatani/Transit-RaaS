@@ -1,39 +1,35 @@
 ---
-- name: Ansible add vm to subnet
-  hosts: "{{ hypervisors }}"
+- name: Connect container to L3 bridge
+  hosts: "{{ hypervisor }}"
   user: root
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
     
   tasks:
-    - name: Create veth pair
-      command: "ip link add {{c_name}}_{{b_name}} type veth peer name {{b_name}}_{{c_name}}"
-      ignore_errors: yes
+    - name: Create veth pair between customer pc and leaf
+      command: "ip link add {{ ve_l_pc }} type veth peer name {{ ve_pc_l }}"
 
-    - name: Add veth endpoint2 to namespace
-      command: "ip link set {{b_name}}_{{c_name}} netns {{b_name}}"
-      ignore_errors: yes
-    
-    - name: Up endpoint2
-      command: "ip netns exec {{b_name}} ip link set {{b_name}}_{{c_name}} up"
-      ignore_errors: yes
+    - name: Add veth endpoint to leaf
+      command: "ip link set {{ ve_l_pc }} netns {{ l_name }}"
 
-    - name: Link endpointw to internal bridge
-      command: "ip netns exec {{b_name}} brctl addif {{b_name}}_br {{b_name}}_{{c_name}}"
-      ignore_errors: yes
+    - name: Up the veth end at the leaf
+      command: "ip netns exec {{l_name}} ip link set {{ ve_l_pc }} up"
 
-    - name: Add veth endpoint1 to client container
-      command: "ip link set {{c_name}}_{{b_name}} netns {{c_name}}"
-      ignore_errors: yes
-    
-    - name: Up endpoint1
-      command: "ip netns exec {{c_name}} ip link set {{c_name}}_{{b_name}} up"
-      ignore_errors: yes
+    - name: Link vethe endpointw to internal bridge in leaf
+      command: "ip netns exec {{l_name}} brctl addif {{ l_br_name }} {{ ve_l_pc }}"
 
-    - name: Run dhclient on client namespace
-      command: "ip netns exec {{c_name}} dhclient {{c_name}}_{{b_name}}"
-      ignore_errors: yes
+    - name: Add veth endpoint to client container
+      command: "ip link set {{ ve_pc_l }} netns {{ c_name }}"
 
-    - name: Remove default route
-      command: "ip netns exec {{c_name}} ip route del default"
+    - name: Up endpoint in the client container
+      command: "ip netns exec {{ c_name }} ip link set {{ ve_pc_l }} up"
 
-    - name: Add new default route to bridge network
-      command: "ip netns exec {{c_name}} ip route add default via {{br_ip}}"
+    - name: Run dhclient on client container
+      command: "ip netns exec {{c_name}} dhclient {{ ve_pc_l }}"
+
+      #    - name: Remove default route
+      #command: "ip netns exec {{c_name}} ip route del default"
+
+      # - name: Add new default route to bridge network
+      #command: "ip netns exec {{c_name}} ip route add default via {{ l_br_ip }}"

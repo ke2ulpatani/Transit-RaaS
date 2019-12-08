@@ -19,6 +19,7 @@
         name: "{{ c_name }}"
         image: "{{ default_container_image }}"
         state: started
+        network_mode: none
         privileged: yes
         memory: "{{ c_ram }}"
         cpuset_cpus: "{{ c_vcpu }}"
