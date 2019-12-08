@@ -24,8 +24,8 @@
         privileged: yes
         interactive: yes
         network_mode: none
-        memory: "{{v_ram}}"
-        cpuset_cpus: "{{v_cpu}}"
+        memory: "{{c_ram}}"
+        cpuset_cpus: "{{c_vcpu}}"
       register: result
 
     - name: Create symbolic link to network namespace

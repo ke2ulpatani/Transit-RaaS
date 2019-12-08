@@ -14,7 +14,7 @@
         path: "/var/run/netns/{{ c_name }}"
         state: absent
 
-    - name: Delete spine container
+    - name: Delete container
       docker_container:
         name: "{{ c_name }}"
         state: absent
