@@ -30,6 +30,7 @@ if __name__=="__main__":
     hypervisor_ip = hyp_utils.get_hyp_ip(hypervisor)
 
     vpc_name = leaf_data["vpc_name"]
+    vpc_id=hyp_utils.get_hyp_vpc_name(hypervisor,vpc_name)
 
     if not raas_utils.client_exists_vpc(vpc_name):
         print("VPC does not exist")
@@ -53,7 +54,7 @@ if __name__=="__main__":
             print("here")
             lid = hyp_utils.get_leaf_id(hypervisor, vpc_name)
             print(lid)
-            leaf_name_hyp = "c" + str(cid) + "_" + "l" + str(lid)
+            leaf_name_hyp = vpc_id + "_" + "l" + str(lid)
             leaf_name_hyp_arg = "l_name="+leaf_name_hyp
 
             subnet = network_id.split('/')
@@ -62,8 +63,8 @@ if __name__=="__main__":
                     str(ipaddress.ip_address(subnet[0])+254)
             l_br_arg = "l_br=" + leaf_name_hyp + "_br"
             l_net_arg = "l_net=" + leaf_name_hyp + "_net"
-            ve_l_br_arg = "ve_l_br=c" + str(cid) + "_ve_" + "l" + str(lid) + "_br"
-            ve_br_l_arg = "ve_br_l=c" + str(cid) + "_ve_" + "br_l" + str(lid)
+            ve_l_br_arg = "ve_l_br=" + vpc_id + "_ve_" + "l" + str(lid) + "_br"
+            ve_br_l_arg = "ve_br_l=" + vpc_id + "_ve_" + "br_l" + str(lid)
 
             extra_vars = constants.ansible_become_pass + " " + \
                     leaf_name_hyp_arg + " " + l_ip_arg + " " + \
@@ -85,6 +86,7 @@ if __name__=="__main__":
             print("Creating leaf failed: ",e)
             raise
         
+        
         #connect to available spines
         try:
           spines_data = raas_utils.get_all_spines(vpc_name)
@@ -100,10 +102,10 @@ if __name__=="__main__":
                       str(ipaddress.ip_address(subnet[0])+6)
               
                
-              l_s_net_arg=" l_s_net=c" + str(cid) + "_net_l" + str(lid)+"_" + spine_id.split('_')[1]
-              l_s_br_arg=" l_s_br=c" + str(cid) + "_br_l" + str(lid)+"_" + spine_id.split('_')[1]
-              ve_l_s_arg=" ve_l_s=c" + str(cid) + "_ve_l" + str(lid)+"_" + spine_id.split('_')[1]
-              ve_s_l_arg=" ve_s_l=c" + str(cid) + "_ve_" + spine_id.split('_')[1]+"_l" + str(lid)
+              l_s_net=" l_s_net=" + vpc_id + "_net_l" + str(lid)+"_" + spine_id.split('_')[1]
+              l_s_br=" l_s_br=" + vpc_id + "_br_l" + str(lid)+"_" + spine_id.split('_')[1]
+              ve_l_s=" ve_l_s=" + vpc_id + "_ve_l" + str(lid)+"_" + spine_id.split('_')[1]
+              ve_s_l=" ve_s_l=" + vpc_id + "_ve_" + spine_id.split('_')[1]+"_l" + str(lid)
               s_name_arg=" s_name="+spine_id
               l_name_arg=" l_name="+leaf_name_hyp
               subnet_ip_arg=" subnet_ip="+b_ip
