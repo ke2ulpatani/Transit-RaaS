@@ -1,35 +1,27 @@
 ---
-- name: Ansible create customer
+- name: Ansible create customer PC
   hosts: "{{ hypervisor }}"
   user: root
   become: yes
   ignore_errors: yes
 
   tasks:
-    - name: Copy customer VM image
+    - name: Copy client PC image
       copy:
         src: "{{ image_path }}"
         dest: "{{ c_vm_image_path }}"
         remote_src: yes
     
-    - name: Define a spine VM
+    - name: Define client PC
       virt:
         name: "{{ vm_name }}"
         command: define
         xml: "{{ lookup('template', '../scripts/create_vm.xml.j2' ) }}"
         uri: 'qemu:///system'
 
-    - name: Start spine VM
+    - name: Start client PC
       virt:
         name: "{{ vm_name }}"
         command: start
         state: running
       become: yes
-    
-    - name: Attach management interface to spine
-      command: "virsh attach-interface --domain {{ vm_name }} --type network --source {{ mgt_net }} --model virtio --config --live"
-      become: yes
-
-    - name: Wait for VMs to be started
-      pause:
-        seconds: 30
