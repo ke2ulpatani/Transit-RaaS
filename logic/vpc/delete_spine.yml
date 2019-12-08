@@ -1,5 +1,5 @@
 ---
-- name: Ansible create spine
+- name: Ansible Delete spine
   hosts: "{{ hypervisor }}"
   user: root
   ignore_errors: yes
@@ -15,7 +15,7 @@
         name: "{{ s_name }}"
       register: result
 
-    - name: Create symbolic link to network namespace
+    - name: Delete symbolic link to network namespace
       file:
         path: "/var/run/netns/{{ s_name }}"
         state: absent
