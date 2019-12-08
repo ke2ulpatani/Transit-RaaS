@@ -32,9 +32,5 @@
         state: link 
 
     - name: Add spine to management network
-      docker_network:
-        name: "{{ mgt_net }}"
-        connected:
-          - "{{ s_name }}"
-        appends: yes
+      script: "../scripts/create_veth_ns_br_noip.sh {{ s_name }} {{ nsm_br }} {{ ve_s_nsm}} {{ ve_nsm_s}}"
 
