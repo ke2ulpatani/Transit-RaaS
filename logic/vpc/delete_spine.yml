@@ -17,9 +17,8 @@
 
     - name: Create symbolic link to network namespace
       file:
-        src: "/proc/{{ result.container['State']['Pid'] }}/ns/net" 
-        dest: "/var/run/netns/{{ s_name }}"
-        state: unlink
+        path: "/var/run/netns/{{ s_name }}"
+        state: absent
 
     - name: Delete spine container
       docker_container:
