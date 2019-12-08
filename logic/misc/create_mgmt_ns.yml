@@ -6,8 +6,22 @@
   #  ignore_errors: yes
     
   tasks:
-    - name: "Create network {{ nsm }}"
-      docker_network:
-        name: "{{ nsm }}"
-        ipam_config:
-          - subnet: "{{ nsm_subnet }}""
+    - name: Create management namespace
+      command: "ip netns add {{ nsm }}"
+
+    - name: Create network
+      script: ../scripts/create_net.sh {{ b_net }} {{ b }}
+    
+    - name: Create veth link with bridge
+      script: ../scripts/create_veth_ns_br.sh {{ nsm }} {{ b_ip }} {{ b }} {{ ve_nsm_b }} {{ ve_b_nsm }}
+
+    - name: Create DHCP server for the bridge
+      command: "ip netns exec {{ nsm }} dnsmasq --interface={{ ve_nsm_b }} --dhcp-range={{ dhcp_range }},12h --bind-interfaces --except-interface=lo"
+
+    - name: Create veth pair with hypervisor
+      shell: "{{ lookup('template', '../scripts/create_veth_nsm_h.j2') }}"
+      args:
+        executable: /bin/bash
+
+    - name: configure static route
+      command: "ip route add {{ nid }} via {{ nsm_h_route }}"      
