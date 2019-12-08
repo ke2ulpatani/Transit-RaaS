@@ -59,6 +59,7 @@ if __name__=="__main__":
         mem = constants.f1_mem
     
     cid = hyp_utils.get_client_id()
+    vpcid = hyp_utils.get_hyp_vpc_name(hypervisor, vpc_name)
 
     try:
         #create_spine
@@ -66,7 +67,7 @@ if __name__=="__main__":
             sid = hyp_utils.get_spine_id(hypervisor, vpc_name)
             image_arg = "image_path="+constants.img_path + \
                     constants.spine_vm_img
-            spine_name_ansible = "c" + str(cid) + "_" + "s" + str(sid)
+            spine_name_ansible = vpcid + "_" + "s" + str(sid)
             spine_name_ansible_arg = "s_name="+spine_name_ansible
             c_s_image_path_arg = "c_s_image_path="+constants.img_path+ \
                     spine_name_ansible + ".img"
@@ -91,7 +92,7 @@ if __name__=="__main__":
             hyp_utils.write_spine_id(sid+1, vpc_name, hypervisor)
             #print("here4", spine_name, vpc_name, hypervisor, spine_name_ansible)
             hyp_utils.vpc_add_spine(hypervisor, vpc_name, spine_name, spine_name_ansible)
-            raas_utils.client_add_spine(vpc_name, spine_name)
+            raas_utils.client_add_spine(hypervisor, vpc_name, spine_name, spine_capacity)
 
             #raise
             #raas_utils.add_mgmt_ns(hypervisor)

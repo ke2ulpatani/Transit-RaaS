@@ -16,14 +16,16 @@ def get_mgmt_nid():
 def client_exists_vpc(vpc_name):
     return os.path.exists(constants.var_vpc + vpc_name + "/" + vpc_name + ".json")
 
-def client_add_vpc(vpc_name):
+def client_add_vpc(hypervisor, vpc_name):
     vpc_dir = constants.var_vpc + vpc_name + "/"
     file_path = vpc_dir + vpc_name + ".json"
 
     if not os.path.exists(vpc_dir):
         os.makedirs(vpc_dir)
 
-    new_vpc_data = {"name": vpc_name}
+    new_vpc_data = constants.new_vpc_data
+    new_vpc_data["hypervisor_name"] = hypervisor
+    new_vpc_data["vpc_name"] = vpc_name
     do_json.json_write(new_vpc_data, file_path)
 
     vpc_spines_dir = vpc_dir + constants.vpc_spines
@@ -44,11 +46,15 @@ def client_exists_spine(vpc_name, spine_name):
 
     return os.path.exists(file_path)
 
-def client_add_spine(vpc_name, spine_name):
+def client_add_spine(hypervisor, vpc_name, spine_name, capacity):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_spines + spine_name + ".json"
 
-    new_spine_data = {"name": spine_name}
+    new_spine_data = constants.new_spine_data
+    new_spine_data["hypervisor_name"] = hypervisor
+    new_spine_data["vpc_name"] = vpc_name
+    new_spine_data["spine_name"] = spine_name
+    new_spine_data["capacity"] = capacity
     do_json.json_write(new_spine_data, file_path)
 
 def client_exists_leaf(vpc_name, leaf_name):
@@ -64,10 +70,14 @@ def get_all_spines(vpc_name):
     return spines
 
 
-def client_add_leaf(vpc_name, leaf_name):
+def client_add_leaf(hypervisor, vpc_name, leaf_name, network_id):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_leafs + leaf_name + ".json"
-    new_leaf_data = {"name": leaf_name}
+    new_leaf_data = constants.new_leaf_data
+    new_leaf_data["hypervisor_name"] = hypervisor_name
+    new_leaf_data["vpc_name"] = vpc_name
+    new_leaf_data["leaf_name"] = leaf_name
+    new_leaf_data["network_id"] = network_id
     do_json.json_write(new_leaf_data, file_path)
 
 def client_exists_pc(vpc_name, pc_name):

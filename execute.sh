@@ -3,6 +3,9 @@
 cmd=$1
 config_file=$2
 
+if [ $cmd == "help" ]; then
+	echo help
+fi
 
 if [ $cmd == "create_vpc" ]; then
 	python3 logic/create_vpc.py $config_file

@@ -79,7 +79,7 @@ if __name__=="__main__":
 
             hyp_utils.write_leaf_id(lid+1, vpc_name, hypervisor)
             hyp_utils.vpc_add_leaf(hypervisor, vpc_name, leaf_name, leaf_name_hyp)
-            raas_utils.client_add_leaf(vpc_name, leaf_name)
+            raas_utils.client_add_leaf(hypervisor, vpc_name, leaf_name, network_id)
 
         except Exception as e:
             print("Creating leaf failed: ",e)

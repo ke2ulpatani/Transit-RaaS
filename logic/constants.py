@@ -72,9 +72,9 @@ new_leaf_data = {
     "vpc_name": ""
 }
 new_spine_data = {
-    "hypervisor_name" : "h1",
-    "spine_name" : "leaf1",
-    "vpc_name": "vpc_1",
+    "hypervisor_name" : "",
+    "spine_name" : "",
+    "vpc_name": "",
     "capacity": ""
 }
 new_l1_transit_data = {
