@@ -45,13 +45,13 @@ if __name__=="__main__":
     spine_name = spine_data["spine_name"]
 
     if spine_capacity == "f1":
-        vcpu = 1
+        vcpu = "1,1"
         mem = constants.f1_mem
     elif spine_capacity == "f2":
-        vcpu = 2
+        vcpu = "1,2"
         mem = constants.f2_mem
     elif spine_capacity == "f3":
-        vcpu = 4
+        vcpu = "1,3"
         mem = constants.f3_mem
     else:
         print("Unknown flavor using default")
@@ -85,6 +85,7 @@ if __name__=="__main__":
 
             #print("here2")
             print("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            raise
             rc = os.system("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             if (rc != 0):
                 raise
