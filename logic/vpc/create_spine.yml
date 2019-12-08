@@ -34,3 +34,6 @@
     - name: Add spine to management network
       script: "../scripts/create_veth_ns_br_noip.sh {{ s_name }} {{ nsm_br }} {{ ve_s_nsm}} {{ ve_nsm_s}}"
 
+    - name: Run dhclient on spine container
+      command: "ip netns exec {{s_name}} dhclient {{ ve_s_nsm}}"
+
