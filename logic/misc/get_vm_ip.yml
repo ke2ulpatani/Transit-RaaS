@@ -7,7 +7,7 @@
 
   tasks:
     - name: Fetch spine VM IPs
-      script: "../scripts/getIP.py {{ vm_name }} {{ net_name }}"
+      script: "../scripts/getIP.py {{ vm_name }}"
       args:
         executable: python
       register: vm_ip

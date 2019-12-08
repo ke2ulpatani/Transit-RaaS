@@ -1,0 +1,16 @@
+---
+- name: Ansible get vm ip
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+  ignore_errors: yes
+
+  tasks:
+    - name: Fetch spine VM IPs
+      script: "../scripts/getIP.py {{ vm_name }} {{ net_name }}"
+      args:
+        executable: python
+      register: vm_ip
+
+    - name: Write IP to file
+      local_action: copy content="{{ vm_ip.stdout | trim }}" dest="{{ ip_path }}"

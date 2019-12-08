@@ -1,0 +1,9 @@
+- name: Configure quagga in spine
+  hosts: "{{ vm_ip }}"
+  user: root
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: Configure Quagga suite
+      script: "../scripts/quagga_setup.sh"

@@ -1,0 +1,10 @@
+---
+- name: Ansible add vm to subnet
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+    
+  tasks:
+    - name: Attach VM to subnet
+      command: "virsh attach-interface --domain {{ pc_name }} --type network {{ net_name }} --model virtio"
+      become: yes

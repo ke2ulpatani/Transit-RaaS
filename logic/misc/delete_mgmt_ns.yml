@@ -6,25 +6,8 @@
   ignore_errors: yes
     
   tasks:
-    
-    - name: Delete managment namespace
-      command: "ip netns del {{ nsm }}"
-    
-    - name: Delete static route
-      command: "ip route del {{ nid }} via {{ nsm_h_ip }}" 
-
-    - name: Delete veth pair hypervisor to ns
-      script: "../scripts/destroy_veth_hyp.sh {{ ve_h_nsm }}"
-    
-    - name: Delete veth pair ns to hypervisor
-      script: "../scripts/destroy_veth_hyp.sh {{ ve_nsm_h }}"
-
-    - name: Delete network
-      script: "../scripts/destroy_net.sh {{ b_net }} {{ b }}"
-
-    - name: Delete veth bridge to ns
-      script: "../scripts/destroy_veth_hyp.sh {{ ve_b_nsm }}"
-    
-    - name: Delete veth ns to br
-      script: "../scripts/destroy_veth_hyp.sh {{ ve_nsm_b }}"
-
+    - name: "Delete network {{ nsm }}"
+      docker_network:
+        name: "{{ nsm }}"
+        state: absent
+        force: yes

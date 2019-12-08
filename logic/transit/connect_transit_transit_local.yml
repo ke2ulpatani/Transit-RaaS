@@ -16,6 +16,10 @@
       command: "virsh attach-interface --domain {{ t1_name }} --type network {{ s_t_net }} --model virtio"
       become: yes
 
+    - name: Assign IP to bridge network between lead and spine
+      commnad: "ip addr add {{ subnet_ip }} dev {{ s_t_br }}"
+      become: yes
+
     - name: Create DHCP server to connect leaf to spine
       command: "dnsmasq --interface={{ s_t_br }} --dhcp-range={{ subnet_range }},infinite --bind-interfaces --except-interface=lo"
       become: yes

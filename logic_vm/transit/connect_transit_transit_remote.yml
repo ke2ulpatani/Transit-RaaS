@@ -1,0 +1,8 @@
+---
+- name: Ansible attach leaf to spine
+  hosts: "{{ outer_transit }}"
+  user: root
+    
+  tasks:
+    - name: GRE config on loca hosts
+      script: "../scripts/gre_tunnel.sh add {{ gre_tunnel_name }} {{ outer_transit_ip }} {{ remote_inner_transit_ip }}"

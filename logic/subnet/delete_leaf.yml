@@ -2,7 +2,7 @@
 - name: Ansible delete leaf
   hosts: "{{ hypervisor }}"
   user: root
-  ignore_errors: yes
+  ignore_erros: yes
   become: yes
     
   tasks:
@@ -11,12 +11,14 @@
     
     - name: Delete the network and bridge between leaf namespace and customer VMs
       script: "../scripts/destroy_net.sh {{ l_net }} {{ l_br }}"
-      
-    - name: Delete the network and bridge between leaf namespace and customer VMs
-      script: "../scripts/destroy_net.sh {{ l_s_net }} {{ l_s_br }}"
 
     - name: Delete veth pair towards leaf
-      script: "../scripts/destroy_veth_hyp.sh {{ ve_l_br }}"
+      command: "../scripts/destroy_veth_hyp.sh {{ ve_l_br }}"
 
     - name: Delete veth pair towards bridge
-      script: "../scripts/destroy_veth_hyp.sh {{ ve_br_l }}"
+      command: "../scripts/destroy_veth_hyp.sh {{ ve_br_l }}"
+
+    - name: Delete default containers
+      docker_container:
+        name: "{{ l_name }}"
+        state: absent

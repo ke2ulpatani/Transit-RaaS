@@ -6,8 +6,7 @@
   become: yes
     
   tasks:
-    - name: Delete a VM 
-      script: "../scripts/vm_destroy.sh {{ vm_name }}" 
-
-    - name: Remove image
-      command: "rm -f {{ c_vm_image_path }}"
+    - name: Create default containers
+      docker_container:
+        name: "{{ vm_name }}"
+        state: absent

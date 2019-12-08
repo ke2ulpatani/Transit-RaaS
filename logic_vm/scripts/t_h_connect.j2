@@ -1,0 +1,5 @@
+ip link add {{ ve_t_h }} type veth peer name {{ ve_h_t }}
+ip link set {{ ve_t_h }} up
+brctl addif {{ t_h_br }} {{ ve_t_h }}
+ip addr add {{ h_t_ip }} dev {{ ve_h_t }}
+ip link set {{ ve_h_t }} up

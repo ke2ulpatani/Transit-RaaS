@@ -1,0 +1,13 @@
+---
+- name: Ansible create spine
+  hosts: "{{ hypervisor }}"
+  user: root
+  ignore_errors: yes
+  become: yes
+    
+  tasks:
+    - name: Delete a VM 
+      script: "../scripts/vm_destroy.sh {{ s_name }}" 
+
+    - name: Remove image
+      command: "rm -f {{ c_s_image_path }}"
