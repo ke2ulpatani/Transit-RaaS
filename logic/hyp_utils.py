@@ -44,6 +44,9 @@ def exists_mgmt_ns(hypervisor):
 def add_mgmt_ns(hypervisor):
     hyp_data = get_hyp_data(hypervisor)
     hyp_data["nsm_exists"] = "True"
+    hyp_data["vpc"] = {"id":1}
+    hyp_data["l1_transit"] = {"id":1}
+    hyp_data["l2_transit"] = {"id":1}
     write_hyp_data(hyp_data, hypervisor)
 
 def get_mgmt_net(cid):
@@ -77,6 +80,26 @@ def write_vpcs_data(vpcs_data, hypervisor):
     hyp_data["vpc"] = vpcs_data
     write_hyp_data(hyp_data, hypervisor)
 
+def get_l1_transits_data(hypervisor):
+    hyp_data = get_hyp_data(hypervisor)
+    vpcs_data = hyp_data["l1_transit"]
+    return vpcs_data
+
+def write_l1_transits_data(l1_transit_data, hypervisor):
+    hyp_data = get_hyp_data(hypervisor)
+    hyp_data["l1_transit"] = l1_transit_data
+    write_hyp_data(hyp_data, hypervisor)
+
+def get_l2_transits_data(hypervisor):
+    hyp_data = get_hyp_data(hypervisor)
+    vpcs_data = hyp_data["l2_transit"]
+    return vpcs_data
+
+def write_l2_transits_data(l2_transit_data, hypervisor):
+    hyp_data = get_hyp_data(hypervisor)
+    hyp_data["l2_transit"] = l2_transit_data
+    write_hyp_data(hyp_data, hypervisor)
+
 def get_vpc_data(hypervisor, vpc):
     vpcs_data = get_vpcs_data(hypervisor)
     return vpcs_data[vpc]
@@ -95,6 +118,44 @@ def write_vpc_id(vpc_id, hypervisor):
     vpcs_data = get_vpcs_data(hypervisor)
     vpcs_data["id"] = str(vpc_id)
     write_vpcs_data(vpcs_data, hypervisor)
+
+def get_l1_transit_data(hypervisor, l1_transit):
+    l1_transits_data = get_l1_transits_data(hypervisor)
+    return l1_transits_data[l1_transit]
+
+def write_l1_transit_data(l1_transit_data, l1_transit, hypervisor):
+    l1_transits_data = get_l1_transits_data(hypervisor)
+    l1_transits_data[l1_transit] = l1_transit_data
+    write_l1_transits_data(l1_transits_data, hypervisor)
+
+def get_l1_transit_id(hypervisor):
+    l1_transits_data = get_l1_transits_data(hypervisor)
+    l1_transit_id = int(l1_transits_data["id"])
+    return l1_transit_id
+
+def write_l1_transit_id(l1_transit_id, hypervisor):
+    l1_transits_data = get_l1_transits_data(hypervisor)
+    l1_transits_data["id"] = str(l1_transit_id)
+    write_l1_transits_data(l1_transits_data, hypervisor)
+
+def get_l2_transit_data(hypervisor, l2_transit):
+    l2_transits_data = get_l2_transits_data(hypervisor)
+    return l2_transits_data[l2_transit]
+
+def write_l2_transit_data(l2_transit_data, l2_transit, hypervisor):
+    l2_transits_data = get_l2_transits_data(hypervisor)
+    l2_transits_data[l2_transit] = l2_transit_data
+    write_l2_transits_data(l2_transits_data, hypervisor)
+
+def get_l2_transit_id(hypervisor):
+    l2_transits_data = get_l2_transits_data(hypervisor)
+    l2_transit_id = int(l2_transits_data["id"])
+    return l2_transit_id
+
+def write_l2_transit_id(l2_transit_id, hypervisor):
+    l2_transits_data = get_l2_transits_data(hypervisor)
+    l2_transits_data["id"] = str(l2_transit_id)
+    write_l2_transits_data(l2_transits_data, hypervisor)
 
 def get_spines_data(hypervisor, vpc):
     vpc_data = get_vpc_data(hypervisor, vpc)
@@ -245,6 +306,21 @@ def hyp_add_vpc(hypervisor, cust_vpc_name, hyp_vpc_name):
     write_pcs_data(new_pcs_data, cust_vpc_name, hypervisor)
     new_pc_id = "1"
     write_pc_id(new_pc_id, cust_vpc_name, hypervisor)
+
+def get_hyp_l1_transit_name(hypervisor, l1_transit):
+    l1_transit_data = get_l1_transit_data(hypervisor, l1_transit)
+    hyp_l1_transit_name = l1_transit_data["name"]
+    return hyp_l1_transit_name
+
+def write_hyp_l1_transit_name(hyp_l1_transit_name, l1_transit, hypervisor):
+    l1_transit_data = get_l1_transit_data(hypervisor, l1_transit)
+    l1_transit_data["name"] = hyp_l1_transit_name
+    write_l1_transit_data(l1_transit_data, l1_transit, hypervisor)
+
+def hyp_add_l1_transit(hypervisor, cust_l1_transit_name, hyp_l1_transit_name):
+    new_l1_transit_data = {}
+    write_l1_transit_data(new_l1_transit_data, cust_l1_transit_name, hypervisor)
+    write_hyp_l1_transit_name(hyp_l1_transit_name, cust_l1_transit_name, hypervisor)
 
 def get_hyp_spine_name(hypervisor, vpc, spine):
     spine_data = get_spine_data(hypervisor, vpc, spine)

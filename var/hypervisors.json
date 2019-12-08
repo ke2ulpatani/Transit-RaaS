@@ -1,1 +1,15 @@
-{"customer_id": "1", "h1": {"h_nsm_ip": "10.1.99.1/30", "ip": "172.16.2.1", "l1_transit": {"id": "1", "t1": {"name": ""}}, "l2_transit": {}, "nsm_br": "c1_m_b", "nsm_exists": "True", "nsm_h_ip": "10.1.99.2/30", "vpc": {"id": "2", "vpc_1": {"leaf": {"id": "10", "leaf1": {"name": "c1_l3"}, "leaf3": {"name": "c1_l4"}, "leaf4": {"name": "c1_l5"}, "leaf5": {"name": "c1_l6"}, "leaf6": {"name": "c1_l7"}, "leaf7": {"name": "c1_l8"}, "leaf8": {"name": "c1_l9"}}, "name": "c1_v1", "pc": {"c1_vm1": {"name": "c1_vm2"}, "id": "5", "pc1": {"name": "c1_vm3"}, "pc2": {"name": "c1_vm4"}}, "spine": {"id": "3", "spine1": {"name": "c1_s1"}, "spine2": {"name": "c1_s2"}}}}}, "h2": {"h_nsm_ip": "10.1.99.1", "ip": "172.16.2.2", "nsm_exists": "True", "nsm_h_ip": "10.1.99.2"}}
+{
+    "customer_id": "1",
+    "h1": {
+        "ip": "172.16.2.1",
+        "nsm_exists": "False",
+        "nsm_h_ip": "10.1.99.2/30",
+        "h_nsm_ip": "10.1.99.1/30"
+    },
+    "h2": {
+        "ip": "172.16.2.2",
+        "nsm_exists": "False",
+        "nsm_h_ip": "10.1.99.2",
+        "h_nsm_ip": "10.1.99.1"
+    }
+}

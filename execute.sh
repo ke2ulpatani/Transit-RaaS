@@ -26,3 +26,11 @@ fi
 if [ $cmd == "connect_pc_leaf" ]; then
 	python3 logic/connect_pc_leaf.py $config_file
 fi
+
+if [ $cmd == "create_l1_transit" ]; then
+	python3 logic/create_l1_transit.py $config_file
+fi
+
+if [ $cmd == "create_l2_transit" ]; then
+	python3 logic/create_l2_transit.py $config_file
+fi

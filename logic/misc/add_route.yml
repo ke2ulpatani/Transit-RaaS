@@ -1,0 +1,11 @@
+---
+- name: Ansible configure route to a VM
+  hosts: "{{ vm_ip }}"
+  user: root
+  gather_facts: no
+  become: yes
+  ignore_errors: yes
+
+  tasks:
+    - name: Configure route to VM {{ route_cmd }}
+      command: "ip route {{ route_cmd }}"

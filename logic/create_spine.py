@@ -151,5 +151,41 @@ if __name__=="__main__":
                 raise
         except:
             print("quagga_install playbook failed")
+            
+            
+        ##connect to available leafs
+        #try:
+        #  leaf_data = raas_utils.get_all_leafs(vpc_name)
+        #  #l_s_net,l_s_br,ve_l_s,ve_s_l,s_name,l_name,subnet_ip,subnet_range
+        #  #e.g. c1_br_l1_s1,c1_net_l1_s1,c1_ve_l1_s1,c1_ve_s1_l1,
+        #  for leaf in leaf_data:
+        #      leaf_id=hyp_utils.get_hyp_leaf_name(hypervisor,vpc_name,leaf).split('_')[2]
+        #  
+        #      network=raas_utils.get_new_veth_subnet('lns_spine')
+        #      subnet = network.split('/')
+        #      b_ip = str(ipaddress.ip_address(subnet[0])+1) + '/' + subnet[1]
+        #      dhcp_range = str(ipaddress.ip_address(subnet[0])+2)+','+ \
+        #              str(ipaddress.ip_address(subnet[0])+6)
+        #      
+        #       
+        #      l_s_net=" l_s_net=" + vpcid + "_net_" + leaf_id+"_" + "s" + str(sid)
+        #      l_s_br=" l_s_br=" + vpcid + "_br_" + leaf_id+"_" + "s" + str(sid)
+        #      ve_l_s=" ve_l_s=" + vpcid + "_ve_" + leaf_id+"_" + "s" + str(sid)
+        #      ve_s_l=" ve_s_l=" + vpcid + "_ve_" + "s" + str(sid) +"_" + leaf_id
+        #      s_name_arg=" s_name="+spine_id
+        #      l_name_arg=" l_name="+leaf_name_hyp
+        #      subnet_ip_arg=" subnet_ip="+b_ip
+        #      subnet_range_arg=" subnet_range="+dhcp_range
+        #      
+        #      extra_vars = constants.ansible_become_pass + l_s_net_arg + l_s_br_arg + ve_l_s_arg + ve_s_l_arg + s_name_arg + l_name_arg + subnet_ip_arg + subnet_range_arg + " " + hypervisor_arg
+        #      
+        #      raas_utils.run_shell_script("ansible-playbook logic/subnet/connect_leaf_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+        #      
+        #      new_subnet=str(ipaddress.ip_address(subnet[0])+8) + '/' + subnet[1]
+        #      raas_utils.update_veth_subnet('lns_spine',new_subnet)
+        #      
+        #except Exception as e:
+        #    print("Connecting leaf to spines failed: ",e)
+        #    raise
     except:
         print("create spine failed python failed")
