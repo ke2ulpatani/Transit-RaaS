@@ -46,17 +46,17 @@ if __name__=="__main__":
 
     if spine_capacity == "f1":
         vcpu = "1,1"
-        mem = constants.f1_mem
+        mem = "1G"
     elif spine_capacity == "f2":
         vcpu = "1,2"
-        mem = constants.f2_mem
+        mem = "2G"
     elif spine_capacity == "f3":
         vcpu = "1,3"
-        mem = constants.f3_mem
+        mem = "4G"
     else:
         print("Unknown flavor using default")
         vcpu = 1
-        mem = constants.f1_mem
+        mem = "1G"
     
     cid = hyp_utils.get_client_id()
     vpcid = hyp_utils.get_hyp_vpc_name(hypervisor, vpc_name)
@@ -76,16 +76,24 @@ if __name__=="__main__":
             s_vcpu_arg = "s_vcpu=" + str(vcpu)
 
             mgt_net_arg = "mgt_net=" + hyp_utils.get_mgmt_net(cid)
+            nsm_br_arg = "nsm_br=" + hyp_utils.get_nsm_br(hypervisor)
+
+            c_ve_s_nsm_arg = "ve_s_nsm=" + vpcid + "_ve_" \
+                    + "s" +str(sid) + "_" + "nsm"
+
+            c_ve_nsm_s_arg = "ve_nsm_s=" + vpcid + "_ve_" + "nsm" \
+                    + "_" + "s" + str(sid) 
 
             extra_vars = constants.ansible_become_pass + " " + \
                     image_arg + " " +  \
                     s_ram_arg + " " + s_vcpu_arg + " " + \
                     mgt_net_arg + " " + spine_name_ansible_arg + \
-                    " " + c_s_image_path_arg + " " +  hypervisor_arg
+                    " " + c_s_image_path_arg + " " +  hypervisor_arg+\
+                    " " + nsm_br_arg + " " + c_ve_s_nsm_arg + \
+                    " " + c_ve_nsm_s_arg
 
-            #print("here2")
+            print("here2")
             print("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            raise
             rc = os.system("ansible-playbook logic/vpc/create_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             if (rc != 0):
                 raise
@@ -107,51 +115,51 @@ if __name__=="__main__":
         #print("here3", sid+1, vpc_name, hypervisor)
 
 
-        #get spine management ip
-        try:
-            vm_name_arg = "vm_name="+spine_name_ansible
-            ip_file_path_arg = "ip_path=../../"+constants.temp_file
-            net_name_arg = "net_name=c" + str(cid) + "_m_net"
-            extra_vars = constants.ansible_become_pass + " " + \
-                    " " + vm_name_arg + " " +  hypervisor_arg + " " + ip_file_path_arg + " " + net_name_arg
+        ##get spine management ip
+        #try:
+        #    vm_name_arg = "vm_name="+spine_name_ansible
+        #    ip_file_path_arg = "ip_path=../../"+constants.temp_file
+        #    net_name_arg = "net_name=c" + str(cid) + "_m_net"
+        #    extra_vars = constants.ansible_become_pass + " " + \
+        #            " " + vm_name_arg + " " +  hypervisor_arg + " " + ip_file_path_arg + " " + net_name_arg
  
-            print("ansible-playbook logic/misc/get_vm_ip.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            rc = os.system("ansible-playbook logic/misc/get_vm_ip.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            if (rc != 0):
-                print ("get_vm_ip playbook failed")
-                raise
+        #    print("ansible-playbook logic/misc/get_vm_ip.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+        #    rc = os.system("ansible-playbook logic/misc/get_vm_ip.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+        #    if (rc != 0):
+        #        print ("get_vm_ip playbook failed")
+        #        raise
 
-            spine_ip = raas_utils.read_temp_file()
-            print(spine_ip, vpc_name, spine_name)
-            #raas_utils.write_spine_ip(vpc_name, spine_name, spine_ip)
-        except:
-            print("spine ip get and store failed")
-            raise
+        #    spine_ip = raas_utils.read_temp_file()
+        #    print(spine_ip, vpc_name, spine_name)
+        #    #raas_utils.write_spine_ip(vpc_name, spine_name, spine_ip)
+        #except:
+        #    print("spine ip get and store failed")
+        #    raise
 
-        #instal quagga
-        try:
-            #spine_ip = raas_utils.get_spine_ip(vpc_name, spine_name)
-            print("here1")
-            spine_ip_arg = "vm_ip="+spine_ip
-            print("here2", spine_ip_arg)
+        ##instal quagga
+        #try:
+        #    #spine_ip = raas_utils.get_spine_ip(vpc_name, spine_name)
+        #    print("here1")
+        #    spine_ip_arg = "vm_ip="+spine_ip
+        #    print("here2", spine_ip_arg)
 
-            ######
-            extra_vars = constants.ansible_become_pass + " " + \
-                    " " + spine_ip_arg
+        #    ######
+        #    extra_vars = constants.ansible_become_pass + " " + \
+        #            " " + spine_ip_arg
 
-            print(extra_vars, "here2.3")
-            ssh_common_args = "-o ProxyCommand=\"ssh -i " + constants.ssh_file + " ece792@" + hypervisor_ip + " " +\
-                    "-W %h:%p\""
-            print("here3", ssh_common_args)
+        #    print(extra_vars, "here2.3")
+        #    ssh_common_args = "-o ProxyCommand=\"ssh -i " + constants.ssh_file + " ece792@" + hypervisor_ip + " " +\
+        #            "-W %h:%p\""
+        #    print("here3", ssh_common_args)
 
-            print("ansible-playbook logic/misc/quagga_install.yml -i \""+spine_ip+",\" -v --extra-vars '"+extra_vars+"'"\
-                    + " --ssh-common-args='"+ssh_common_args+"'")
-            rc = os.system("ansible-playbook logic/misc/quagga_install.yml -i \""+spine_ip+",\" -v --extra-vars '"+extra_vars+"'"\
-                    + " --ssh-common-args='"+ssh_common_args+"'")
-            if (rc != 0):
-                raise
-        except:
-            print("quagga_install playbook failed")
+        #    print("ansible-playbook logic/misc/quagga_install.yml -i \""+spine_ip+",\" -v --extra-vars '"+extra_vars+"'"\
+        #            + " --ssh-common-args='"+ssh_common_args+"'")
+        #    rc = os.system("ansible-playbook logic/misc/quagga_install.yml -i \""+spine_ip+",\" -v --extra-vars '"+extra_vars+"'"\
+        #            + " --ssh-common-args='"+ssh_common_args+"'")
+        #    if (rc != 0):
+        #        raise
+        #except:
+        #    print("quagga_install playbook failed")
             
             
         ##connect to available leafs
