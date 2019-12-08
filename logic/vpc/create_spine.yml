@@ -20,6 +20,8 @@
         image: "{{ default_container_image }}"
         state: started
         privileged: yes
+        memory: {{ s_ram }}
+        cpuset_cpus: {{ s_vcpu }}
         command: sleep infinity
       register: result
 
@@ -29,9 +31,9 @@
         dest: "/var/run/netns/{{ s_name }}"
         state: link 
 
-    - name: Add transit to management network
+    - name: Add spine to management network
       docker_network:
-        name: "{{ mns }}"
+        name: "{{ mgt_net }}"
         connected:
           - "{{ s_name }}"
         appends: yes
