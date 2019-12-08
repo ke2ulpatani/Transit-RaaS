@@ -1,0 +1,44 @@
+---
+- name: Ansible configure tranist
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+    
+  tasks:
+    - name: Configure loopback address to transit
+      command: "ip netns exec {{ t_name }} ip addr add {{ t_loopback_ip }} dev lo"
+
+    - name: Adding veth pair between hypervisor and transit
+      command: "ip link add {{ ve_t_h }} type veth peer name {{ ve_h_t }}"
+
+    - name: Configure loopback address to transit
+      command: "ip link set {{ ve_t_h }} netns {{ t_name }}"
+
+    - name: Bringing {{ ve_t_h }} down
+      command: "ip netns exec {{ t_name }} ip link set {{ ve_t_h }} down"
+
+    - name: Assigning {{ t_h_ip }} for {{ ve_t_h }}
+      command: "ip netns exec {{ t_name }} ip addr add {{ t_h_ip }} dev {{ ve_t_h }}"
+
+    - name: Bringing {{ ve_t_h }} up
+      command: "ip netns exec {{ t_name }} ip netns exec {{ t_name }} ip link set {{ ve_t_h }} up"
+
+    - name: Bringing {{ ve_h_t }} down
+      command: "ip link set {{ve_h_t}} down"
+
+    - name:  Assigning {{ h_t_ip }} for {{ ve_h_t }}
+      command: "ip addr add {{h_t_ip}} dev {{ve_h_t}}"
+
+    - name: Bringing {{ ve_h_t }} up
+      command: "ip link set {{ve_h_t}} up"
+
+
+
+
+
+
+
+
+    - name: Set static IP on transit to HV interface
+      script: "../scripts/last_dev_assn_ip.sh {{ t_last_dev_ip }}"
+
