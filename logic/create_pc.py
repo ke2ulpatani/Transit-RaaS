@@ -44,18 +44,18 @@ if __name__=="__main__":
     pc_name = pc_data["pc_name"]
 
     if pc_capacity == "f1":
-        vcpu = 1
-        mem = constants.f1_mem
+        vcpu = "1,1"
+        mem = "1G"
     elif pc_capacity == "f2":
-        vcpu = 2
-        mem = constants.f2_mem
+        vcpu = "1,2"
+        mem = "2G"
     elif pc_capacity == "f3":
-        vcpu = 4
-        mem = constants.f3_mem
+        vcpu = "1,3"
+        mem = "4G"
     else:
         print("Unknown flavor using default")
-        vcpu = 1
-        mem = constants.f1_mem
+        vcpu = "1,1"
+        mem = "1G"
     
     cid = hyp_utils.get_client_id()
     hyp_vpc_name = hyp_utils.get_hyp_vpc_name(hypervisor, vpc_name)
@@ -64,43 +64,32 @@ if __name__=="__main__":
         #create_pc
         try:
             pcid = hyp_utils.get_pc_id(hypervisor, vpc_name)
-            image_arg = "image_path="+constants.img_path + \
-                    constants.pc_vm_img
+            #image_arg = "image_path="+constants.img_path + \
+            #        constants.pc_vm_img
+
             pc_name_ansible = hyp_vpc_name + "_" + "vm" + str(pcid)
-            pc_name_ansible_arg = "vm_name="+pc_name_ansible
-            c_s_image_path_arg = "c_vm_image_path="+constants.img_path+ \
-                    pc_name_ansible + ".img"
+            pc_name_ansible_arg = "c_name="+pc_name_ansible
+            #c_s_image_path_arg = "c_vm_image_path="+constants.img_path+ \
+            #        pc_name_ansible + ".img"
 
-            s_ram_arg = "vm_ram=" + str(mem)
-            s_vcpu_arg = "vm_vcpu=" + str(vcpu)
+            s_ram_arg = "c_ram=" + str(mem)
+            s_vcpu_arg = "c_vcpu=" + str(vcpu)
 
-            mgt_net_arg = "mgt_net=" + hyp_utils.get_mgmt_net(cid)
+            #mgt_net_arg = "mgt_net=" + hyp_utils.get_mgmt_net(cid)
 
             extra_vars = constants.ansible_become_pass + " " + \
-                    image_arg + " " +  \
                     s_ram_arg + " " + s_vcpu_arg + " " + \
-                    mgt_net_arg + " " + pc_name_ansible_arg + \
-                    " " + c_s_image_path_arg + " " +  hypervisor_arg
+                    pc_name_ansible_arg + \
+                    " " + hypervisor_arg
 
-            #print("here2")
-            print("ansible-playbook logic/pc/create_vm.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            rc = os.system("ansible-playbook logic/pc/create_vm.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            if (rc != 0):
-                raise
+            raas_utils.run_playbook("ansible-playbook logic/misc/create_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
                 
             hyp_utils.write_pc_id(pcid+1, vpc_name, hypervisor)
-            #print("here4", pc_name, vpc_name, hypervisor, pc_name_ansible)
             hyp_utils.vpc_add_pc(hypervisor, vpc_name, pc_name, pc_name_ansible)
             raas_utils.client_add_pc(hypervisor, vpc_name, pc_name, pc_capacity)
-
-            #raise
-            #raas_utils.add_mgmt_ns(hypervisor)
         except:
             print("create pc failed")
-            print("ansible-playbook logic/pc/delete_vm.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            os.system("ansible-playbook logic/pc/delete_vm.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            raas_utils.run_playbook("ansible-playbook logic/misc/delete_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             raise
-        #print("ansible-playbook logic/vpc/delete_pc.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-
     except:
         print("create pc failed python failed")

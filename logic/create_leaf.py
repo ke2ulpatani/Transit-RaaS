@@ -119,7 +119,8 @@ if __name__=="__main__":
               
               ve_l_s = vpc_id + "_ve_l" + str(lid)+"_" + spine_id.split('_')[2]
               ve_l_s_arg=" ve_ns1_ns2=" + ve_l_s
-              ve_s_l_arg=" ve_ns2_ns1=" + vpc_id + "_ve_" + spine_id.split('_')[2] +"_l" + str(lid)
+              ve_s_l = vpc_id + "_ve_" + spine_id.split('_')[2] +"_l" + str(lid)
+              ve_s_l_arg=" ve_ns2_ns1=" + ve_s_l
 
               l_name_arg=" ns1="+leaf_name_hyp
               s_name_arg=" ns2="+spine_id
@@ -135,7 +136,7 @@ if __name__=="__main__":
               new_subnet=str(ipaddress.ip_address(subnet[0])+8) + '/' + subnet[1]
               raas_utils.update_veth_subnet('lns_spine',new_subnet)
               
-              spine_ip=raas_utils.get_vm_ip(hypervisor,spine_id,net_name)
+              spine_ip=raas_utils.get_ns_ip(hypervisor,spine_id, ve_s_l)
               spine_ips.append(spine_ip)
 
               #Add route for leaf on spine only if dhcp_flag is true
@@ -146,12 +147,21 @@ if __name__=="__main__":
                   extra_vars=constants.ansible_become_pass+ns_name_arg+route_cmd_arg+ " " + hypervisor_arg
                   raas_utils.run_shell_script("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
              
+
+          ns_name_arg=" ns_name="+leaf_name_hyp
+    
+          #delete default arg
+          route_cmd_arg=" route_cmd=\"delete default\""
+          extra_vars=constants.ansible_become_pass+ns_name_arg+route_cmd_arg+ " " + hypervisor_arg
+          raas_utils.run_shell_script("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+
+          #add weightet default arg
           route_weight="add default scope global" 
           for curr_ip in spine_ips:
                route_weight+=" nexthop via "+curr_ip+" weight 1"
           route_weight='"'+route_weight+'"'
           print(route_weight)
-          ns_name_arg=" ns_name="+leaf_name_hyp
+
           route_cmd_arg=" route_cmd="+route_weight
           extra_vars=constants.ansible_become_pass+ns_name_arg+route_cmd_arg+ " " + hypervisor_arg
           raas_utils.run_shell_script("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")

@@ -46,23 +46,30 @@ if __name__=="__main__":
         try:
             hyp_pc_name = hyp_utils.get_hyp_pc_name(hypervisor, vpc_name, pc_name)
 
-            pc_name_ansible_arg = "pc_name=" + hyp_pc_name
+            pc_name_ansible_arg = "c_name=" + hyp_pc_name
 
             hyp_leaf_name = hyp_utils.get_hyp_leaf_name(hypervisor, vpc_name, leaf_name)
+            hyp_leaf_name_arg = "l_name=" + hyp_leaf_name
 
-            net_name = hyp_leaf_name + "_net"
+            l_br_name = hyp_leaf_name + "_br"
+            l_br_name_arg = "l_br_name=" + l_br_name
 
-            net_name_arg = "net_name=" + net_name
+            c_hyp_id = hyp_pc_name.split('_')[0]
+            vpc_hyp_id = hyp_pc_name.split('_')[1]
+            pc_hyp_id = hyp_pc_name.split('_')[2]
+
+            leaf_hyp_id = hyp_leaf_name.split('_')[2]
+
+            ve_l_pc_arg = "ve_l_pc=" + c_hyp_id + '_' + vpc_hyp_id + '_ve_' + leaf_hyp_id + ' ' + pc_hyp_id 
+            ve_pc_l_arg = "ve_pc_l=" + c_hyp_id + '_' + vpc_hyp_id + '_ve_' + pc_hyp_id + ' ' + leaf_hyp_id 
 
             extra_vars = constants.ansible_become_pass + " " + \
-                    pc_name_ansible_arg + " " + \
-                    net_name_arg + " " +  hypervisor_arg
+                    pc_name_ansible_arg + " " + hypervisor_arg + \
+                    " " + hyp_leaf_name_arg + " " + l_br_name_arg + " " + \
+                    ve_l_pc_arg + " " + ve_pc_l_arg
 
             #print("here2")
-            print("ansible-playbook logic/subnet/add_to_subnet.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            rc = os.system("ansible-playbook logic/subnet/add_to_subnet.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            if (rc != 0):
-                raise
+            raas_utils.run_playbook("ansible-playbook logic/subnet/add_to_subnet.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
                 
             raas_utils.client_add_leaf_pc(vpc_name, pc_name, leaf_name)
 
