@@ -61,7 +61,7 @@ if __name__=="__main__":
             leaf_name_hyp_arg = "c_name="+leaf_name_hyp
 
             subnet = network_id.split('/')
-            l_ip_arg = "br_ip=" + str(ipaddress.ip_address(subnet[0])+1) + '/' + subnet[1]
+            l_ip_arg = " br_ip=" + str(ipaddress.ip_address(subnet[0])+1) + '/' + subnet[1]
             dhcp_range_arg = "dhcp_range=" + str(ipaddress.ip_address(subnet[0])+2)+','+ \
                     str(ipaddress.ip_address(subnet[0])+254)
             l_br_arg = "br_name=" + leaf_name_hyp + "_br"
@@ -74,7 +74,7 @@ if __name__=="__main__":
             #create container
             try:
                 extra_vars = constants.ansible_become_pass + " " + \
-                        leaf_name_hyp_arg + " " + hypervisor_arg + c_vcpu_arg + c_ram_arg
+                        leaf_name_hyp_arg + " " + hypervisor_arg + " " + c_vcpu_arg + c_ram_arg
                 
                 raas_utils.run_playbook("ansible-playbook logic/misc/create_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             except Exception as e:
