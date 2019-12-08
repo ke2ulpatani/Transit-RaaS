@@ -1,0 +1,21 @@
+---
+- name: Ansible Delete container
+  hosts: "{{ hypervisor }}"
+  user: root
+  ignore_errors: yes
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    
+  tasks:
+    # Pull image specified by variable default_image from the Docker Hub
+    - name: Delete symbolic link to network namespace
+      file:
+        path: "/var/run/netns/{{ c_name }}"
+        state: absent
+
+    - name: Delete spine container
+      docker_container:
+        name: "{{ c_name }}"
+        state: absent
+      register: result

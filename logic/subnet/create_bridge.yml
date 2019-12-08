@@ -1,0 +1,23 @@
+---
+- name: Create network namespace with a bridge
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+    
+    - name: Create bridge in leaf namespace
+      command: "ip netns exec {{ l_name }} brctl addbr {{ br_name }}"
+
+    - name: Up the bridge
+      command: "ip netns exec {{ l_name }} ip link set {{ br_name }} up"
+
+    - name: Assign IP for dhcp server
+      command: "ip netns exec {{ l_name }} ip addr add {{ br_ip }} dev {{ br_name }}"
+      when: br_ip is defined and dhcp_range is defined
+
+    - name: Create DHCP server for the leaf namespace
+      command: "ip netns exec {{ l_name }} dnsmasq --interface={{ br_name }} --dhcp-range={{ dhcp_range }},12h --bind-interfaces --except-interface=lo"
+      when: br_ip is defined and dhcp_range is defined
