@@ -14,8 +14,15 @@
         src: "/proc/{{ result.container['State']['Pid'] }}/ns/net" 
         dest: "/var/run/netns/{{ s_name }}"
         state: unlink
-         
+
     - name: Delete spine container
       docker_container:
         name: "{{ s_name }}"
         state: absent
+    
+    - name: Delete veth from spine to mgmt
+      script: "../scripts/destroy_veth_hyp.sh {{ ve_s_nsm}}"
+    
+    - name: Delete veth from mgmt to spine
+      script: "../scripts/destroy_veth_hyp.sh {{ ve_nsm_s }}"
+       
