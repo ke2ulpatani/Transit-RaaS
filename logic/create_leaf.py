@@ -165,5 +165,5 @@ if __name__=="__main__":
         raas_utils.client_add_leaf(hypervisor, vpc_name, leaf_name, network_id)
 
     except Exception as e:
-        extra_vars=constants.ansible_become_pass + " " + c_name +  " " + hypervisor_arg
+        extra_vars=constants.ansible_become_pass + " " + leaf_name_hyp_arg +  " " + hypervisor_arg
         raas_utils.run_shell_script("ansible-playbook logic/misc/delete_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
