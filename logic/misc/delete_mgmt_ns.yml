@@ -8,8 +8,19 @@
     ansible_python_interpreter: /usr/bin/python3
     
   tasks:
-    - name: "Delete network {{ nsm }}"
-      docker_network:
-        name: "{{ nsm }}"
-        state: absent
-        force: yes
+    - name: configure static route
+      command: "ip route del {{ nid }} via {{ nsm_h_route }}" 
+
+    - name: Delete veth pair with hypervisor
+      shell: "{{ lookup('template', '../scripts/delete_veth_nsm_h.j2') }}"
+      args:
+        executable: /bin/bash
+
+    - name: Delete DHCP server for the bridge
+      shell: "ps -ef | grep dnsmasq | grep {{ ve_nsm_b }} |  sed 's/\s\+/ /g' | cut -f 2 -d ' ' | while read pid; do sudo kill -9 $pid ; done"
+
+    - name: Delete network
+      script: ../scripts/destroy_net.sh {{ b_net }} {{ b }}
+
+    - name: Delete management namespace
+      command: "ip netns del {{ nsm }}"
