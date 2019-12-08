@@ -19,3 +19,13 @@
 
     - name: Create DHCP server to connect leaf to spine
       command: "dnsmasq --interface={{ l_s_br }} --dhcp-range={{ subnet_range }},infinite --bind-interfaces --except-interface=lo"
+    
+    - name: Wait for dhclient to be started
+      pause:
+        seconds: 10
+    
+    - name: Run dhclient on leaf namespace
+      command: "ip netns exec {{l_name}} dhclient {{ ve_l_s }}"
+      
+    - name: Remove default route on leaf ns
+      command: "ip netns exec {{l_name}} ip route del default"

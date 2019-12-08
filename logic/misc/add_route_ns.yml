@@ -1,0 +1,11 @@
+---
+- name: Ansible configure default route to a NS
+  hosts: "{{ hypervisor }}"
+  user: root
+  gather_facts: no
+  become: yes
+  ignore_errors: yes
+
+  tasks:
+    - name: "Configure route to NS {{ route_cmd }}"
+      command: "ip netns exec {{ ns_name }} ip route {{ route_cmd }}"

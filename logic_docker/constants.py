@@ -36,13 +36,59 @@ h2_nsm_ip_file="var/h2_nsm_ip"
 nsm_h2_ip_file="var/nsm_h2_ip"
 var_vpc="var/vpc/"
 vpc_spines="/spines/"
+l1_transits="var/l1_transits/"
+l2_transits="var/l2_transits/"
 vpc_leafs="/leafs/"
 vpc_bridges="/bridges/"
 vpc_pcs="/pcs/"
 img_path="/var/lib/libvirt/images/"
 spine_vm_img="routerVM.img"
+pc_vm_img="sampleBuild.img"
+l1_transit_vm_img="routerVM.img"
+l2_transit_vm_img="routerVM.img"
 var_spines="/var/spines/"
 f1_mem = 976562
 f2_mem = 1953125
 f3_mem = 3906250
 temp_file = "var/temp"
+new_mgmt_net_data = {
+    "hypervisor_name" : "",
+    "network_id" : "",
+    "subnet_name" : ""
+}
+new_vpc_data = {
+    "hypervisor_name": "",
+    "vpc_name": ""
+}
+new_vpc_data["peering"] = False
+
+new_pc_data = {
+    "hypervisor_name":"",
+    "vpc_name":"",
+    "pc_name": "",
+    "capacity":""
+}
+new_pc_data["leafs"]=[]
+
+new_leaf_data = {
+    "hypervisor_name" : "",
+    "network_id" : "",
+    "leaf_name" : "",
+    "vpc_name": ""
+}
+new_spine_data = {
+    "hypervisor_name" : "",
+    "spine_name" : "",
+    "vpc_name": "",
+    "capacity": ""
+}
+new_l1_transit_data = {
+    "hypervisor_name" :"",
+    "l1_transit_name" :"",
+    "capacity": ""
+}
+new_l2_transit_data = {
+    "hypervisor_name" :"",
+    "l2_transit_name" :"",
+    "capacity": ""
+}

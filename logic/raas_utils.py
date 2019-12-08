@@ -31,7 +31,23 @@ def get_vm_ip(hypervisor,vm_name,net_name):
     except:
         print("IP fetch failed for machine: "+vm_name+" of network "+net_name)
         raise
-    
+
+def get_ns_ip(hypervisor,ns_name,ns_if):
+    try:
+        ns_name_arg=" ns_name="+ns_name
+        ns_if_arg=" ns_if="+ns_if
+        ip_file_path_arg = " ip_path=../../"+constants.temp_file
+        hypervisor_arg = " hypervisor="+hypervisor
+        extra_vars = constants.ansible_become_pass +  hypervisor_arg + ip_file_path_arg+ns_name_arg+ns_if_arg
+
+        rc = run_shell_script("ansible-playbook logic/misc/get_ns_ip.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+        if (rc != 0):
+            raise
+
+        return read_temp_file()
+    except:
+        print("IP fetch failed for machine: "+ns_name+" of interface "+ns_interface)
+        raise
 
 def get_mgmt_nid():
     json_data = do_json.json_read(constants.mgmt_net_file)
@@ -138,7 +154,7 @@ def client_add_leaf(hypervisor, vpc_name, leaf_name, network_id):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_leafs + leaf_name + ".json"
     new_leaf_data = constants.new_leaf_data
-    new_leaf_data["hypervisor_name"] = hypervisor_name
+    new_leaf_data["hypervisor_name"] = hypervisor
     new_leaf_data["vpc_name"] = vpc_name
     new_leaf_data["leaf_name"] = leaf_name
     new_leaf_data["network_id"] = network_id
@@ -155,8 +171,8 @@ def client_exists_pc(vpc_name, pc_name):
 def client_add_pc(hypervisor_name,vpc_name, pc_name, capacity):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_pcs + pc_name + ".json"
-    print(constants.new_vpc_data)
-    new_pc_data = constants.new_vpc_data
+    print(constants.new_pc_data)
+    new_pc_data = constants.new_pc_data
     new_pc_data["hypervisor_name"] = hypervisor_name
     new_pc_data["vpc_name"] = vpc_name
     new_pc_data["pc_name"] = pc_name

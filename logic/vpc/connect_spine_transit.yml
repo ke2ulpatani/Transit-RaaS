@@ -19,3 +19,7 @@
 
     - name: Create DHCP server to connect leaf to spine
       command: "dnsmasq --interface={{ s_t_br }} --dhcp-range={{ subnet_range }},infinite --bind-interfaces --except-interface=lo"
+
+    - name: Wait for dhclient to be started
+      pause:
+        seconds: 5

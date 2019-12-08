@@ -58,6 +58,7 @@ if __name__=="__main__":
         mem = constants.f1_mem
     
     cid = hyp_utils.get_client_id()
+    hyp_vpc_name = hyp_utils.get_hyp_vpc_name(hypervisor, vpc_name)
 
     try:
         #create_pc
@@ -65,7 +66,7 @@ if __name__=="__main__":
             pcid = hyp_utils.get_pc_id(hypervisor, vpc_name)
             image_arg = "image_path="+constants.img_path + \
                     constants.pc_vm_img
-            pc_name_ansible = "c" + str(cid) + "_" + "vm" + str(pcid)
+            pc_name_ansible = hyp_vpc_name + "_" + "vm" + str(pcid)
             pc_name_ansible_arg = "vm_name="+pc_name_ansible
             c_s_image_path_arg = "c_vm_image_path="+constants.img_path+ \
                     pc_name_ansible + ".img"
@@ -90,7 +91,7 @@ if __name__=="__main__":
             hyp_utils.write_pc_id(pcid+1, vpc_name, hypervisor)
             #print("here4", pc_name, vpc_name, hypervisor, pc_name_ansible)
             hyp_utils.vpc_add_pc(hypervisor, vpc_name, pc_name, pc_name_ansible)
-            raas_utils.client_add_pc(vpc_name, pc_name)
+            raas_utils.client_add_pc(hypervisor, vpc_name, pc_name, pc_capacity)
 
             #raise
             #raas_utils.add_mgmt_ns(hypervisor)

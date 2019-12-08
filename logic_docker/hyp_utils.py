@@ -44,6 +44,9 @@ def exists_mgmt_ns(hypervisor):
 def add_mgmt_ns(hypervisor):
     hyp_data = get_hyp_data(hypervisor)
     hyp_data["nsm_exists"] = "True"
+    hyp_data["vpc"] = {"id":"1"}
+    hyp_data["l1_transit"] = {"id":"1"}
+    hyp_data["l2_transit"] = {"id":"1"}
     write_hyp_data(hyp_data, hypervisor)
 
 def get_mgmt_net(cid):
@@ -77,6 +80,26 @@ def write_vpcs_data(vpcs_data, hypervisor):
     hyp_data["vpc"] = vpcs_data
     write_hyp_data(hyp_data, hypervisor)
 
+def get_l1_transits_data(hypervisor):
+    hyp_data = get_hyp_data(hypervisor)
+    vpcs_data = hyp_data["l1_transit"]
+    return vpcs_data
+
+def write_l1_transits_data(l1_transit_data, hypervisor):
+    hyp_data = get_hyp_data(hypervisor)
+    hyp_data["l1_transit"] = l1_transit_data
+    write_hyp_data(hyp_data, hypervisor)
+
+def get_l2_transits_data(hypervisor):
+    hyp_data = get_hyp_data(hypervisor)
+    vpcs_data = hyp_data["l2_transit"]
+    return vpcs_data
+
+def write_l2_transits_data(l2_transit_data, hypervisor):
+    hyp_data = get_hyp_data(hypervisor)
+    hyp_data["l2_transit"] = l2_transit_data
+    write_hyp_data(hyp_data, hypervisor)
+
 def get_vpc_data(hypervisor, vpc):
     vpcs_data = get_vpcs_data(hypervisor)
     return vpcs_data[vpc]
@@ -95,6 +118,44 @@ def write_vpc_id(vpc_id, hypervisor):
     vpcs_data = get_vpcs_data(hypervisor)
     vpcs_data["id"] = str(vpc_id)
     write_vpcs_data(vpcs_data, hypervisor)
+
+def get_l1_transit_data(hypervisor, l1_transit):
+    l1_transits_data = get_l1_transits_data(hypervisor)
+    return l1_transits_data[l1_transit]
+
+def write_l1_transit_data(l1_transit_data, l1_transit, hypervisor):
+    l1_transits_data = get_l1_transits_data(hypervisor)
+    l1_transits_data[l1_transit] = l1_transit_data
+    write_l1_transits_data(l1_transits_data, hypervisor)
+
+def get_l1_transit_id(hypervisor):
+    l1_transits_data = get_l1_transits_data(hypervisor)
+    l1_transit_id = int(l1_transits_data["id"])
+    return l1_transit_id
+
+def write_l1_transit_id(l1_transit_id, hypervisor):
+    l1_transits_data = get_l1_transits_data(hypervisor)
+    l1_transits_data["id"] = str(l1_transit_id)
+    write_l1_transits_data(l1_transits_data, hypervisor)
+
+def get_l2_transit_data(hypervisor, l2_transit):
+    l2_transits_data = get_l2_transits_data(hypervisor)
+    return l2_transits_data[l2_transit]
+
+def write_l2_transit_data(l2_transit_data, l2_transit, hypervisor):
+    l2_transits_data = get_l2_transits_data(hypervisor)
+    l2_transits_data[l2_transit] = l2_transit_data
+    write_l2_transits_data(l2_transits_data, hypervisor)
+
+def get_l2_transit_id(hypervisor):
+    l2_transits_data = get_l2_transits_data(hypervisor)
+    l2_transit_id = int(l2_transits_data["id"])
+    return l2_transit_id
+
+def write_l2_transit_id(l2_transit_id, hypervisor):
+    l2_transits_data = get_l2_transits_data(hypervisor)
+    l2_transits_data["id"] = str(l2_transit_id)
+    write_l2_transits_data(l2_transits_data, hypervisor)
 
 def get_spines_data(hypervisor, vpc):
     vpc_data = get_vpc_data(hypervisor, vpc)
@@ -156,6 +217,36 @@ def write_leaf_id(leaf_id, vpc, hypervisor):
     leafs_data["id"] = str(leaf_id)
     write_leafs_data(leafs_data, vpc, hypervisor)
 
+def get_pcs_data(hypervisor, vpc):
+    vpc_data = get_vpc_data(hypervisor, vpc)
+    pcs_data = vpc_data["pc"]
+    return pcs_data
+
+def write_pcs_data(pcs_data, vpc, hypervisor):
+    vpc_data = get_vpc_data(hypervisor, vpc)
+    vpc_data["pc"] = pcs_data
+    write_vpc_data(vpc_data, vpc, hypervisor)
+
+def get_pc_data(hypervisor, vpc, pc):
+    pcs_data = get_pcs_data(hypervisor, vpc)
+    pc_data = pcs_data[pc]
+    return pc_data
+
+def write_pc_data(pc_data, pc, vpc, hypervisor):
+    pcs_data = get_pcs_data(hypervisor, vpc)
+    pcs_data[pc] = pc_data
+    write_pcs_data(pcs_data, vpc, hypervisor)
+
+def get_pc_id(hypervisor, vpc):
+    pcs_data = get_pcs_data(hypervisor, vpc)
+    pc_id = int(pcs_data["id"])
+    return pc_id
+
+def write_pc_id(pc_id, vpc, hypervisor):
+    pcs_data = get_pcs_data(hypervisor, vpc)
+    pcs_data["id"] = str(pc_id)
+    write_pcs_data(pcs_data, vpc, hypervisor)
+
 def get_bridges_data(hypervisor, vpc):
     vpc_data = get_vpc_data(hypervisor, vpc)
     bridges_data = vpc_data["bridges"]
@@ -211,6 +302,26 @@ def hyp_add_vpc(hypervisor, cust_vpc_name, hyp_vpc_name):
     new_leaf_id = "1"
     write_leaf_id(new_leaf_id, cust_vpc_name, hypervisor)
 
+    new_pcs_data = {}
+    write_pcs_data(new_pcs_data, cust_vpc_name, hypervisor)
+    new_pc_id = "1"
+    write_pc_id(new_pc_id, cust_vpc_name, hypervisor)
+
+def get_hyp_l1_transit_name(hypervisor, l1_transit):
+    l1_transit_data = get_l1_transit_data(hypervisor, l1_transit)
+    hyp_l1_transit_name = l1_transit_data["name"]
+    return hyp_l1_transit_name
+
+def write_hyp_l1_transit_name(hyp_l1_transit_name, l1_transit, hypervisor):
+    l1_transit_data = get_l1_transit_data(hypervisor, l1_transit)
+    l1_transit_data["name"] = hyp_l1_transit_name
+    write_l1_transit_data(l1_transit_data, l1_transit, hypervisor)
+
+def hyp_add_l1_transit(hypervisor, cust_l1_transit_name, hyp_l1_transit_name):
+    new_l1_transit_data = {}
+    write_l1_transit_data(new_l1_transit_data, cust_l1_transit_name, hypervisor)
+    write_hyp_l1_transit_name(hyp_l1_transit_name, cust_l1_transit_name, hypervisor)
+
 def get_hyp_spine_name(hypervisor, vpc, spine):
     spine_data = get_spine_data(hypervisor, vpc, spine)
     hyp_spine_name = spine_data["name"]
@@ -236,7 +347,22 @@ def write_hyp_leaf_name(hyp_leaf_name, leaf, vpc, hypervisor):
     leaf_data["name"] = hyp_leaf_name 
     write_leaf_data(leaf_data, leaf, vpc, hypervisor)
 
-def vpc_add_spine(hypervisor, vpc, cust_leaf_name, hyp_leaf_name):
+def vpc_add_leaf(hypervisor, vpc, cust_leaf_name, hyp_leaf_name):
     new_leaf_data = {}
     write_leaf_data(new_leaf_data, cust_leaf_name, vpc, hypervisor)
     write_hyp_leaf_name(hyp_leaf_name, cust_leaf_name, vpc, hypervisor)
+
+def get_hyp_pc_name(hypervisor, vpc, pc):
+    pc_data = get_pc_data(hypervisor, vpc, pc)
+    hyp_pc_name = pc_data["name"]
+    return hyp_pc_name
+
+def write_hyp_pc_name(hyp_pc_name, pc, vpc, hypervisor):
+    pc_data = get_pc_data(hypervisor, vpc, pc)
+    pc_data["name"] = hyp_pc_name 
+    write_pc_data(pc_data, pc, vpc, hypervisor)
+
+def vpc_add_pc(hypervisor, vpc, cust_pc_name, hyp_pc_name):
+    new_pc_data = {}
+    write_pc_data(new_pc_data, cust_pc_name, vpc, hypervisor)
+    write_hyp_pc_name(hyp_pc_name, cust_pc_name, vpc, hypervisor)

@@ -1,0 +1,14 @@
+---
+- name: Ansible get vm ip
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+  ignore_errors: yes
+
+  tasks:
+    - name: Fetch namespace IPs
+      script: "../scripts/get_ns_ip.sh {{ ns_name }} {{ ns_if }}"
+      register: ns_ip
+
+    - name: Write IP to file
+      local_action: copy content="{{ ns_ip.stdout | trim }}" dest="{{ ip_path }}"

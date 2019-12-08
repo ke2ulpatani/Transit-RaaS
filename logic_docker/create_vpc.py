@@ -93,7 +93,7 @@ if __name__=="__main__":
         print("here3", hyp_vpc_name)
         hyp_utils.hyp_add_vpc(hypervisor, vpc_name, hyp_vpc_name)
 
-        raas_utils.client_add_vpc(vpc_name) 
+        raas_utils.client_add_vpc(hypervisor, vpc_name) 
         print("here4")
     except Exception:
         print ("create vpc failed")

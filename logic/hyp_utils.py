@@ -44,9 +44,9 @@ def exists_mgmt_ns(hypervisor):
 def add_mgmt_ns(hypervisor):
     hyp_data = get_hyp_data(hypervisor)
     hyp_data["nsm_exists"] = "True"
-    hyp_data["vpc"] = {"id":1}
-    hyp_data["l1_transit"] = {"id":1}
-    hyp_data["l2_transit"] = {"id":1}
+    hyp_data["vpc"] = {"id":"1"}
+    hyp_data["l1_transit"] = {"id":"1"}
+    hyp_data["l2_transit"] = {"id":"1"}
     write_hyp_data(hyp_data, hypervisor)
 
 def get_mgmt_net(cid):
