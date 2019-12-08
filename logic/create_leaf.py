@@ -7,12 +7,12 @@ import constants
 import ipaddress
 
 """@params:
-    param1 = vpc config file (required)
+    param1 = leaf config file (required)
 """
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
-        print("Please give vpc config file")
+        print("Please give leaf config file")
         exit(1)
 
     leaf_config_file = sys.argv[1]
