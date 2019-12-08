@@ -1,0 +1,12 @@
+---
+- name: Ansible configure tranist
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+    
+  tasks:
+    - name: Delete one end of veth
+      command: "../scripts/destroy_veth_hyp.sh {{ ve_e1_e2 }}"
+    - name: Delete second end of veth
+      command: "../scripts/destroy_veth_hyp.sh {{ ve_e2_e1 }}"
+      
