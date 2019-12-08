@@ -5,7 +5,7 @@ rip1=$2
 ras1=$3
 bgp_lo=$4
 
-setsebool zebra_write_config 1
+#setsebool zebra_write_config 1
 
 vtysh -c "conf t" -c "no router bgp 7675" -c "router bgp $self_as" \
 	-c "neighbor $rip1 remote-as $ras1"  \

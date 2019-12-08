@@ -58,18 +58,12 @@ if __name__=="__main__":
             #image_path, c_t_image_path, t_name, t_ram, t_vcpu, mgt_net, t_h_net, t_h_br, hypervisor, b_ip, dhcp_range
 
             l1id = hyp_utils.get_l1_transit_id(hypervisor)
-            image_arg = "image_path="+constants.img_path + \
-                    constants.l1_transit_vm_img
             l1_transit_name_ansible = "c"+ str(cid) + "_" + "l1t" + str(l1id)
             l1_transit_name_ansible_arg = "t_name="+l1_transit_name_ansible
-            c_t_image_path_arg = "c_t_image_path="+constants.img_path+ \
-                    l1_transit_name_ansible + ".img"
 
             t_ram_arg = "t_ram=" + str(mem)
             t_vcpu_arg = "t_vcpu=" + str(vcpu)
 
-            mgt_net_arg = "mgt_net=" + hyp_utils.get_mgmt_net(cid)
-            
             network=raas_utils.get_new_veth_subnet('l1t_h')
             subnet = network.split('/')
             b_ip = str(ipaddress.ip_address(subnet[0])+1) + '/' + subnet[1]
@@ -85,10 +79,9 @@ if __name__=="__main__":
             t_h_br_arg = "t_h_br=" + t_h_br
 
             extra_vars = constants.ansible_become_pass + " " + \
-                    image_arg + " " +  \
-                    t_ram_arg + " " + t_vcpu_arg + " " + \
-                    mgt_net_arg + " " + l1_transit_name_ansible_arg + \
-                    " " + c_t_image_path_arg + " " +  hypervisor_arg + \
+                    t_ram_arg + " " + t_vcpu_arg + " " + \ 
+                     + l1_transit_name_ansible_arg + \
+                    " "  +  hypervisor_arg + \
                     " " + t_h_net_arg + " " + t_h_br_arg + " " + b_ip_arg + \
                     " " + dhcp_range_arg
 
