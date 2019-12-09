@@ -39,37 +39,48 @@ if __name__=="__main__":
             exit(1)
 
     node_name = multipath_data["node_name"]
-    node_name_arg = "c_name=" + node_name
 
-    if not check_exists(node_type, node_name, vpc_name):
+    if (node_type == "spine"):
+        node_name_hyp = hyp_utils.get_hyp_spine_name(hypervisor, vpc_name, node_name)
+    elif (node_type == "t1_transit"):
+        node_name_hyp = hyp_utils.get_hyp_l1_transit_name(hypervisor, node_name)
+    elif (node_type == "t2_transit"):
+        node_name_hyp = hyp_utils.get_hyp_l2_transit_name(hypervisor, node_name)
+    else:
+        exit(1)
+
+    node_name_hyp_arg = "c_name="+node_name_hyp
+
+    if not raas_utils.check_exists(node_type, node_name, vpc_name):
         print("Node does not exists")
         exit(1)
 
     client_node_data = raas_utils.get_client_node_data(node_type, node_name, vpc_name)
 
     activate = multipath_data["activate"]
-    self_as_arg = "self_as="+ client_node_data["self_as"]
+    self_as = str(client_node_data["self_as"])
+    self_as_arg = "self_as="+ self_as
 
     if activate:
-        activate_arg == "activate=" + "true"
+        activate_arg = "activate=" + "true"
     else:
-        activate_arg == "activate=" + "false"
+        activate_arg = "activate=" + "false"
     
     try:
         #create_pc
         try:
             extra_vars = constants.ansible_become_pass + " " + \
-                    node_name_arg + self_as_arg +\
+                    node_name_hyp_arg + " " + self_as_arg +\
                     " " + hypervisor_arg + " " + activate_arg
 
             print("ansible-playbook logic/bgp/bgp_multipath.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            raise
             rc = raas_utils.run_playbook("ansible-playbook logic/bgp/bgp_multipath.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             if (rc != 0):
                 print ("bgp config failed playbook")
                 raise
                 
             raas_utils.write_client_node_data(node_type, node_name, vpc_name, "activate", True)
+            raas_utils.write_client_node_data(node_type, node_name, vpc_name, "self_as", self_as)
         except:
             print ("bgp config failed")
             raise

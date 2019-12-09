@@ -83,9 +83,12 @@ if __name__=="__main__":
 
             l_name_arg = "l_name=" + leaf_name_hyp
 
+            t_loopback_ip = raas_utils.get_new_veth_subnet('loopbacks')
+            t_loopback_ip_arg = "t_loopback_ip="+str(t_loopback_ip)
+
             extra_vars = constants.ansible_become_pass + " " + \
                     l_name_arg + " " + " " + l_br_arg + " " + \
-                    hypervisor_arg
+                    hypervisor_arg + " " + t_loopback_ip_arg
 
             if (dhcp_flag):
                 extra_vars += l_ip_arg + " " + dhcp_range_arg 
@@ -96,6 +99,10 @@ if __name__=="__main__":
             except Exception as e:
                 print("create bridge failed ", e)
                 raise
+
+            subnet = t_loopback_ip.split('/')
+            new_subnet = str(ipaddress.ip_address(subnet[0])+1) + '/' + subnet[1]
+            raas_utils.update_veth_subnet('loopbacks',new_subnet)
 
         except Exception as e:
             print("Creating leaf failed: ",e)
@@ -147,6 +154,9 @@ if __name__=="__main__":
                   extra_vars=constants.ansible_become_pass+ns_name_arg+route_cmd_arg+ " " + hypervisor_arg
                   raas_utils.run_shell_script("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
              
+              route_cmd_arg = " add "+t_loopback_ip+" via " + leaf_ip
+              extra_vars=constants.ansible_become_pass+ns_name_arg+route_cmd_arg+ " " + hypervisor_arg
+              raas_utils.run_playbook("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
 
           ns_name_arg=" ns_name="+leaf_name_hyp
     

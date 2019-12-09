@@ -2,6 +2,7 @@
 - name: Ansible BGP multipath
   hosts: "{{ hypervisor }}"
   user: root
+  become: yes
 
   tasks:
     - name: runnning multipatch shell scripts

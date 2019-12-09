@@ -255,15 +255,15 @@ def client_add_leaf_pc(vpc_name, pc_name, leaf_name):
 
 def check_exists(node_type, node_name, vpc_name):
     if (node_type == "spine"):
-        if not raas_utils.client_exists_spine(vpc_name, node_name):
+        if not client_exists_spine(vpc_name, node_name):
             print("Spine does not exists")
             return False
     elif (node_type == "l1_transit"):
-        if not raas_utils.client_exists_l1_transit(node_name):
+        if not client_exists_l1_transit(node_name):
             print("l1_transit does not exists")
             return False
     elif (node_type == "l2_transit"):
-        if not raas_utils.client_exists_l2_transit(node_name):
+        if not client_exists_l2_transit(node_name):
             print("l2_transit does not exists")
             return False
     else:
@@ -274,19 +274,19 @@ def check_exists(node_type, node_name, vpc_name):
 def get_client_node_data(node_type, node_name, vpc_name):
     file_path = ""
     if (node_type == "spine"):
-        if not raas_utils.client_exists_spine(vpc_name, node_name):
+        if not client_exists_spine(vpc_name, node_name):
             print("Spine does not exists")
             return False
         else:
             file_path = "var/vpc/" + vpc_name + "/spines/" + node_name
     elif (node_type == "l1_transit"):
-        if not raas_utils.client_exists_l1_transit(node_name):
+        if not client_exists_l1_transit(node_name):
             print("l1_transit does not exists")
             return False
         else:
             file_path = "var/l1_transits/" + node_name
     elif (node_type == "l2_transit"):
-        if not raas_utils.client_exists_l2_transit(node_name):
+        if not client_exists_l2_transit(node_name):
             print("l2_transit does not exists")
             return False
             file_path = "var/l2_transits/" + node_name
@@ -294,10 +294,32 @@ def get_client_node_data(node_type, node_name, vpc_name):
         print("Wrong node type")
         return False
     
-    return do_json.json_read(file_path)
+    return do_json.json_read(file_path + ".json") 
 
 def write_client_node_data(node_type, node_name, vpc_name, key, value):
     file_path = ""
     client_node_data = get_client_node_data(node_type, node_name, vpc_name)
     client_node_data[key] = value
-    do_json.json_write(client_node_data, file_path)
+
+    if (node_type == "spine"):
+        if not client_exists_spine(vpc_name, node_name):
+            print("Spine does not exists")
+            return False
+        else:
+            file_path = "var/vpc/" + vpc_name + "/spines/" + node_name
+    elif (node_type == "l1_transit"):
+        if not client_exists_l1_transit(node_name):
+            print("l1_transit does not exists")
+            return False
+        else:
+            file_path = "var/l1_transits/" + node_name
+    elif (node_type == "l2_transit"):
+        if not client_exists_l2_transit(node_name):
+            print("l2_transit does not exists")
+            return False
+            file_path = "var/l2_transits/" + node_name
+    else:
+        print("Wrong node type")
+        return False
+
+    do_json.json_write(client_node_data, file_path+".json")
