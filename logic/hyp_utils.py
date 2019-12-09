@@ -2,6 +2,8 @@ import sys
 import do_json
 import constants
 import os
+from logging import info as print
+logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 def get_client_id():
     hypervisors_data = do_json.json_read(constants.hypervisors_file)
