@@ -1,0 +1,22 @@
+---
+- name: Create docker container playbook
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+
+    - name: Check if container exists
+      script: "docker ps -a | grep {{pod}}"
+      register: c_result
+
+    - name: Create checkpoint for {{pod}}
+      command: "docker checkpoint create --leave-running=true {{pod}} {{version}}-before"
+      when: "{{pod}} in c_result.stdout"
+
+    - name: Restore checkpoint for {{pod}}
+      command: "docker checkpoint start --checkpoint {{version}} {{pod}}"
+      when: "{{pod}} in c_result.stdout"
+
