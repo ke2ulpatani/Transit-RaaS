@@ -17,7 +17,7 @@ name=$2
 local_ip=$3
 remote_ip=$4
 remote_subnet=$5
-
+c_name=$6
 
 if [ $action = "add" ]; then
 	#at ns1
