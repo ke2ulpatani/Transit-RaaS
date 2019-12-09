@@ -1,0 +1,15 @@
+---
+- name: Ansible create VxLAN tunnel on leaf
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+    
+  tasks:
+    - name: Adding VxLAN tunnel to {{ l_name }}
+      command: "ip netns exec {{ l_name }} ip link add {{ vxlan_tunnel_name }} type vxlan id 42 remote {{ remote_l_ip }} local {{ l_ip }} dstport 4789"
+      
+    - name: Bring VxLAN interface up on  {{ l_name }}
+      command: "ip netns exec {{ l_name }} ip link set {{ vxlan_tunnel_name }} up"    
+      
+    - name: Adding VxLAN point to {{ l_br_name }}
+      command: "ip netns exec {{ l_name }} brctl addif {{ l_br_name }} {{ vxlan_tunnel_name }}"    
