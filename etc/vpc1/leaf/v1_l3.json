@@ -1,0 +1,6 @@
+{
+    "hypervisor_name" : "h1",
+    "network_id" : "20.3.0.0/24",
+    "leaf_name" : "v1_l3",
+    "vpc_name": "vpc1"
+}
