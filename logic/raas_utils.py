@@ -295,3 +295,9 @@ def get_client_node_data(node_type, node_name, vpc_name):
         return False
     
     return do_json.json_read(file_path)
+
+def write_client_node_data(node_type, node_name, vpc_name, key, value):
+    file_path = ""
+    client_node_data = get_client_node_data(node_type, node_name, vpc_name)
+    client_node_data[key] = value
+    do_json.json_write(client_node_data, file_path)
