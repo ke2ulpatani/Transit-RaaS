@@ -3,8 +3,8 @@
 self_as=$1
 rip1=$2
 ras1=$3
-rip2=$4
-ras2=$5
+rip2=$4 #May remove ?
+ras2=$5 #May remove ? 
 adv_subnets=$6
 
 #setsebool zebra_write_config 1

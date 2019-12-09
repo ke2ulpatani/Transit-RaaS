@@ -322,6 +322,21 @@ def hyp_add_l1_transit(hypervisor, cust_l1_transit_name, hyp_l1_transit_name):
     write_l1_transit_data(new_l1_transit_data, cust_l1_transit_name, hypervisor)
     write_hyp_l1_transit_name(hyp_l1_transit_name, cust_l1_transit_name, hypervisor)
 
+def get_hyp_l2_transit_name(hypervisor, l2_transit):
+    l2_transit_data = get_l2_transit_data(hypervisor, l2_transit)
+    hyp_l2_transit_name = l2_transit_data["name"]
+    return hyp_l2_transit_name
+
+def write_hyp_l2_transit_name(hyp_l2_transit_name, l2_transit, hypervisor):
+    l2_transit_data = get_l2_transit_data(hypervisor, l2_transit)
+    l2_transit_data["name"] = hyp_l2_transit_name
+    write_l2_transit_data(l2_transit_data, l2_transit, hypervisor)
+
+def hyp_add_l2_transit(hypervisor, cust_l2_transit_name, hyp_l2_transit_name):
+    new_l2_transit_data = {}
+    write_l2_transit_data(new_l2_transit_data, cust_l2_transit_name, hypervisor)
+    write_hyp_l2_transit_name(hyp_l2_transit_name, cust_l2_transit_name, hypervisor)
+
 def get_hyp_spine_name(hypervisor, vpc, spine):
     spine_data = get_spine_data(hypervisor, vpc, spine)
     hyp_spine_name = spine_data["name"]
