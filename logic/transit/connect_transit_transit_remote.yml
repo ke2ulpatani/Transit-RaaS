@@ -11,4 +11,4 @@
       command: "ip netns exec {{ t_name }} ip link set dev {{ gre_tunnel_name }} up"    
 
     - name: Adding remote subnet to {{ t_name }}
-      command: "ip netns exec {{ t_name }} ip route add {{ remote_transit_ip }} via dev {{ gre_tunnel_name }}"    
+      command: "ip netns exec {{ t_name }} ip route add {{ remote_subnet }} via dev {{ gre_tunnel_name }}"    
