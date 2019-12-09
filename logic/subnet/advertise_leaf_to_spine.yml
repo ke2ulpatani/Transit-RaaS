@@ -1,0 +1,9 @@
+---
+- name: Ansible advertise leaf to spine
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+
+  tasks:
+    - name: Runninng shell script to advertise route in spine
+      script: "../scripts/advertise_leaf_to_spine.sh {{ spine_self_as }} {{ leaf_loopback }} {{ c_name }}"

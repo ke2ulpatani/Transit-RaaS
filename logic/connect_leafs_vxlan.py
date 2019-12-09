@@ -76,6 +76,32 @@ if __name__=="__main__":
         except Exception as e:
             print("Configure VXLAN on leaf 2 subnet failed",e)
             raise
+        
+        spines_data = raas_utils.get_all_spines(vpc_name)
+        try:
+            leaf1_loopback_arg=" leaf_loopback=" + leaf1_lo_ip
+            for spine in spines_data:
+                spine_id = hyp_utils.get_hyp_spine_name(leaf1_hypervisor_name,vpc_name,spine)
+                node_name_hyp_arg = "c_name="+spine_id
+                spine_self_as = raas_utils.get_client_node_data("spine",spine_id,vpc_name)["self_as"]
+                spine_self_as_arg = " spine_self_as=" + str(spine_self_as)
+                extra_vars = constants.ansible_become_pass + l1_hypervisor_arg + leaf1_loopback_arg + spine_self_as_arg + node_name_hyp_arg
+                raas_utils.run_playbook("ansible-playbook logic/subnet/advertise_leaf_to_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
+        except:
+            print("Advertising routes of leaf 1 failed",e)
+
+        try:
+            leaf2_loopback_arg=" leaf_loopback=" + leaf2_lo_ip
+            for spine in spines_data:
+                spine_id = hyp_utils.get_hyp_spine_name(leaf2_hypervisor_name,vpc_name,spine)
+                node_name_hyp_arg = "c_name="+spine_id
+                spine_self_as = raas_utils.get_client_node_data("spine",spine_id,vpc_name)["self_as"]
+                spine_self_as_arg = " spine_self_as=" + str(spine_self_as)
+                extra_vars = constants.ansible_become_pass + l2_hypervisor_arg + leaf2_loopback_arg + spine_self_as_arg + node_name_hyp_arg
+                raas_utils.run_playbook("ansible-playbook logic/subnet/advertise_leaf_to_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
+        except:
+            print("Advertising routes of leaf 2 failed",e)
+
     except Exception as e:
         print("Configure VXLAN failed",e)
 
