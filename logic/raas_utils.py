@@ -5,35 +5,31 @@ import os
 from os import listdir
 from os.path import isfile, join
 import logging
-formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
 
-#Setting up client logger
-client_log_handler = logging.FileHandler("client.log")        
-client_log_handler.setFormatter(formatter)
-client_logger = logging.getLogger("client")
-client_logger.setLevel(logging.INFO)
-client_logger.addHandler(client_log_handler)
-
-#Setting up services logger
-service_log_handler = logging.FileHandler("service.log")        
-service_log_handler.setFormatter(formatter)
-service_logger = logging.getLogger("service")
-service_logger.setLevel(logging.INFO)
-service_logger.addHandler(service_log_handler)
+__client_log_handler_info = logging.FileHandler(constants.client_log_file)
+__client_log_handler_info.setFormatter(formatter)
+__client_logger = logging.getLogger("client")
+__client_logger.setLevel(logging.INFO)
+__client_logger.addHandler(__client_log_handler_info)
 
 
-#from logging import info as print
-#logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+__service_log_handler = logging.FileHandler(constants.service_log_file)        
+__service_log_handler.setFormatter(formatter)
+__service_logger = logging.getLogger("service")
+__service_logger.setLevel(logging.INFO)
+__service_logger.addHandler(__service_log_handler)
+
 
 def log_client(output):
     try:
-        client_logger.info(output)
+        __client_logger.info(output)
     except Exception as e:
         print("client logging failed "+e)
 
 def log_service(output):
     try:
-        service_logger.info(output)
+        __service_logger.info(output)
     except Exception as e:
         print("service logging failed "+e)
     
