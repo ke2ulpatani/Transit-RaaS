@@ -32,39 +32,57 @@ if __name__=="__main__":
 
     vpc_name = ""
     #check if vpc exists for spine
-    if (node_type == "spine")
+    if (node_type == "spine"):
         vpc_name = multipath_data["vpc_name"]
         if not raas_utils.client_exists_vpc(vpc_name):
             print("VPC does not exist")
             exit(1)
 
     node_name = multipath_data["node_name"]
-    node_name_arg = "c_name=" node_name
 
-    if not check_exists(node_type, node_name, vpc_name):
+    if (node_type == "spine"):
+        node_name_hyp = hyp_utils.get_hyp_spine_name(hypervisor, vpc_name, node_name)
+    elif (node_type == "t1_transit"):
+        node_name_hyp = hyp_utils.get_hyp_l1_transit_name(hypervisor, node_name)
+    elif (node_type == "t2_transit"):
+        node_name_hyp = hyp_utils.get_hyp_l2_transit_name(hypervisor, node_name)
+    else:
+        exit(1)
+
+    node_name_hyp_arg = "c_name="+node_name_hyp
+
+    if not raas_utils.check_exists(node_type, node_name, vpc_name):
         print("Node does not exists")
         exit(1)
 
-    client_node_data = raas_utils.get_client_node_data(node_type, node_name, vpc_name):
+    client_node_data = raas_utils.get_client_node_data(node_type, node_name, vpc_name)
 
     activate = multipath_data["activate"]
-    self_as_arg = "self_as="client_node_data["self_as"]
+    self_as = str(client_node_data["self_as"])
+    self_as_arg = "self_as="+ self_as
+
+    if activate:
+        activate_arg = "activate=" + "true"
+    else:
+        activate_arg = "activate=" + "false"
     
     try:
         #create_pc
         try:
             extra_vars = constants.ansible_become_pass + " " + \
-                    node_name_arg + self_as_arg +\
-                    " " + hypervisor_arg
+                    node_name_hyp_arg + " " + self_as_arg +\
+                    " " + hypervisor_arg + " " + activate_arg
 
-            raas_utils.run_playbook("ansible-playbook logic/misc/create_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            print("ansible-playbook logic/bgp/bgp_multipath.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            rc = raas_utils.run_playbook("ansible-playbook logic/bgp/bgp_multipath.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            if (rc != 0):
+                print ("bgp config failed playbook")
+                raise
                 
-            hyp_utils.write_pc_id(pcid+1, vpc_name, hypervisor)
-            hyp_utils.vpc_add_pc(hypervisor, vpc_name, pc_name, pc_name_ansible)
-            raas_utils.client_add_pc(hypervisor, vpc_name, pc_name, pc_capacity)
+            raas_utils.write_client_node_data(node_type, node_name, vpc_name, "activate", True)
+            raas_utils.write_client_node_data(node_type, node_name, vpc_name, "self_as", self_as)
         except:
-            print("create pc failed")
-            raas_utils.run_playbook("ansible-playbook logic/misc/delete_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            print ("bgp config failed")
             raise
     except:
         print("create pc failed python failed")

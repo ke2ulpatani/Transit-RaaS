@@ -42,3 +42,7 @@ fi
 if [ $cmd == "connect_l1t_l2t" ]; then
 	python3 logic/connect_transit_l1_l2.py $config_file
 fi
+
+if [ $cmd == "enable_ecmp" ]; then
+	python3 logic/bgp_multipath.py $config_file
+fi

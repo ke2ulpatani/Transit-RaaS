@@ -43,6 +43,7 @@ if __name__=="__main__":
     #All prereq checks done at this point
     spine_capacity = spine_data["capacity"]
     spine_name = spine_data["spine_name"]
+    self_as = spine_data["self_as"]
 
     if spine_capacity == "f1":
         vcpu = "1,1"
@@ -81,7 +82,7 @@ if __name__=="__main__":
                 
             hyp_utils.write_spine_id(sid+1, vpc_name, hypervisor)
             hyp_utils.vpc_add_spine(hypervisor, vpc_name, spine_name, spine_name_ansible)
-            raas_utils.client_add_spine(hypervisor, vpc_name, spine_name, spine_capacity)
+            raas_utils.client_add_spine(hypervisor, vpc_name, spine_name, spine_capacity, self_as)
 
         except:
             print("create spine failed")
