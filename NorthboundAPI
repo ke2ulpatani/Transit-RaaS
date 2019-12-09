@@ -1,0 +1,114 @@
+1. 2nd level transit
+
+2. Single client being part of multiple subnets
+
+3. BGP multi pathing
+
+4. Project servicability (number of transit,spine (1,2), routing protocol choice - none/BGP, BGP (AS,Router-ID), Multipathing ?, PBR ?, Transit Capacity)
+
+5. VxLAN 
+
+
+
+
+=======================================
+
+Create_VPC ::	HYPERVISOR MUST BE PRESENT
+	
+	Hypervisor_Name :
+	VPC_Name :
+	Spine_Count : (1/2)
+
+Create_Spine :: HYPERVISOR AND VPC MUST BE PRESENT
+
+	Hypervisor_Name :
+	VPC_Name :
+	Spine_Name :
+	Capacity :
+
+Create_Subnet :: HYPERVISOR AND	VPC MUST BE PRESENT
+
+	Hypervisor_Name :
+	VPC_Name :
+	Network_ID : 
+	Subnet_Name ??
+
+Create_Client_Container :: HYPERVISOR AND VPC MUST BE PRESENT
+
+	Hypervisor_Name :
+	VPC_Name :
+	Client_PC_Name : 	
+
+Attach_Client :: HYPERVISORS, VPC, SUBNET MUST BE PRESENT
+
+	Network_ID_Hypervisor_Name :
+	VPC_Name :
+	Network_ID :
+	Client_PC_Hypervisor_Name :
+	Client_PC_Name :
+
+##Attach_Leaf-Spine :: HYPERVISOR, VPC AND SUBNET MUST BE PRESENT##
+
+	Hypervisor_Name :
+	VPC_Name :
+	Network_ID :
+	Spine_Name :           (WE ALWAYS CONNECT ALL LEAVES TO ALL SPINES)
+
+Create_L1-Transit :: HYPERVISOR MUST EXIST
+
+	Hypervisor_Name :
+	L1-Transit_Name :
+	Capacity :	
+
+Create_L2-Transit :: HYPERVISOR MUST EXIST
+
+	Hypervisor_Name :
+	L2-Transit_Name :
+	Capacity :
+
+##Attach_Spine-L1-Transit :: EVERYTHING MUST EXIST##
+
+	Hypervisor_Name :
+	VPC_Name :
+	Spine_Name :
+	L1-Transit_Name :
+
+##Attach_L1-Transit-L2-Transit :: EVERYTHING MUST EXIST##
+
+	Hypervisor_Name_L1-Transit :
+	L1-Transit_Name :
+	Hypervisor_Name_L2-Transit :
+	L2-Transit_Name :
+
+Enable_Routing_Spine_L1 :: EVERYTHING MUST EXIST
+
+	Hypervisor_Name :
+	VPC_Name :
+	Spine_Name :
+    Spine_AS :
+	L1_Transit_Name :
+    L1_Transit_AS :
+	Networks_Advertised :
+	
+Enable_Routing_L1_L2 :: EVERYTHING MUST EXIST
+
+	L1_Hypervisor_Name : 
+	L1_Name :
+    L1_AS :
+	L2_Hypervisor_Name :
+	L2_Name :
+    L2_AS :
+
+Activate_ECMP ::
+	
+	Hypervisor_Name :
+	Node_Name :
+	Activate : (Y/N)
+
+Enable_Path_Influence ::
+	
+	Enable : (Y/N)
+	Hypervisor_Name :
+	Node_Name : 
+	Path_Choice : #Name --> #IP
+	Weight :
