@@ -10,5 +10,3 @@ c_name=$4
 docker -it exec $c_name vtysh -c "conf t" -c "no router bgp 7675" -c "router bgp $self_as" \
 	-c "neighbor $neighbor_ip weight $bgp_weight" \
 	-c "end" -c "write"
-
-

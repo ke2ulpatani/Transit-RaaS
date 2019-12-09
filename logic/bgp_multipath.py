@@ -79,7 +79,7 @@ if __name__=="__main__":
                 print ("bgp config failed playbook")
                 raise
                 
-            raas_utils.write_client_node_data(node_type, node_name, vpc_name, "activate", True)
+            raas_utils.write_client_node_data(node_type, node_name, vpc_name, "ecmp", True)
             raas_utils.write_client_node_data(node_type, node_name, vpc_name, "self_as", self_as)
         except:
             print ("bgp config failed")

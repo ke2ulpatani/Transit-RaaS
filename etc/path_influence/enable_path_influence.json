@@ -1,0 +1,6 @@
+{
+	"hypervisor_name" : "h1",
+	"node_name" : "l1t1",
+	"path_choice" : "l1t2",
+	"weight" :  "200"  
+}
