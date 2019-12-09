@@ -1,5 +1,6 @@
 {
 	"hypervisor_name" : "",
 	"l1_transit_name": "",
-	"capacity": ""
+    "capacity": "",
+    "self_as": 60
 }

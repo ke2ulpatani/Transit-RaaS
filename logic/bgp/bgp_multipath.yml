@@ -5,4 +5,4 @@
 
   tasks:
     - name: runnning multipatch shell scripts
-      script: "../scripts/bgp_multipath.sh {{ self_as }} {{ c_name }}"
+      script: "../scripts/bgp_multipath.sh {{ self_as }} {{ activate }} {{ c_name }}"
