@@ -40,6 +40,12 @@ if __name__=="__main__":
 
     node_name = multipath_data["node_name"]
 
+    node_name_hyp_arg = "c_name="+node_name_hyp
+
+    if not raas_utils.check_exists(node_type, node_name, vpc_name):
+        print("Node does not exists")
+        exit(1)
+
     if (node_type == "spine"):
         node_name_hyp = hyp_utils.get_hyp_spine_name(hypervisor, vpc_name, node_name)
     elif (node_type == "t1_transit"):
@@ -47,12 +53,6 @@ if __name__=="__main__":
     elif (node_type == "t2_transit"):
         node_name_hyp = hyp_utils.get_hyp_l2_transit_name(hypervisor, node_name)
     else:
-        exit(1)
-
-    node_name_hyp_arg = "c_name="+node_name_hyp
-
-    if not raas_utils.check_exists(node_type, node_name, vpc_name):
-        print("Node does not exists")
         exit(1)
 
     client_node_data = raas_utils.get_client_node_data(node_type, node_name, vpc_name)
@@ -79,7 +79,7 @@ if __name__=="__main__":
                 print ("bgp config failed playbook")
                 raise
                 
-            raas_utils.write_client_node_data(node_type, node_name, vpc_name, "activate", True)
+            raas_utils.write_client_node_data(node_type, node_name, vpc_name, "ecmp", True)
             raas_utils.write_client_node_data(node_type, node_name, vpc_name, "self_as", self_as)
         except:
             print ("bgp config failed")
