@@ -1,8 +1,14 @@
 ---
-- name: Ansible attach leaf to spine
-  hosts: "{{ outer_transit }}"
+- name: Ansible attach remote transit VM
+  hosts: "{{ hypervisor }}"
   user: root
     
   tasks:
-    - name: GRE config on loca hosts
-      script: "../scripts/gre_tunnel.sh add {{ gre_tunnel_name }} {{ o_t_ip }} {{ r_i_t_ip }} {{ r_vm_subnet }}"
+    - name: Adding GRE tunnel to {{ t_name }}
+      command: "ip netns exec {{ t_name }} ip tunnel add {{ gre_tunnel_name }} mode gre local {{ local_transit_ip }} remote {{ remote_transit_ip }}"
+
+    - name: Bring GRE interface up on  {{ t_name }}
+      command: "ip netns exec {{ t_name }} ip link set dev {{ gre_tunnel_name }} up"    
+
+    - name: Adding remote subnet to {{ t_name }}
+      command: "ip netns exec {{ t_name }} ip route add {{ remote_transit_ip }} via dev {{ gre_tunnel_name }}"    
