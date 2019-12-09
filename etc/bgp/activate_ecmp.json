@@ -1,0 +1,5 @@
+{
+    "hypervisor_name":"h1",
+	"node_name": "spine1",
+	"activate" : "false"
+}
