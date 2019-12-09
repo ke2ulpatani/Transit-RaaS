@@ -1,0 +1,6 @@
+{"experimental" : true} into /etc/docker/daemon.json
+sudo service docker restart
+
+verify: docker version
+
+sudo apt-get install -y criu
