@@ -34,3 +34,11 @@ fi
 if [ $cmd == "create_l2_transit" ]; then
 	python3 logic/create_l2_transit.py $config_file
 fi
+
+if [ $cmd == "connect_s_l1t" ]; then
+	python3 logic/connect_s_l1t.py $config_file
+fi
+
+if [ $cmd == "connect_l1t_l2t" ]; then
+	python3 logic/connect_transit_l1_l2.py $config_file
+fi

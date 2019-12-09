@@ -15,6 +15,19 @@ def run_playbook(my_script):
     print(my_script)
     return os.system(my_script)
 
+def run_playbook_script(hypervisor,my_script):
+    try:
+        #This can run a playbook only on the management VM
+        extra_vars=constants.ansible_become_pass+" hypervisor="+hypervisor+" my_script="+my_script
+        playbook_command="ansible-playbook logic/misc/run_any_script.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'"
+        rc = run_playbook(playbook_command)
+        if (rc != 0):
+            raise
+        return read_temp_file()
+    except:
+        print("Failed to run script: ",my_script)
+        raise
+
 def get_vm_ip(hypervisor,vm_name,net_name):
     try:
         vm_name_arg = " vm_name="+vm_name
@@ -30,6 +43,22 @@ def get_vm_ip(hypervisor,vm_name,net_name):
         return read_temp_file()
     except:
         print("IP fetch failed for machine: "+vm_name+" of network "+net_name)
+        raise
+
+def get_hv_ip(hypervisor,if_name):
+    try:
+        if_name_arg=" if_name="+if_name
+        ip_file_path_arg = " ip_path=../../"+constants.temp_file
+        hypervisor_arg = " hypervisor="+hypervisor
+        extra_vars = constants.ansible_become_pass +  hypervisor_arg + ip_file_path_arg+if_name_arg
+
+        rc = run_shell_script("ansible-playbook logic/misc/get_hv_ip.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+        if (rc != 0):
+            raise
+
+        return read_temp_file()
+    except:
+        print("IP fetch failed for interface "+if_name)
         raise
 
 def get_ns_ip(hypervisor,ns_name,ns_if):
@@ -86,7 +115,7 @@ def client_exists_spine(vpc_name, spine_name):
 
     return os.path.exists(file_path)
 
-def client_add_spine(hypervisor, vpc_name, spine_name, capacity):
+def client_add_spine(hypervisor, vpc_name, spine_name, capacity, self_as):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_spines + spine_name + ".json"
 
@@ -95,13 +124,14 @@ def client_add_spine(hypervisor, vpc_name, spine_name, capacity):
     new_spine_data["vpc_name"] = vpc_name
     new_spine_data["spine_name"] = spine_name
     new_spine_data["capacity"] = capacity
+    new_spine_data["self_as"] = self_as
     do_json.json_write(new_spine_data, file_path)
 
 def client_exists_l1_transit(l1_transit_name):
     file_path = constants.l1_transits + l1_transit_name + ".json"
     return os.path.exists(file_path)
 
-def client_add_l1_transit(hypervisor, l1_transit_name, capacity):
+def client_add_l1_transit(hypervisor, l1_transit_name, capacity, self_as):
     dir_path = constants.l1_transits;
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
@@ -112,13 +142,14 @@ def client_add_l1_transit(hypervisor, l1_transit_name, capacity):
     new_l1_transit_data["hypervisor_name"] = hypervisor
     new_l1_transit_data["l1_transit_name"] = l1_transit_name
     new_l1_transit_data["capacity"] = capacity
+    new_l1_transit_data["self_as"] = self_as
     do_json.json_write(new_l1_transit_data, file_path)
 
 def client_exists_l2_transit(l2_transit_name):
     file_path = constants.l2_transits + l2_transit_name + ".json"
     return os.path.exists(file_path)
 
-def client_add_l2_transit(hypervisor, l2_transit_name, capacity):
+def client_add_l2_transit(hypervisor, l2_transit_name, capacity, self_as):
     dir_path = constants.l2_transits;
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
@@ -129,6 +160,7 @@ def client_add_l2_transit(hypervisor, l2_transit_name, capacity):
     new_l2_transit_data["hypervisor_name"] = hypervisor
     new_l2_transit_data["l2_transit_name"] = l2_transit_name
     new_l2_transit_data["capacity"] = capacity
+    new_l2_transit_data["self_as"] = self_as
     do_json.json_write(new_l2_transit_data, file_path)
 
 def client_exists_leaf(vpc_name, leaf_name):
@@ -221,3 +253,45 @@ def client_add_leaf_pc(vpc_name, pc_name, leaf_name):
     pc_data["leafs"] = leafs
     do_json.json_write(pc_data, file_path) 
 
+def check_exists(node_type, node_name, vpc_name):
+    if (node_type == "spine"):
+        if not raas_utils.client_exists_spine(vpc_name, node_name):
+            print("Spine does not exists")
+            return False
+    elif (node_type == "l1_transit"):
+        if not raas_utils.client_exists_l1_transit(node_name):
+            print("l1_transit does not exists")
+            return False
+    elif (node_type == "l2_transit"):
+        if not raas_utils.client_exists_l2_transit(node_name):
+            print("l2_transit does not exists")
+            return False
+    else:
+        print("Wrong node type")
+        return False
+    return True
+
+def get_client_node_data(node_type, node_name, vpc_name):
+    file_path = ""
+    if (node_type == "spine"):
+        if not raas_utils.client_exists_spine(vpc_name, node_name):
+            print("Spine does not exists")
+            return False
+        else:
+            file_path = "var/vpc/" + vpc_name + "/spines/" + node_name
+    elif (node_type == "l1_transit"):
+        if not raas_utils.client_exists_l1_transit(node_name):
+            print("l1_transit does not exists")
+            return False
+        else:
+            file_path = "var/l1_transits/" + node_name
+    elif (node_type == "l2_transit"):
+        if not raas_utils.client_exists_l2_transit(node_name):
+            print("l2_transit does not exists")
+            return False
+            file_path = "var/l2_transits/" + node_name
+    else:
+        print("Wrong node type")
+        return False
+    
+    return do_json.json_read(file_path)

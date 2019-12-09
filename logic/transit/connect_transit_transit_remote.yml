@@ -2,6 +2,7 @@
 - name: Ansible attach remote transit VM
   hosts: "{{ hypervisor }}"
   user: root
+  become: yes
     
   tasks:
     - name: Adding GRE tunnel to {{ t_name }}
@@ -11,4 +12,4 @@
       command: "ip netns exec {{ t_name }} ip link set dev {{ gre_tunnel_name }} up"    
 
     - name: Adding remote subnet to {{ t_name }}
-      command: "ip netns exec {{ t_name }} ip route add {{ remote_subnet }} via dev {{ gre_tunnel_name }}"    
+      command: "ip netns exec {{ t_name }} ip route add {{ remote_subnet }} dev {{ gre_tunnel_name }}"    

@@ -16,9 +16,6 @@
       args:
         executable: /bin/bash
 
-    - name: Delete DHCP server for the bridge
-      shell: "ps -ef | grep dnsmasq | grep {{ ve_nsm_b }} |  sed 's/\s\+/ /g' | cut -f 2 -d ' ' | while read pid; do sudo kill -9 $pid ; done"
-
     - name: Delete network
       script: ../scripts/destroy_net.sh {{ b_net }} {{ b }}
 

@@ -1,0 +1,16 @@
+---
+- name: Ansible get vm ip
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+  ignore_errors: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+    - name: Fetch namespace IPs
+      script: "{{my_script}}"
+      register: my_ip
+
+    - name: Write IP to file
+      local_action: copy content="{{ my_ip.stdout | trim }}" dest="{{ ip_path }}"

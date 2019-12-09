@@ -1,0 +1,16 @@
+---
+- name: Ansible get interface ip
+  hosts: "{{ hypervisor }}"
+  user: root
+  become: yes
+  ignore_errors: yes
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+
+  tasks:
+    - name: Fetch interface IPs
+      script: "../scripts/get_hv_ip.sh {{ if_name }}"
+      register: if_ip
+
+    - name: Write IP to file
+      local_action: copy content="{{ if_ip.stdout | trim }}" dest="{{ ip_path }}"

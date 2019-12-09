@@ -5,7 +5,7 @@
   become: yes
   #  ignore_errors: yes
   vars:
-    ansible_python_interpreter: /usr/bin/bash
+    ansible_python_interpreter: /usr/bin/python3
     
   tasks:
     - name: Create management namespace
