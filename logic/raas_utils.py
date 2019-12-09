@@ -115,7 +115,7 @@ def client_exists_spine(vpc_name, spine_name):
 
     return os.path.exists(file_path)
 
-def client_add_spine(hypervisor, vpc_name, spine_name, capacity):
+def client_add_spine(hypervisor, vpc_name, spine_name, capacity, self_as):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_spines + spine_name + ".json"
 
@@ -124,13 +124,14 @@ def client_add_spine(hypervisor, vpc_name, spine_name, capacity):
     new_spine_data["vpc_name"] = vpc_name
     new_spine_data["spine_name"] = spine_name
     new_spine_data["capacity"] = capacity
+    new_spine_data["self_as"] = self_as
     do_json.json_write(new_spine_data, file_path)
 
 def client_exists_l1_transit(l1_transit_name):
     file_path = constants.l1_transits + l1_transit_name + ".json"
     return os.path.exists(file_path)
 
-def client_add_l1_transit(hypervisor, l1_transit_name, capacity):
+def client_add_l1_transit(hypervisor, l1_transit_name, capacity, self_as):
     dir_path = constants.l1_transits;
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
@@ -141,13 +142,14 @@ def client_add_l1_transit(hypervisor, l1_transit_name, capacity):
     new_l1_transit_data["hypervisor_name"] = hypervisor
     new_l1_transit_data["l1_transit_name"] = l1_transit_name
     new_l1_transit_data["capacity"] = capacity
+    new_l1_transit_data["self_as"] = self_as
     do_json.json_write(new_l1_transit_data, file_path)
 
 def client_exists_l2_transit(l2_transit_name):
     file_path = constants.l2_transits + l2_transit_name + ".json"
     return os.path.exists(file_path)
 
-def client_add_l2_transit(hypervisor, l2_transit_name, capacity):
+def client_add_l2_transit(hypervisor, l2_transit_name, capacity, self_as):
     dir_path = constants.l2_transits;
     if not os.path.exists(dir_path):
         os.makedirs(dir_path)
@@ -158,6 +160,7 @@ def client_add_l2_transit(hypervisor, l2_transit_name, capacity):
     new_l2_transit_data["hypervisor_name"] = hypervisor
     new_l2_transit_data["l2_transit_name"] = l2_transit_name
     new_l2_transit_data["capacity"] = capacity
+    new_l2_transit_data["self_as"] = self_as
     do_json.json_write(new_l2_transit_data, file_path)
 
 def client_exists_leaf(vpc_name, leaf_name):
@@ -250,3 +253,45 @@ def client_add_leaf_pc(vpc_name, pc_name, leaf_name):
     pc_data["leafs"] = leafs
     do_json.json_write(pc_data, file_path) 
 
+def check_exists(node_type, node_name, vpc_name):
+    if (node_type == "spine"):
+        if not raas_utils.client_exists_spine(vpc_name, node_name):
+            print("Spine does not exists")
+            return False
+    elif (node_type == "l1_transit"):
+        if not raas_utils.client_exists_l1_transit(node_name):
+            print("l1_transit does not exists")
+            return False
+    elif (node_type == "l2_transit"):
+        if not raas_utils.client_exists_l2_transit(node_name):
+            print("l2_transit does not exists")
+            return False
+    else:
+        print("Wrong node type")
+        return False
+    return True
+
+def get_client_node_data(node_type, node_name, vpc_name):
+    file_path = ""
+    if (node_type == "spine"):
+        if not raas_utils.client_exists_spine(vpc_name, node_name):
+            print("Spine does not exists")
+            return False
+        else:
+            file_path = "var/vpc/" + vpc_name + "/spines/" + node_name
+    elif (node_type == "l1_transit"):
+        if not raas_utils.client_exists_l1_transit(node_name):
+            print("l1_transit does not exists")
+            return False
+        else:
+            file_path = "var/l1_transits/" + node_name
+    elif (node_type == "l2_transit"):
+        if not raas_utils.client_exists_l2_transit(node_name):
+            print("l2_transit does not exists")
+            return False
+            file_path = "var/l2_transits/" + node_name
+    else:
+        print("Wrong node type")
+        return False
+    
+    return do_json.json_read(file_path)

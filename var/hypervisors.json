@@ -1,1 +1,74 @@
 {"customer_id": "1", "h1": {"h_nsm_ip": "10.1.99.1/30", "ip": "172.16.2.1", "l1_transit": {"id": "4", "l1_transit1": {"name": "c1_l1t1"}, "l1_transit2": {"name": "c1_l1t2"}, "l1_transit3": {"name": "c1_l1t3"}}, "l2_transit": {"id": "3", "l2_transit1": {"name": "c1_l2t2"}}, "nsm_br": "c1_m_b", "nsm_exists": "True", "nsm_h_ip": "10.1.99.2/30", "vpc": {"id": "3", "vpc1": {"leaf": {"id": "5", "leaf4": {"name": "c1_v1_l1"}, "leaf5": {"name": "c1_v1_l2"}, "leaf6": {"name": "c1_v1_l3"}, "leaf7": {"name": "c1_v1_l4"}}, "name": "c1_v1", "pc": {"id": "3", "pc1": {"name": "c1_v1_vm1"}, "pc2": {"name": "c1_v1_vm2"}}, "spine": {"id": "3", "spine1": {"name": "c1_v1_s1"}, "spine2": {"name": "c1_v1_s2"}}}, "vpc2": {"leaf": {"id": "1"}, "name": "c1_v2", "pc": {"id": "1"}, "spine": {"id": "3", "v2_s1": {"name": "c1_v2_s1"}, "v2_s2": {"name": "c1_v2_s2"}}}}}, "h2": {"h_nsm_ip": "10.1.99.5/30", "ip": "172.16.2.2", "l1_transit": {"id": "2", "l1_transit4": {"name": "c1_l1t1"}}, "l2_transit": {"id": "1"}, "nsm_br": "c1_m_b", "nsm_exists": "True", "nsm_h_ip": "10.1.99.6/30", "vpc": {"id": "2", "vpc4": {"name": "c1_v1", "spine": {"id": "1"}, "leaf": {"id": "1"}, "pc": {"id": "1"}}}}}
+{
+    "customer_id": "1",
+    "h1": {
+        "h_nsm_ip": "10.1.99.1/30",
+        "ip": "172.16.2.1",
+        "l1_transit": {
+            "id": "4",
+            "l1_transit1": {
+                "name": "c1_l1t1"
+            },
+            "l1_transit2": {
+                "name": "c1_l1t2"
+            },
+            "l1_transit3": {
+                "name": "c1_l1t3"
+            }
+        },
+        "l2_transit": {
+            "id": "3",
+            "l2_transit1": {
+                "name": "c1_l2t2"
+            }
+        },
+        "nsm_br": "c1_m_b",
+        "nsm_exists": "True",
+        "nsm_h_ip": "10.1.99.2/30",
+        "vpc": {
+            "id": "2",
+            "vpc1": {
+                "leaf": {
+                    "id": "5",
+                    "leaf4": {
+                        "name": "c1_v1_l1"
+                    },
+                    "leaf5": {
+                        "name": "c1_v1_l2"
+                    },
+                    "leaf6": {
+                        "name": "c1_v1_l3"
+                    },
+                    "leaf7": {
+                        "name": "c1_v1_l4"
+                    }
+                },
+                "name": "c1_v1",
+                "pc": {
+                    "id": "3",
+                    "pc1": {
+                        "name": "c1_v1_vm1"
+                    },
+                    "pc2": {
+                        "name": "c1_v1_vm2"
+                    }
+                },
+                "spine": {
+                    "id": "3",
+                    "spine1": {
+                        "name": "c1_v1_s1"
+                    },
+                    "spine2": {
+                        "name": "c1_v1_s2"
+                    }
+                }
+            }
+        }
+    },
+    "h2": {
+        "h_nsm_ip": "10.1.99.9",
+        "ip": "172.16.2.2",
+        "nsm_exists": "False",
+        "nsm_h_ip": "10.1.99.10"
+    }
+}
