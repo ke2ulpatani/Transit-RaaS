@@ -1,0 +1,6 @@
+{
+	"hypervisor_name" : "h1",
+	"l2_transit_name": "l2t1",
+	"capacity": "f1",
+	"self_as": "1000"
+}
