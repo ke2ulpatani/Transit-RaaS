@@ -48,16 +48,16 @@ if __name__=="__main__":
     node_name = weight_data["node_name"]
     path_choice_name = weight_data["path_choice"]
 
-    if not raas_utils.check_exists(node_type, node_name, vpc_name) or
-       not raas_utils.check_exists(node_type, path_choice_name, vpc_name):
+    if not raas_utils.check_exists(node_type, node_name, vpc_name) or \
+       not raas_utils.check_exists(path_choice_type, path_choice_name, vpc_name):
         print("Either Node does not exists")
         exit(1)
 
     if (node_type == "spine"):
         node_name_hyp = hyp_utils.get_hyp_spine_name(hypervisor, vpc_name, node_name)
-    elif (node_type == "t1_transit"):
+    elif (node_type == "l1_transit"):
         node_name_hyp = hyp_utils.get_hyp_l1_transit_name(hypervisor, node_name)
-    elif (node_type == "t2_transit"):
+    elif (node_type == "l2_transit"):
         node_name_hyp = hyp_utils.get_hyp_l2_transit_name(hypervisor, node_name)
     else:
         exit(1)
@@ -66,27 +66,29 @@ if __name__=="__main__":
 
     if (path_choice_type == "spine"):
         path_choice_name_hyp = hyp_utils.get_hyp_spine_name(hypervisor, vpc_name, path_choice_name)
-    elif (path_choice_type == "t1_transit"):
+    elif (path_choice_type == "l1_transit"):
         path_choice_name_hyp = hyp_utils.get_hyp_l1_transit_name(hypervisor, path_choice_name)
-    elif (path_choice_type == "t2_transit"):
+    elif (path_choice_type == "l2_transit"):
         path_choice_name_hyp = hyp_utils.get_hyp_l2_transit_name(hypervisor, path_choice_name)
     else:
         exit(1)
 
 
+    print("here1")
     weight = weight_data["weight"]
     weight_arg = "bgp_weight=" + weight
 
+    client_node_data = raas_utils.get_client_node_data(path_choice_type, path_choice_name, vpc_name)
+    print(client_node_data)
     self_as = str(client_node_data["self_as"])
     self_as_arg = "self_as="+ self_as
-
 
     ve_ns1_ns2 = "c" + hyp_utils.get_client_id() + \
             "_ve_" + node_name_hyp.split('_')[-1] + "_" + \
             path_choice_name_hyp.split('_')[-1]
             
 
-    path_choice_ip_arg = "neighbor_ip="raas_utils.get_ns_ip(hypervisor, path_choice_name, ve_ns1_ns2)
+    path_choice_ip_arg = "neighbor_ip="+ raas_utils.get_ns_ip(hypervisor, path_choice_name, ve_ns1_ns2)
     
     try:
         extra_vars = constants.ansible_become_pass + " " + \

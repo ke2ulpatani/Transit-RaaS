@@ -2,5 +2,5 @@
 	"hypervisor_name" : "",
 	"l1_transit_name": "",
     "capacity": "",
-    "self_as": 60
+    "self_as": "60"
 }

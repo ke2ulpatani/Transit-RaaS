@@ -36,6 +36,7 @@ if __name__=="__main__":
     #All prereq checks done at this point
     l1_transit_capacity = l1_transit_data["capacity"]
     l1_transit_name = l1_transit_data["l1_transit_name"]
+    self_as = l1_transit_data["self_as"]
 
     if l1_transit_capacity == "f1":
         vcpu = "1,1"
@@ -75,7 +76,7 @@ if __name__=="__main__":
 
             hyp_utils.write_l1_transit_id(l1id+1, hypervisor)
             hyp_utils.hyp_add_l1_transit(hypervisor, l1_transit_name, l1_transit_name_ansible)
-            raas_utils.client_add_l1_transit(hypervisor, l1_transit_name, l1_transit_capacity)
+            raas_utils.client_add_l1_transit(hypervisor, l1_transit_name, l1_transit_capacity, str(self_as))
 
         except Exception as e:
             print("create l1_transit failed deleting transit", e)

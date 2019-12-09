@@ -1,8 +1,8 @@
 {
 	"hypervisor_name" : "h1",
-	"node_name" : "l1t1",
+	"node_name" : "l1_transit1",
 	"node_type" : "l1_transit",
-	"path_choice" : "l1t2",
+	"path_choice" : "l2_transit1",
 	"path_choice_type" : "l2_transit",
 	"weight" :  "200"  
 }

@@ -53,4 +53,5 @@ fi
 
 if [ $cmd == "influence_path" ]; then
 	python3 logic/influence_path.py $config_file
+	echo hhi
 fi

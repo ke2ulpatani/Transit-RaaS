@@ -147,6 +147,7 @@ def client_add_l1_transit(hypervisor, l1_transit_name, capacity, self_as):
 
 def client_exists_l2_transit(l2_transit_name):
     file_path = constants.l2_transits + l2_transit_name + ".json"
+    print(file_path)
     return os.path.exists(file_path)
 
 def client_add_l2_transit(hypervisor, l2_transit_name, capacity, self_as):
@@ -260,9 +261,10 @@ def check_exists(node_type, node_name, vpc_name):
             return False
     elif (node_type == "l1_transit"):
         if not client_exists_l1_transit(node_name):
-            print("l1_transit does not exists")
+            print("l1_transit does not exists", node_name)
             return False
     elif (node_type == "l2_transit"):
+        print("node_name=", node_name)
         if not client_exists_l2_transit(node_name):
             print("l2_transit does not exists")
             return False
@@ -272,6 +274,7 @@ def check_exists(node_type, node_name, vpc_name):
     return True
 
 def get_client_node_data(node_type, node_name, vpc_name):
+    print(node_type, node_name, vpc_name)
     file_path = ""
     if (node_type == "spine"):
         if not client_exists_spine(vpc_name, node_name):
@@ -281,7 +284,7 @@ def get_client_node_data(node_type, node_name, vpc_name):
             file_path = "var/vpc/" + vpc_name + "/spines/" + node_name
     elif (node_type == "l1_transit"):
         if not client_exists_l1_transit(node_name):
-            print("l1_transit does not exists")
+            print("l1_transit does not exists ", node_name)
             return False
         else:
             file_path = "var/l1_transits/" + node_name
