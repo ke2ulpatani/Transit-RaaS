@@ -4,9 +4,39 @@ import constants
 import os
 from os import listdir
 from os.path import isfile, join
-#import logging
+import logging
+formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+
+#Setting up client logger
+client_log_handler = logging.FileHandler("client.log")        
+client_log_handler.setFormatter(formatter)
+client_logger = logging.getLogger("client")
+client_logger.setLevel(logging.INFO)
+client_logger.addHandler(client_log_handler)
+
+#Setting up services logger
+service_log_handler = logging.FileHandler("service.log")        
+service_log_handler.setFormatter(formatter)
+service_logger = logging.getLogger("service")
+service_logger.setLevel(logging.INFO)
+service_logger.addHandler(service_log_handler)
+
+
 #from logging import info as print
 #logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
+def log_client(output):
+    try:
+        client_logger.info(output)
+    except Exception as e:
+        print("client logging failed "+e)
+
+def log_service(output):
+    try:
+        service_logger.info(output)
+    except Exception as e:
+        print("service logging failed "+e)
+    
 
 def run_shell_script(my_script):
     #This can run a shell script only on the management VM
