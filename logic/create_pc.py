@@ -5,6 +5,7 @@ import raas_utils
 import hyp_utils
 import constants
 import ipaddress
+import logging
 from logging import info as print
 logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 """@params:
