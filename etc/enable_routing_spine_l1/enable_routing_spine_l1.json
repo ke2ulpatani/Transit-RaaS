@@ -2,6 +2,6 @@
     "hypervisor_name": "h1",
 	"vpc_name" : "vpc1",
 	"spine_name" :"spine1",
-    "l1_transit_name" :"l1t",
+    "l1_transit_name" :"l1_transit4",
 	"networks_advertised": "10.0.0.0/8"
 }

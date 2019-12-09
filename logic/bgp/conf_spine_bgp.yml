@@ -2,7 +2,8 @@
 - name: Ansible BGP spine conf
   hosts: "{{ hypervisor }}"
   user: root
+  become: yes
 
   tasks:
     - name: Runnning conf inter transit
-      script: "../scripts/conf_spine_bgp.sh {{ self_as }} {{ rip1 }} {{ ras1 }} {{ rip2 }} {{ ras2 }} {{ adv_subnets }} {{ c_name }}"
+      script: "../scripts/conf_spine_bgp.sh {{ self_as }} {{ rip }} {{ ras }} {{ adv_subnets }} {{ c_name }}"

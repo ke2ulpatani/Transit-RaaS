@@ -274,7 +274,7 @@ def check_exists(node_type, node_name, vpc_name):
     return True
 
 def get_client_node_data(node_type, node_name, vpc_name):
-    print(node_type, node_name, vpc_name)
+    print("get client node data() ", node_type, node_name, vpc_name)
     file_path = ""
     if (node_type == "spine"):
         if not client_exists_spine(vpc_name, node_name):
@@ -292,6 +292,7 @@ def get_client_node_data(node_type, node_name, vpc_name):
         if not client_exists_l2_transit(node_name):
             print("l2_transit does not exists")
             return False
+        else:
             file_path = "var/l2_transits/" + node_name
     else:
         print("Wrong node type")

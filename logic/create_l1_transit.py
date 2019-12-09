@@ -69,8 +69,8 @@ if __name__=="__main__":
                     l1_transit_name_ansible_arg + " " + \
                     hypervisor_arg
 
-            print("ansible-playbook logic/misc/create_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-            rc = raas_utils.run_playbook("ansible-playbook logic/misc/create_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            print("ansible-playbook logic/misc/create_router_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            rc = raas_utils.run_playbook("ansible-playbook logic/misc/create_router_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             if (rc != 0):
                 raise
 
