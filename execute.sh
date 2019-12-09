@@ -55,3 +55,8 @@ if [ $cmd == "influence_path" ]; then
 	python3 logic/influence_path.py $config_file
 	echo hhi
 fi
+
+if [ $cmd == "checkpoint_restore" ]; then
+	python3 logic/checkpoint_restore.py $1 $2
+fi
+
