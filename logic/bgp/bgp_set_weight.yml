@@ -2,6 +2,7 @@
 - name: Ansible BGP set weight
   hosts: "{{ hypervisor }}"
   user: root
+  become: yes
 
   tasks:
     - name: Runnning setting weight

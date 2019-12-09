@@ -76,7 +76,7 @@ if __name__=="__main__":
         exit(1)
 
 
-    print("here1")
+    print("here1 ", path_choice_name_hyp)
     weight = weight_data["weight"]
     weight_arg = "bgp_weight=" + weight
 
@@ -86,11 +86,12 @@ if __name__=="__main__":
     self_as_arg = "self_as="+ self_as
 
     ve_ns1_ns2 = "c" + hyp_utils.get_client_id() + \
-            "_ve_" + node_name_hyp.split('_')[-1] + "_" + \
-            path_choice_name_hyp.split('_')[-1]
+            "ve" + \
+            path_choice_name_hyp.split('_')[-1] + \
+            node_name_hyp.split('_')[-1]
             
 
-    path_choice_ip_arg = "neighbor_ip="+ raas_utils.get_ns_ip(hypervisor, path_choice_name, ve_ns1_ns2)
+    path_choice_ip_arg = "neighbor_ip="+ raas_utils.get_ns_ip(hypervisor, path_choice_name_hyp, ve_ns1_ns2)
     
     try:
         extra_vars = constants.ansible_become_pass + " " + \
@@ -99,14 +100,13 @@ if __name__=="__main__":
                 " " + path_choice_ip_arg
 
         print("ansible-playbook logic/bgp/bgp_set_weight.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-        raise
-        rc = raas_utils.run_playbook("ansible-playbook logic/bgp/bgp_weight.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+        rc = raas_utils.run_playbook("ansible-playbook logic/bgp/bgp_set_weight.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
         if (rc != 0):
             print ("bgp set weight failed")
             raise
 
-        raas_utils.write_client_node_data(node_type, node_name, vpc_name, "path_choice", path_choice_arg)
-        raas_utils.write_client_node_data(node_type, node_name, vpc_name, "weight", weight)
+        raas_utils.write_client_node_data(node_type, node_name, vpc_name, "path_choice", path_choice_name)
+        raas_utils.write_client_node_data(node_type, node_name, vpc_name, "weight", str(weight))
 
     except:
         print("create pc failed python failed")
