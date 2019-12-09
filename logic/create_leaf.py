@@ -5,9 +5,9 @@ import raas_utils
 import hyp_utils
 import constants
 import ipaddress
-import logging
-from logging import info as print
-logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+#import logging
+#from logging import info as print
+#logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 """@params:
     param1 = leaf config file (required)
@@ -157,7 +157,7 @@ if __name__=="__main__":
                   extra_vars=constants.ansible_become_pass+ns_name_arg+route_cmd_arg+ " " + hypervisor_arg
                   raas_utils.run_shell_script("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
              
-              route_cmd_arg = " add "+t_loopback_ip+" via " + leaf_ip
+              route_cmd_arg = " route_cmd= \"add "+t_loopback_ip+" via " + leaf_ip+"\""
               extra_vars=constants.ansible_become_pass+ns_name_arg+route_cmd_arg+ " " + hypervisor_arg
               raas_utils.run_playbook("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
 

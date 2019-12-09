@@ -6,9 +6,9 @@ import constants
 import ipaddress
 import hyp_utils
 from subprocess import Popen, PIPE
-import logging
-from logging import info as print
-logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+#import logging
+#from logging import info as print
+#logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 """@params:
     param1 = vpc config file (required)
@@ -86,17 +86,13 @@ if __name__=="__main__":
                 os.system("ansible-playbook logic/misc/delete_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
                 raise
 
-        print("here1")
         vpc_id = hyp_utils.get_vpc_id(hypervisor)
-        print("here2", vpc_id)
         hyp_utils.write_vpc_id(vpc_id+1, hypervisor)
 
         hyp_vpc_name = "c" + str(cid) + "_" + "v" + str(vpc_id)
 
-        print("here3", hyp_vpc_name)
         hyp_utils.hyp_add_vpc(hypervisor, vpc_name, hyp_vpc_name)
 
         raas_utils.client_add_vpc(hypervisor, vpc_name) 
-        print("here4")
     except Exception:
         print ("create vpc failed")

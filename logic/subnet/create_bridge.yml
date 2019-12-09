@@ -15,7 +15,7 @@
       command: "ip netns exec {{ l_name }} ip link set {{ br_name }} up"
 
     - name: Set the loopback IP
-      command: "ip netns exec {{ l_name }} ip link addr add {{ t_loopback_ip }} dev lo"
+      command: "ip netns exec {{ l_name }} ip addr add {{ t_loopback_ip }} dev lo"
 
     - name: Assign IP for dhcp server
       command: "ip netns exec {{ l_name }} ip addr add {{ br_ip }} dev {{ br_name }}"

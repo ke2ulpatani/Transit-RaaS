@@ -1,0 +1,3 @@
+2019-12-09 21:11:03,627 root - INFO - ansible-playbook logic/misc/create_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars 'ansible_ssh_pass=yashrocks ansible_become_pass=yashrocks nsm=c1_nsm b_net=c1_m_net b=c1_m_b nid=10.0.0.0/24 ve_h_nsm=c1_ve_h_nsm ve_nsm_h=c1_ve_nsm_h ve_nsm_b=c1_ve_nsm_b ve_b_nsm=c1_ve_b_nsm h_nsm_ip=10.1.99.1/30 nsm_h_ip=10.1.99.2/30 b_ip=10.0.0.1/24 dhcp_range=10.0.0.2,10.0.0.254 hypervisor=h1 nsm_h_route=10.1.99.2'
+2019-12-09 21:11:09,166 root - INFO - here1
+2019-12-09 21:11:09,181 root - INFO - here4

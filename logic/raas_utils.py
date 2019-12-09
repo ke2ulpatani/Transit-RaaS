@@ -4,9 +4,9 @@ import constants
 import os
 from os import listdir
 from os.path import isfile, join
-import logging
-from logging import info as print
-logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+#import logging
+#from logging import info as print
+#logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 def run_shell_script(my_script):
     #This can run a shell script only on the management VM
