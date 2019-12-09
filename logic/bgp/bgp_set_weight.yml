@@ -1,0 +1,8 @@
+---
+- name: Ansible BGP set weight
+  hosts: "{{ hypervisor }}"
+  user: root
+
+  tasks:
+    - name: Runnning setting weight
+      script: "../scripts/bgp_set_weight.sh {{ self_as }} {{ neighbor_ip }} {{ bgp_weight }} {{ c_name }}"
