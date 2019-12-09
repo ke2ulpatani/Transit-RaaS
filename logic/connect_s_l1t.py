@@ -7,7 +7,7 @@ import constants
 import ipaddress
 
 """@params:
-    param1 = vpc config file (required)
+    param1 = config file (required)
 """
 
 if __name__=="__main__":
@@ -48,26 +48,36 @@ if __name__=="__main__":
 
     try:
       
+      print("here-1")
       network=raas_utils.get_new_veth_subnet('spine_l1t')
       subnet = network.split('/')
       s_ip = str(ipaddress.ip_address(subnet[0])+1) + '/' + subnet[1]
       t_ip = str(ipaddress.ip_address(subnet[0])+2) + '/' + subnet[1]
-      t_ip_arg = " ns1_ip=" + t_ip
-      s_ip_arg = " ns2_ip=" + s_ip 
+      s_ip_arg = " ns1_ip=" + s_ip 
+      t_ip_arg = " ns2_ip=" + t_ip
 
-      veth_1=" ve_ns1_ns2=" + vpc_id + "_ve_" + spine_id.split('_')[2]+"_" + transit_id.split('_')[1]
-      veth_2=" ve_ns2_ns1=" + vpc_id + "_ve_" + transit_id.split('_')[1]+"_" + spine_id.split('_')[2]
-      t_name_arg=" ns2="+transit_id
+      print("here0")
+      veth_1=" ve_ns1_ns2=" + vpc_id + "ve" + spine_id.split('_')[2] + transit_id.split('_')[1]
+      veth_2=" ve_ns2_ns1=" + vpc_id + "ve" + transit_id.split('_')[1] + spine_id.split('_')[2]
       s_name_arg=" ns1="+spine_id
+      t_name_arg=" ns2="+transit_id
+      print("here11")
 
       extra_vars = constants.ansible_become_pass + s_ip_arg + t_ip_arg + \
                   veth_1 + veth_2 + s_name_arg + t_name_arg + " " + hypervisor_arg
+      print("here13")
 
-      raas_utils.run_playbook("ansible-playbook logic/misc/connect_ns_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")    
+        
+      rc = raas_utils.run_playbook("ansible-playbook logic/misc/connect_ns_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")    
+      if (rc != 0):
+          print ("connect spine to l1t failed")
+          raise
 
 
+      print("here1")
       new_subnet=str(ipaddress.ip_address(subnet[0])+8) + '/' + subnet[1]
       raas_utils.update_veth_subnet('spine_l1t',new_subnet)
+      print("here2")
 
     except Exception as e:
         print("[Err] Connecting spine to transit failed: ",e)

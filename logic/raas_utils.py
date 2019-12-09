@@ -15,6 +15,19 @@ def run_playbook(my_script):
     print(my_script)
     return os.system(my_script)
 
+def run_playbook_script(hypervisor,my_script):
+    try:
+        #This can run a playbook only on the management VM
+        extra_vars=constants.ansible_become_pass+" hypervisor="+hypervisor+" my_script="+my_script
+        playbook_command="ansible-playbook logic/misc/run_any_script.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'"
+        rc = run_playbook(playbook_command)
+        if (rc != 0):
+            raise
+        return read_temp_file()
+    except:
+        print("Failed to run script: ",my_script)
+        raise
+
 def get_vm_ip(hypervisor,vm_name,net_name):
     try:
         vm_name_arg = " vm_name="+vm_name
@@ -30,6 +43,22 @@ def get_vm_ip(hypervisor,vm_name,net_name):
         return read_temp_file()
     except:
         print("IP fetch failed for machine: "+vm_name+" of network "+net_name)
+        raise
+
+def get_hv_ip(hypervisor,if_name):
+    try:
+        if_name_arg=" if_name="+if_name
+        ip_file_path_arg = " ip_path=../../"+constants.temp_file
+        hypervisor_arg = " hypervisor="+hypervisor
+        extra_vars = constants.ansible_become_pass +  hypervisor_arg + ip_file_path_arg+if_name_arg
+
+        rc = run_shell_script("ansible-playbook logic/misc/get_hv_ip.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+        if (rc != 0):
+            raise
+
+        return read_temp_file()
+    except:
+        print("IP fetch failed for interface "+if_name)
         raise
 
 def get_ns_ip(hypervisor,ns_name,ns_if):

@@ -117,9 +117,9 @@ if __name__=="__main__":
               l_ip_arg = " ns1_ip=" + l_ip
               s_ip_arg = " ns2_ip=" + s_ip              
               
-              ve_l_s = vpc_id + "_ve_l" + str(lid)+"_" + spine_id.split('_')[2]
+              ve_l_s = vpc_id + "vel" + str(lid)+ spine_id.split('_')[2]
               ve_l_s_arg=" ve_ns1_ns2=" + ve_l_s
-              ve_s_l = vpc_id + "_ve_" + spine_id.split('_')[2] +"_l" + str(lid)
+              ve_s_l = vpc_id + "ve" + spine_id.split('_')[2] +"l" + str(lid)
               ve_s_l_arg=" ve_ns2_ns1=" + ve_s_l
 
               l_name_arg=" ns1="+leaf_name_hyp
