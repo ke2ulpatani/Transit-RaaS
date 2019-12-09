@@ -46,3 +46,7 @@ fi
 if [ $cmd == "enable_ecmp" ]; then
 	python3 logic/bgp_multipath.py $config_file
 fi
+
+if [ $cmd == "connect_leafs_vxlan" ]; then
+	python3 logic/connect_leafs_vxlan.py $config_file
+fi
