@@ -83,8 +83,7 @@ if __name__=="__main__":
             hyp_utils.write_l2_transit_id(l2id+1, hypervisor)
             hyp_utils.hyp_add_l2_transit(hypervisor, l2_transit_name, l2_transit_name_ansible)
             raas_utils.client_add_l2_transit(hypervisor, l2_transit_name, l2_transit_capacity, self_as)
-            raas_utils.log_client("l2 transit created successfully")
-            raas_utils.log_service("l2_transit created successfully")
+            
         except Exception as e:
             raas_utils.log_client("create l2_transit failed")
             raas_utils.log_service("create l2_transit failed deleting transit"+ str(e))
@@ -130,9 +129,13 @@ if __name__=="__main__":
             subnet = t_loopback_ip.split('/')
             new_subnet = str(ipaddress.ip_address(subnet[0])+1) + '/' + subnet[1]
             raas_utils.update_veth_subnet('loopbacks',new_subnet)
+            raas_utils.log_client("l2 transit created successfully")
+            raas_utils.log_service("l2_transit created successfully")
 
         except Exception as e:
             raas_utils.log_service("create transit failed "+ str(e))
+            raas_utils.log_client("create transit failed")
             raise
     except Exception as e:
         raas_utils.log_service("create l2_transit failed python failed "+ str(e))
+        raas_utils.log_client("create l2_transit failed")
