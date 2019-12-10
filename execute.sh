@@ -19,6 +19,10 @@ if [ $cmd == "create_leaf" ]; then
 	python3 logic/create_leaf.py $config_file True
 fi
 
+if [ $cmd == "create_dummy_leaf" ]; then
+        python3 logic/create_leaf.py $config_file False
+fi
+
 if [ $cmd == "create_pc" ]; then
 	python3 logic/create_pc.py $config_file
 fi
@@ -58,5 +62,9 @@ fi
 
 if [ $cmd == "checkpoint_restore" ]; then
 	python3 logic/checkpoint_restore.py $1 $2
+fi
+
+if [ $cmd == "conf_spine_bgp" ]; then
+        python3 logic/conf_spine_bgp.py $conf_file
 fi
 
