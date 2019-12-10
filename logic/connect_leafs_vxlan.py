@@ -6,7 +6,7 @@ import hyp_utils
 import constants
 import ipaddress
 #import logging
-#from logging import info as print
+#from logging import info as raas_utils.log_service
 #logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 """@params:
@@ -15,7 +15,7 @@ import ipaddress
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
-        print("Please give connection config file")
+        raas_utils.log_service("Please give connection config file")
         exit(1)
 
     connection_config_file = sys.argv[1]
@@ -23,7 +23,7 @@ if __name__=="__main__":
     cid = hyp_utils.get_client_id()
 
     connection_data = do_json.json_read(connection_config_file)
-    print(connection_data)
+    raas_utils.log_service(connection_data)
 
     
     cid = hyp_utils.get_client_id()
@@ -63,7 +63,7 @@ if __name__=="__main__":
 
             raas_utils.run_playbook("ansible-playbook logic/subnet/add_vxlan_to_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
         except Exception as e:
-            print("Configure VXLAN on leaf 1 subnet failed",e)
+            raas_utils.log_service("Configure VXLAN on leaf 1 subnet failed"+e)
             raise
         
         try:
@@ -77,7 +77,7 @@ if __name__=="__main__":
 
             raas_utils.run_playbook("ansible-playbook logic/subnet/add_vxlan_to_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
         except Exception as e:
-            print("Configure VXLAN on leaf 2 subnet failed",e)
+            raas_utils.log_service("Configure VXLAN on leaf 2 subnet failed"+e)
             raise
         
         spines_data = raas_utils.get_all_spines(vpc_name)
@@ -91,7 +91,7 @@ if __name__=="__main__":
                 extra_vars = constants.ansible_become_pass + l1_hypervisor_arg + leaf1_loopback_arg + spine_self_as_arg + node_name_hyp_arg
                 raas_utils.run_playbook("ansible-playbook logic/subnet/advertise_leaf_to_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
         except:
-            print("Advertising routes of leaf 1 failed",e)
+            raas_utils.log_service("Advertising routes of leaf 1 failed"+e)
 
         try:
             leaf2_loopback_arg=" leaf_loopback=" + leaf2_lo_ip
@@ -103,8 +103,8 @@ if __name__=="__main__":
                 extra_vars = constants.ansible_become_pass + l2_hypervisor_arg + leaf2_loopback_arg + spine_self_as_arg + node_name_hyp_arg
                 raas_utils.run_playbook("ansible-playbook logic/subnet/advertise_leaf_to_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
         except:
-            print("Advertising routes of leaf 2 failed",e)
+            raas_utils.log_service("Advertising routes of leaf 2 failed"+e)
 
     except Exception as e:
-        print("Configure VXLAN failed",e)
+        raas_utils.log_service("Configure VXLAN failed"+e)
 

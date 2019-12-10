@@ -2,9 +2,6 @@ import sys
 import do_json
 import constants
 import os
-#import logging
-#from logging import info as print
-#logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 def get_client_id():
     hypervisors_data = do_json.json_read(constants.hypervisors_file)
@@ -31,7 +28,7 @@ def get_hyp_ip(hypervisor):
     hyp_data = get_hyp_data(hypervisor)
 
     if hyp_data == None:
-        print("Hypervisor does not exist")
+        raas_utils.log_service("Hypervisor does not exist")
         return None
 
     hypervisor_ip = hyp_data["ip"]

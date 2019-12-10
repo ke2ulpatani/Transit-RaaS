@@ -6,7 +6,7 @@ import hyp_utils
 import constants
 import ipaddress
 #import logging
-#from logging import info as print
+#from logging import info as raas_utils.log_service
 #logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 """@params:
@@ -15,7 +15,7 @@ import ipaddress
 
 if __name__=="__main__":
     if (len(sys.argv) < 3):
-        print("Please give leaf config file")
+        raas_utils.log_service("Please give leaf config file")
         exit(1)
 
     leaf_config_file = sys.argv[1]
@@ -39,11 +39,11 @@ if __name__=="__main__":
     vpc_id=hyp_utils.get_hyp_vpc_name(hypervisor,vpc_name)
 
     if not raas_utils.client_exists_vpc(vpc_name):
-        print("VPC does not exist")
+        raas_utils.log_service("VPC does not exist")
         exit(1)
 
     if raas_utils.client_exists_leaf(vpc_name, leaf_name):
-        print("leaf already exists")
+        raas_utils.log_service("leaf already exists")
         exit(1)
     
     #All prereq checks done at this point
@@ -57,9 +57,9 @@ if __name__=="__main__":
         try:
             #l_name: leaf_name, l_net: network_name_br: L_br: name_br; 
             #hypervisor: hyp_name, l_ip, ve_l_br, ve_br_l, dhcp_range
-            print("here")
+            
             lid = hyp_utils.get_leaf_id(hypervisor, vpc_name)
-            print(lid)
+            raas_utils.log_service(lid)
             leaf_name_hyp = vpc_id + "_" + "l" + str(lid)
             leaf_name_hyp_arg = "c_name="+leaf_name_hyp
 
@@ -81,7 +81,7 @@ if __name__=="__main__":
                 
                 raas_utils.run_playbook("ansible-playbook logic/misc/create_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             except Exception as e:
-                print("create container failed ", e)
+                raas_utils.log_service("create container failed "+ e)
                 raise
 
             l_name_arg = "l_name=" + leaf_name_hyp
@@ -100,7 +100,7 @@ if __name__=="__main__":
             try:
                 raas_utils.run_playbook("ansible-playbook logic/subnet/create_bridge.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             except Exception as e:
-                print("create bridge failed ", e)
+                raas_utils.log_service("create bridge failed "+ e)
                 raise
 
             subnet = t_loopback_ip.split('/')
@@ -108,7 +108,7 @@ if __name__=="__main__":
             raas_utils.update_veth_subnet('loopbacks',new_subnet)
 
         except Exception as e:
-            print("Creating leaf failed: ",e)
+            raas_utils.log_service("Creating leaf failed: "+e)
             raise
         
         
@@ -173,14 +173,14 @@ if __name__=="__main__":
           for curr_ip in spine_ips:
                route_weight+=" nexthop via "+curr_ip+" weight 1"
           route_weight='"'+route_weight+'"'
-          print(route_weight)
+          raas_utils.log_service(route_weight)
 
           route_cmd_arg=" route_cmd="+route_weight
           extra_vars=constants.ansible_become_pass+ns_name_arg+route_cmd_arg+ " " + hypervisor_arg
           raas_utils.run_shell_script("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
     
         except Exception as e:
-            print("Connecting leaf to spines failed: ",e)
+            raas_utils.log_service("Connecting leaf to spines failed: "+e)
             raise
 
         hyp_utils.write_leaf_id(lid+1, vpc_name, hypervisor)

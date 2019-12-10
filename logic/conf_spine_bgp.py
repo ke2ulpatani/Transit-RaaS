@@ -6,7 +6,7 @@ import hyp_utils
 import constants
 import ipaddress
 #import logging
-#from logging import info as print
+#from logging import info as raas_utils.log_service
 #logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 """@params:
@@ -15,7 +15,7 @@ import ipaddress
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
-        print("Please give bgp config file")
+        raas_utils.log_service("Please give bgp config file")
         exit(1)
 
     advertise_file = sys.argv[1]
@@ -33,7 +33,7 @@ if __name__=="__main__":
     
     vpc_name = advertise_data["vpc_name"]
     if not raas_utils.client_exists_vpc(vpc_name):
-        print("VPC does not exist")
+        raas_utils.log_service("VPC does not exist")
         exit(1)
 
     spine_name = advertise_data["spine_name"]
@@ -41,7 +41,7 @@ if __name__=="__main__":
 
     if not raas_utils.check_exists("spine", spine_name, vpc_name) or \
        not raas_utils.check_exists("l1_transit", l1_transit_name, vpc_name):
-        print("Either Node does not exists")
+        raas_utils.log_service("Either Node does not exists")
         exit(1)
 
     spine_name_hyp = hyp_utils.get_hyp_spine_name(hypervisor, vpc_name, spine_name)
@@ -79,10 +79,10 @@ if __name__=="__main__":
 
         rc = raas_utils.run_playbook("ansible-playbook logic/bgp/conf_spine_bgp.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
         if (rc != 0):
-            print ("bgp advertisement failed")
+            raas_utils.log_service ("bgp advertisement failed")
             raise
 
         raas_utils.write_client_spine_data(spine_type, spine_name, vpc_name, "adv_subnets", advertise)
 
     except:
-        print("conf spine bgp failed python failed")
+        raas_utils.log_service("conf spine bgp failed python failed")

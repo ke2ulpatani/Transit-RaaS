@@ -5,9 +5,6 @@ import raas_utils
 import hyp_utils
 import constants
 import ipaddress
-#import logging
-#from logging import info as print
-#logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 """@params:
     param1 = bgp config file (required)
@@ -15,7 +12,7 @@ import ipaddress
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
-        print("Please give bgp config file")
+        raas_utils.log_service("Please give bgp config file")
         exit(1)
 
     weight_file = sys.argv[1]
@@ -39,13 +36,13 @@ if __name__=="__main__":
     if (node_type == "spine"):
         vpc_name = weight_data["vpc_name"]
         if not raas_utils.client_exists_vpc(vpc_name):
-            print("VPC does not exist")
+            raas_utils.log_service("VPC does not exist")
             exit(1)
 
     if (path_choice_type == "spine"):
         vpc_name = weight_data["vpc_name"]
         if not raas_utils.client_exists_vpc(vpc_name):
-            print("VPC does not exist")
+            raas_utils.log_service("VPC does not exist")
             exit(1)
 
     node_name = weight_data["node_name"]
@@ -53,7 +50,7 @@ if __name__=="__main__":
 
     if not raas_utils.check_exists(node_type, node_name, vpc_name) or \
        not raas_utils.check_exists(path_choice_type, path_choice_name, vpc_name):
-        print("Either Node does not exists")
+        raas_utils.log_service("Either Node does not exists")
         exit(1)
 
     if (node_type == "spine"):
@@ -77,12 +74,12 @@ if __name__=="__main__":
         exit(1)
 
 
-    print("here1 ", path_choice_name_hyp)
+    
     weight = weight_data["weight"]
     weight_arg = "bgp_weight=" + weight
 
     client_node_data = raas_utils.get_client_node_data(path_choice_type, path_choice_name, vpc_name)
-    print(client_node_data)
+    raas_utils.log_service(client_node_data)
     self_as = str(client_node_data["self_as"])
     self_as_arg = "self_as="+ self_as
 
@@ -100,14 +97,14 @@ if __name__=="__main__":
                 " " + hypervisor_arg + " " + weight_arg + \
                 " " + path_choice_ip_arg
 
-        print("ansible-playbook logic/bgp/bgp_set_weight.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+        raas_utils.log_service("ansible-playbook logic/bgp/bgp_set_weight.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
         rc = raas_utils.run_playbook("ansible-playbook logic/bgp/bgp_set_weight.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
         if (rc != 0):
-            print ("bgp set weight failed")
+            raas_utils.log_service ("bgp set weight failed")
             raise
 
         raas_utils.write_client_node_data(node_type, node_name, vpc_name, "path_choice", path_choice_name)
         raas_utils.write_client_node_data(node_type, node_name, vpc_name, "weight", str(weight))
 
     except:
-        print("create pc failed python failed")
+        raas_utils.log_service("create pc failed python failed")

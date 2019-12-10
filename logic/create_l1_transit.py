@@ -6,7 +6,7 @@ import hyp_utils
 import constants
 import ipaddress
 #import logging
-#from logging import info as print
+#from logging import info as raas_utils.log_service
 #logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 """@params:
@@ -15,7 +15,7 @@ import ipaddress
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
-        print("Please give l1_transit config file")
+        raas_utils.log_service("Please give l1_transit config file")
         exit(1)
 
     l1_transit_config_file = sys.argv[1]
@@ -33,7 +33,7 @@ if __name__=="__main__":
     hypervisor_ip = hyp_utils.get_hyp_ip(hypervisor)
 
     if raas_utils.client_exists_l1_transit(l1_transit_name):
-        print("l1_transit already exists ", l1_transit_name)
+        raas_utils.log_service("l1_transit already exists "+ l1_transit_name)
         exit(1)
     
     #All prereq checks done at this point
@@ -51,7 +51,7 @@ if __name__=="__main__":
         vcpu = "1,3"
         mem = "4G"
     else:
-        print("Unknown flavor using default")
+        raas_utils.log_service("Unknown flavor using default")
         vcpu = "1,1"
         mem = "1G"
     
@@ -72,7 +72,7 @@ if __name__=="__main__":
                     l1_transit_name_ansible_arg + " " + \
                     hypervisor_arg
 
-            print("ansible-playbook logic/misc/create_router_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            raas_utils.log_service("ansible-playbook logic/misc/create_router_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             rc = raas_utils.run_playbook("ansible-playbook logic/misc/create_router_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             if (rc != 0):
                 raise
@@ -82,7 +82,7 @@ if __name__=="__main__":
             raas_utils.client_add_l1_transit(hypervisor, l1_transit_name, l1_transit_capacity, str(self_as))
 
         except Exception as e:
-            print("create l1_transit failed deleting transit", e)
+            raas_utils.log_service("create l1_transit failed deleting transit"+ e)
             raas_utils.run_playbook("ansible-playbook logic/misc/delete_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             raise
 
@@ -126,7 +126,7 @@ if __name__=="__main__":
             raas_utils.update_veth_subnet('loopbacks',new_subnet)
 
         except Exception as e:
-            print("create transit failed ", e)
+            raas_utils.log_service("create transit failed "+ e)
             raise
     except Exception as e:
-        print("create l1_transit failed python failed ", e)
+        raas_utils.log_service("create l1_transit failed python failed "+ e)
