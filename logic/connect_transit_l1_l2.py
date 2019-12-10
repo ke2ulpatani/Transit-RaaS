@@ -64,7 +64,7 @@ if __name__=="__main__":
             raas_utils.update_veth_subnet('l1t_l2t',new_subnet)
 
         except Exception as e:
-            raas_utils.log_service("l1 transit to l2 transit local failed"+e)
+            raas_utils.log_service("l1 transit to l2 transit local failed"+str(e))
     else:
         #connect l1 transit to l2 transit remote
         try:
@@ -92,7 +92,7 @@ if __name__=="__main__":
 
                 raas_utils.run_playbook("ansible-playbook logic/transit/connect_transit_transit_remote.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
             except Exception as e:
-                raas_utils.log_service("Configure GRE on Level 1 Transit failed"+e)
+                raas_utils.log_service("Configure GRE on Level 1 Transit failed"+str(e))
                 raise
             
             try:
@@ -106,8 +106,8 @@ if __name__=="__main__":
 
                 raas_utils.run_playbook("ansible-playbook logic/transit/connect_transit_transit_remote.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
             except Exception as e:
-                raas_utils.log_service("Configure GRE on Level 2 Transit failed"+e)
+                raas_utils.log_service("Configure GRE on Level 2 Transit failed"+str(e))
                 raise
         except Exception as e:
-            raas_utils.log_service("l1 transit to l2 transit remote failed"+e)
+            raas_utils.log_service("l1 transit to l2 transit remote failed"+str(e))
 

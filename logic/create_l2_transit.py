@@ -82,7 +82,7 @@ if __name__=="__main__":
             raas_utils.client_add_l2_transit(hypervisor, l2_transit_name, l2_transit_capacity, self_as)
 
         except Exception as e:
-            raas_utils.log_service("create l2_transit failed deleting transit"+ e)
+            raas_utils.log_service("create l2_transit failed deleting transit"+ str(e))
             raas_utils.run_playbook("ansible-playbook logic/misc/delete_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             raise
 
@@ -127,7 +127,7 @@ if __name__=="__main__":
             raas_utils.update_veth_subnet('loopbacks',new_subnet)
 
         except Exception as e:
-            raas_utils.log_service("create transit failed "+ e)
+            raas_utils.log_service("create transit failed "+ str(e))
             raise
     except Exception as e:
-        raas_utils.log_service("create l2_transit failed python failed "+ e)
+        raas_utils.log_service("create l2_transit failed python failed "+ str(e))

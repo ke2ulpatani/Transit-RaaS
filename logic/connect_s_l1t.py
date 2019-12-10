@@ -83,4 +83,4 @@ if __name__=="__main__":
       
 
     except Exception as e:
-        raas_utils.log_service("[Err] Connecting spine to transit failed: "+e)
+        raas_utils.log_service("[Err] Connecting spine to transit failed: "+str(e))

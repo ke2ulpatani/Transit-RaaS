@@ -23,12 +23,14 @@ __service_logger.addHandler(__service_log_handler)
 
 def log_client(output):
     try:
+        output = str(output)
         __client_logger.info(output)
     except Exception as e:
         print("client logging failed "+e)
 
 def log_service(output):
     try:
+        output = str(output)
         __service_logger.info(output)
     except Exception as e:
         print("service logging failed "+e)

@@ -81,7 +81,7 @@ if __name__=="__main__":
                 
                 raas_utils.run_playbook("ansible-playbook logic/misc/create_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             except Exception as e:
-                raas_utils.log_service("create container failed "+ e)
+                raas_utils.log_service("create container failed "+ str(e))
                 raise
 
             l_name_arg = "l_name=" + leaf_name_hyp
@@ -100,7 +100,7 @@ if __name__=="__main__":
             try:
                 raas_utils.run_playbook("ansible-playbook logic/subnet/create_bridge.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             except Exception as e:
-                raas_utils.log_service("create bridge failed "+ e)
+                raas_utils.log_service("create bridge failed "+ str(e))
                 raise
 
             subnet = t_loopback_ip.split('/')
@@ -108,7 +108,7 @@ if __name__=="__main__":
             raas_utils.update_veth_subnet('loopbacks',new_subnet)
 
         except Exception as e:
-            raas_utils.log_service("Creating leaf failed: "+e)
+            raas_utils.log_service("Creating leaf failed: "+str(e))
             raise
         
         
@@ -180,7 +180,7 @@ if __name__=="__main__":
           raas_utils.run_shell_script("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
     
         except Exception as e:
-            raas_utils.log_service("Connecting leaf to spines failed: "+e)
+            raas_utils.log_service("Connecting leaf to spines failed: "+str(e))
             raise
 
         hyp_utils.write_leaf_id(lid+1, vpc_name, hypervisor)

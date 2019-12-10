@@ -63,7 +63,7 @@ if __name__=="__main__":
 
             raas_utils.run_playbook("ansible-playbook logic/subnet/add_vxlan_to_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
         except Exception as e:
-            raas_utils.log_service("Configure VXLAN on leaf 1 subnet failed"+e)
+            raas_utils.log_service("Configure VXLAN on leaf 1 subnet failed"+str(e))
             raise
         
         try:
@@ -77,7 +77,7 @@ if __name__=="__main__":
 
             raas_utils.run_playbook("ansible-playbook logic/subnet/add_vxlan_to_leaf.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
         except Exception as e:
-            raas_utils.log_service("Configure VXLAN on leaf 2 subnet failed"+e)
+            raas_utils.log_service("Configure VXLAN on leaf 2 subnet failed"+str(e))
             raise
         
         spines_data = raas_utils.get_all_spines(vpc_name)
@@ -91,7 +91,7 @@ if __name__=="__main__":
                 extra_vars = constants.ansible_become_pass + l1_hypervisor_arg + leaf1_loopback_arg + spine_self_as_arg + node_name_hyp_arg
                 raas_utils.run_playbook("ansible-playbook logic/subnet/advertise_leaf_to_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
         except:
-            raas_utils.log_service("Advertising routes of leaf 1 failed"+e)
+            raas_utils.log_service("Advertising routes of leaf 1 failed"+str(e))
 
         try:
             leaf2_loopback_arg=" leaf_loopback=" + leaf2_lo_ip
@@ -103,8 +103,8 @@ if __name__=="__main__":
                 extra_vars = constants.ansible_become_pass + l2_hypervisor_arg + leaf2_loopback_arg + spine_self_as_arg + node_name_hyp_arg
                 raas_utils.run_playbook("ansible-playbook logic/subnet/advertise_leaf_to_spine.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
         except:
-            raas_utils.log_service("Advertising routes of leaf 2 failed"+e)
+            raas_utils.log_service("Advertising routes of leaf 2 failed"+str(e))
 
     except Exception as e:
-        raas_utils.log_service("Configure VXLAN failed"+e)
+        raas_utils.log_service("Configure VXLAN failed"+str(e))
 

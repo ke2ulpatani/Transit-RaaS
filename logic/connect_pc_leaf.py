@@ -31,7 +31,7 @@ if __name__=="__main__":
         exit(1)
 
     if not raas_utils.client_exists_leaf(vpc_name, leaf_name):
-        raas_utils.log_service("leaf does not exist ", leaf_name)
+        raas_utils.log_service("leaf does not exist "+ leaf_name)
         exit(1)
 
     pc_hypervisor_name = connection_data["pc_hypervisor_name"]
