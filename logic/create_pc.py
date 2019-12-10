@@ -14,6 +14,7 @@ import ipaddress
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
+        raas_utils.log_client("Config not provided.........aborting")
         raas_utils.log_service("Please give vpc config file")
         exit(1)
 
@@ -55,6 +56,7 @@ if __name__=="__main__":
         vcpu = "1,3"
         mem = "4G"
     else:
+        raas_utils.log_client("Unknown flavor provided using default")
         raas_utils.log_service("Unknown flavor using default")
         vcpu = "1,1"
         mem = "1G"
@@ -89,9 +91,13 @@ if __name__=="__main__":
             hyp_utils.write_pc_id(pcid+1, vpc_name, hypervisor)
             hyp_utils.vpc_add_pc(hypervisor, vpc_name, pc_name, pc_name_ansible)
             raas_utils.client_add_pc(hypervisor, vpc_name, pc_name, pc_capacity)
+            raas_utils.log_client("pc created successfully")
+            raas_utils.log_service("pc created successfully")
         except:
             raas_utils.log_service("create pc failed")
+            raas_utils.log_client("create pc failed")
             raas_utils.run_playbook("ansible-playbook logic/misc/delete_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             raise
     except:
+        raas_utils.log_client("create pc failed python failed")
         raas_utils.log_service("create pc failed python failed")

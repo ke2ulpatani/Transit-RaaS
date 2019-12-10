@@ -15,7 +15,8 @@ import ipaddress
 
 if __name__=="__main__":
     if (len(sys.argv) < 3):
-        raas_utils.log_service("Please give leaf config file")
+        raas_utils.log_client("Config file missing.......aborting")
+        raas_utils.log_service("Please give leaf config file......asborting")
         exit(1)
 
     leaf_config_file = sys.argv[1]
@@ -43,11 +44,13 @@ if __name__=="__main__":
     vpc_id=hyp_utils.get_hyp_vpc_name(hypervisor,vpc_name)
 
     if not raas_utils.client_exists_vpc(vpc_name):
-        raas_utils.log_service("VPC does not exist")
+        raas_utils.log_client("VPC does not exist......aborting")
+        raas_utils.log_service("VPC does not exist........aborting")
         exit(1)
 
     if raas_utils.client_exists_leaf(vpc_name, leaf_name):
-        raas_utils.log_service("leaf already exists")
+        raas_utils.log_client("leaf already exists......aborting")
+        raas_utils.log_service("leaf already exists......asborting")
         exit(1)
     
     #All prereq checks done at this point
@@ -88,6 +91,7 @@ if __name__=="__main__":
                 
                 raas_utils.run_playbook("ansible-playbook logic/misc/create_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             except Exception as e:
+                raas_utils.log_client("Container creation failed......aborting")
                 raas_utils.log_service("create container failed "+ str(e))
                 raise
 
@@ -107,6 +111,7 @@ if __name__=="__main__":
             try:
                 raas_utils.run_playbook("ansible-playbook logic/subnet/create_bridge.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             except Exception as e:
+                raas_utils.log_client("create bridge failed.....aborting")
                 raas_utils.log_service("create bridge failed "+ str(e))
                 raise
 
@@ -115,6 +120,7 @@ if __name__=="__main__":
             raas_utils.update_veth_subnet('loopbacks',new_subnet)
 
         except Exception as e:
+            raas_utils.log_client("Leaf creation failed.......aborting")
             raas_utils.log_service("Creating leaf failed: "+str(e))
             raise
         
@@ -187,7 +193,7 @@ if __name__=="__main__":
           route_cmd_arg=" route_cmd="+route_weight
           extra_vars=constants.ansible_become_pass+ns_name_arg+route_cmd_arg+ " " + hypervisor_arg
           raas_utils.run_shell_script("ansible-playbook logic/misc/add_route_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
-    
+          
         except Exception as e:
             raas_utils.log_service("Connecting leaf to spines failed: "+str(e))
             raise
@@ -195,7 +201,10 @@ if __name__=="__main__":
         hyp_utils.write_leaf_id(lid+1, vpc_name, hypervisor)
         hyp_utils.vpc_add_leaf(hypervisor, vpc_name, leaf_name, leaf_name_hyp)
         raas_utils.client_add_leaf(hypervisor, vpc_name, leaf_name, network_id)
-
+        raas_utils.log_client("leaf created successfully")
+        raas_utils.log_service("leaf created successfully")
     except Exception as e:
         extra_vars=constants.ansible_become_pass + " " + leaf_name_hyp_arg +  " " + hypervisor_arg
         raas_utils.run_shell_script("ansible-playbook logic/misc/delete_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+        raas_utils.log_client("leaf creation failed......aborting")
+        raas_utils.log_service("leaf creation failed.......aborting")

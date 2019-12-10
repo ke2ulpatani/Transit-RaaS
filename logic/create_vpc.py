@@ -14,6 +14,7 @@ from subprocess import Popen, PIPE
 if __name__=="__main__":
     if (len(sys.argv) < 2):
         raas_utils.log_service("Please give vpc config file")
+        raas_utils.log_client("No config file present")
         exit(1)
 
     vpc_config_file = sys.argv[1]
@@ -21,7 +22,10 @@ if __name__=="__main__":
     vpc_name = vpc_config_file.split('/')[-1].split('.')[0]
 
     if raas_utils.client_exists_vpc(vpc_name):
+        raas_utils.log_client("Vpc already exists")
+        raas_utils.log_client("aborting vpc creation")
         raas_utils.log_service("Vpc already exists")
+        raas_utils.log_service("aborting vpc creation")
         exit(1)
 
     #Assumed customer always gives correct config file
@@ -91,5 +95,8 @@ if __name__=="__main__":
         hyp_utils.hyp_add_vpc(hypervisor, vpc_name, hyp_vpc_name)
 
         raas_utils.client_add_vpc(hypervisor, vpc_name) 
+        raas_utils.log_client("VPC creation completed successfully")
+        raas_utils.log_service("VPC creation completed successfully")
     except Exception:
-        raas_utils.log_service ("create vpc failed")
+        raas_utils.log_client("VPC creation failed....aborting.")
+        raas_utils.log_service ("create vpc failed....aborting")
