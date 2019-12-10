@@ -6,21 +6,14 @@ import hyp_utils
 import constants
 import ipaddress
 import raas_utils
-#import logging
-#from logging import info as print
-#logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
-#import logging
-#from logging import info as print
-#logging.basicConfig(filename='raas.log', filemode='w', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-#
 """@params:
     param1 = vpc config file (required)
 """
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
-        print("Please give vpc config file")
+        raas_utils.log_service("Please give vpc config file")
         exit(1)
 
     spine_config_file = sys.argv[1]
@@ -40,11 +33,11 @@ if __name__=="__main__":
     vpc_name = spine_data["vpc_name"]
 
     if not raas_utils.client_exists_vpc(vpc_name):
-        print("VPC does not exist")
+        raas_utils.log_service("VPC does not exist")
         exit(1)
 
     if raas_utils.client_exists_spine(vpc_name, spine_name):
-        print("Spine already exists")
+        raas_utils.log_service("Spine already exists")
         exit(1)
     
     #All prereq checks done at this point
@@ -62,7 +55,7 @@ if __name__=="__main__":
         vcpu = "1,3"
         mem = "4G"
     else:
-        print("Unknown flavor using default")
+        raas_utils.log_service("Unknown flavor using default")
         vcpu = 1
         mem = "1G"
     
@@ -92,8 +85,8 @@ if __name__=="__main__":
             raas_utils.client_add_spine(hypervisor, vpc_name, spine_name, spine_capacity, self_as)
 
         except:
-            print("create spine failed")
+            raas_utils.log_service("create spine failed")
             os.system("ansible-playbook logic/misc/delete_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             raise
     except:
-        print("create spine failed python failed")
+        raas_utils.log_service("create spine failed python failed")

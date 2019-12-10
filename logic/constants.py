@@ -16,7 +16,8 @@ subnet: nid
 manamgement: m
 management namespace: nsm
 """
-
+client_log_file = "client.log"
+service_log_file = "service.log"
 ssh_file = "~/.ssh/id_raas"
 ansible_become_pass="ansible_ssh_pass=yashrocks ansible_become_pass=yashrocks"
 ansible_ssh_private_key_file="ansible_ssh_private_key_file="+ssh_file

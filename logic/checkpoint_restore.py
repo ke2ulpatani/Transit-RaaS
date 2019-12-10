@@ -23,7 +23,7 @@ def create_checkpoint(pod,version,hypervisor):
       
       rc = raas_utils.run_playbook("ansible-playbook logic/checkpoint/create_checkpoint.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")    
 #      if (rc != 0):
-#          print ("create checkpoint failed")
+#          raas_utils.log_service ("create checkpoint failed")
 
 def restore_pod_checkpoint(pod,version,hypervisor):
       hypervisor_arg = " hypervisor="+hypervisor
@@ -33,11 +33,11 @@ def restore_pod_checkpoint(pod,version,hypervisor):
       
       rc = raas_utils.run_playbook("ansible-playbook logic/checkpoint/restore_checkpoint.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")    
 #      if (rc != 0):
-#          print ("restore checkpoint failed")
+#          raas_utils.log_service ("restore checkpoint failed")
 
 
 if (len(sys.argv) < 2):
-    print("Please give correct arguments <checkpoint/restore> <version>")
+    raas_utils.log_service("Please give correct arguments <checkpoint/restore> <version>")
     exit(1)
 
 with open('var/hypervisors.json') as tenant_file:

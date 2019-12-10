@@ -5,9 +5,7 @@ import raas_utils
 import hyp_utils
 import constants
 import ipaddress
-#import logging
-#from logging import info as print
-#logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+
 
 """@params:
     param1 = connection config name (required)
@@ -15,7 +13,7 @@ import ipaddress
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
-        print("Please give connection config file")
+        raas_utils.log_service("Please give connection config file")
         exit(1)
 
     connection_config_file = sys.argv[1]
@@ -23,24 +21,24 @@ if __name__=="__main__":
     cid = hyp_utils.get_client_id()
 
     connection_data = do_json.json_read(connection_config_file)
-    print(connection_data)
+    raas_utils.log_service(connection_data)
     vpc_name = connection_data["vpc_name"]
     pc_name = connection_data["pc_name"]
     leaf_name = connection_data["leaf_name"]
 
     if not raas_utils.client_exists_pc(vpc_name, pc_name):
-        print("pc does not exists ", pc_name)
+        raas_utils.log_service("pc does not exists "+pc_name)
         exit(1)
 
     if not raas_utils.client_exists_leaf(vpc_name, leaf_name):
-        print("leaf does not exist ", leaf_name)
+        raas_utils.log_service("leaf does not exist "+ leaf_name)
         exit(1)
 
     pc_hypervisor_name = connection_data["pc_hypervisor_name"]
     leaf_hypervisor_name = connection_data["leaf_hypervisor_name"]
 
     if (pc_hypervisor_name == leaf_hypervisor_name):
-        print("pc and leaf exist in same hypervisor, direct connect")
+        raas_utils.log_service("pc and leaf exist in same hypervisor, direct connect")
         hypervisor = pc_hypervisor_name
         hypervisor_arg = "hypervisor="+hypervisor
         hypervisors_data = hyp_utils.get_hypervisors_data()
@@ -71,7 +69,7 @@ if __name__=="__main__":
                     " " + hyp_leaf_name_arg + " " + l_br_name_arg + " " + \
                     ve_l_pc_arg + " " + ve_pc_l_arg
 
-            #print("here2")
+            #raas_utils.log_service("here2")
             raas_utils.run_playbook("ansible-playbook logic/subnet/add_to_subnet.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
                 
             raas_utils.client_add_leaf_pc(vpc_name, pc_name, leaf_name)
@@ -79,9 +77,9 @@ if __name__=="__main__":
             #raise
             #raas_utils.add_mgmt_ns(hypervisor)
         except:
-            print("connect pc failed")
+            raas_utils.log_service("connect pc failed")
             raise
-            #print("ansible-playbook logic/vpc/delete_pc.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            #raas_utils.log_service("ansible-playbook logic/vpc/delete_pc.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
     else:
-        print("pc and leaf exist in different hypervisor, vxlan connect")
+        raas_utils.log_service("pc and leaf exist in different hypervisor, vxlan connect")
         exit(1)

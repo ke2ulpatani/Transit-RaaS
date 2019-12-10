@@ -4,18 +4,46 @@ import constants
 import os
 from os import listdir
 from os.path import isfile, join
-#import logging
-#from logging import info as print
-#logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
+import logging
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(message)s')
+
+__client_log_handler_info = logging.FileHandler(constants.client_log_file)
+__client_log_handler_info.setFormatter(formatter)
+__client_logger = logging.getLogger("client")
+__client_logger.setLevel(logging.INFO)
+__client_logger.addHandler(__client_log_handler_info)
+
+
+__service_log_handler = logging.FileHandler(constants.service_log_file)        
+__service_log_handler.setFormatter(formatter)
+__service_logger = logging.getLogger("service")
+__service_logger.setLevel(logging.INFO)
+__service_logger.addHandler(__service_log_handler)
+
+
+def log_client(output):
+    try:
+        output = str(output)
+        __client_logger.info(output)
+    except Exception as e:
+        print("client logging failed "+e)
+
+def log_service(output):
+    try:
+        output = str(output)
+        __service_logger.info(output)
+    except Exception as e:
+        print("service logging failed "+e)
+    
 
 def run_shell_script(my_script):
     #This can run a shell script only on the management VM
-    print(my_script)
+    log_service(my_script)
     return os.system(my_script)
 
 def run_playbook(my_script):
     #This can run a playbook only on the management VM
-    print(my_script)
+    log_service(my_script)
     return os.system(my_script)
 
 def run_playbook_script(hypervisor,my_script):
@@ -28,7 +56,7 @@ def run_playbook_script(hypervisor,my_script):
             raise
         return read_temp_file()
     except:
-        print("Failed to run script: ",my_script)
+        log_service("Failed to run script: "+my_script)
         raise
 
 def get_vm_ip(hypervisor,vm_name,net_name):
@@ -45,7 +73,7 @@ def get_vm_ip(hypervisor,vm_name,net_name):
 
         return read_temp_file()
     except:
-        print("IP fetch failed for machine: "+vm_name+" of network "+net_name)
+        log_service("IP fetch failed for machine: "+vm_name+" of network "+net_name)
         raise
 
 def get_hv_ip(hypervisor,if_name):
@@ -61,7 +89,7 @@ def get_hv_ip(hypervisor,if_name):
 
         return read_temp_file()
     except:
-        print("IP fetch failed for interface "+if_name)
+        log_service("IP fetch failed for interface "+if_name)
         raise
 
 def get_ns_ip(hypervisor,ns_name,ns_if):
@@ -78,7 +106,7 @@ def get_ns_ip(hypervisor,ns_name,ns_if):
 
         return read_temp_file()
     except:
-        print("IP fetch failed for machine: "+ns_name+" of interface "+ns_interface)
+        log_service("IP fetch failed for machine: "+ns_name+" of interface "+ns_interface)
         raise
 
 def get_mgmt_nid():
@@ -86,6 +114,8 @@ def get_mgmt_nid():
     return json_data["network_id"]
 
 def client_exists_vpc(vpc_name):
+    print("vpc fata", vpc_name)
+    print(constants.var_vpc + vpc_name + "/" + vpc_name + ".json")
     return os.path.exists(constants.var_vpc + vpc_name + "/" + vpc_name + ".json")
 
 def client_add_vpc(hypervisor, vpc_name):
@@ -150,7 +180,7 @@ def client_add_l1_transit(hypervisor, l1_transit_name, capacity, self_as):
 
 def client_exists_l2_transit(l2_transit_name):
     file_path = constants.l2_transits + l2_transit_name + ".json"
-    print(file_path)
+    log_service(file_path)
     return os.path.exists(file_path)
 
 def client_add_l2_transit(hypervisor, l2_transit_name, capacity, self_as):
@@ -200,14 +230,14 @@ def client_exists_pc(vpc_name, pc_name):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_pcs + pc_name + ".json"
 
-    print(file_path)
+    log_service(file_path)
 
     return os.path.exists(file_path)
 
 def client_add_pc(hypervisor_name,vpc_name, pc_name, capacity):
     file_path = constants.var_vpc + vpc_name + \
             constants.vpc_pcs + pc_name + ".json"
-    print(constants.new_pc_data)
+    log_service(constants.new_pc_data)
     new_pc_data = constants.new_pc_data
     new_pc_data["hypervisor_name"] = hypervisor_name
     new_pc_data["vpc_name"] = vpc_name
@@ -260,45 +290,45 @@ def client_add_leaf_pc(vpc_name, pc_name, leaf_name):
 def check_exists(node_type, node_name, vpc_name):
     if (node_type == "spine"):
         if not client_exists_spine(vpc_name, node_name):
-            print("Spine does not exists")
+            log_service("Spine does not exists")
             return False
     elif (node_type == "l1_transit"):
         if not client_exists_l1_transit(node_name):
-            print("l1_transit does not exists", node_name)
+            log_service("l1_transit does not exists"+ node_name)
             return False
     elif (node_type == "l2_transit"):
-        print("node_name=", node_name)
+        log_service("node_name="+ node_name)
         if not client_exists_l2_transit(node_name):
-            print("l2_transit does not exists")
+            log_service("l2_transit does not exists")
             return False
     else:
-        print("Wrong node type")
+        log_service("Wrong node type")
         return False
     return True
 
 def get_client_node_data(node_type, node_name, vpc_name):
-    print("get client node data() ", node_type, node_name, vpc_name)
+    log_service("get client node data() ", node_type, node_name, vpc_name)
     file_path = ""
     if (node_type == "spine"):
         if not client_exists_spine(vpc_name, node_name):
-            print("Spine does not exists")
+            log_service("Spine does not exists")
             return False
         else:
             file_path = "var/vpc/" + vpc_name + "/spines/" + node_name
     elif (node_type == "l1_transit"):
         if not client_exists_l1_transit(node_name):
-            print("l1_transit does not exists ", node_name)
+            log_service("l1_transit does not exists "+ node_name)
             return False
         else:
             file_path = "var/l1_transits/" + node_name
     elif (node_type == "l2_transit"):
         if not client_exists_l2_transit(node_name):
-            print("l2_transit does not exists")
+            log_service("l2_transit does not exists")
             return False
         else:
             file_path = "var/l2_transits/" + node_name
     else:
-        print("Wrong node type")
+        log_service("Wrong node type")
         return False
     
     return do_json.json_read(file_path + ".json") 
@@ -310,23 +340,23 @@ def write_client_node_data(node_type, node_name, vpc_name, key, value):
 
     if (node_type == "spine"):
         if not client_exists_spine(vpc_name, node_name):
-            print("Spine does not exists")
+            log_service("Spine does not exists")
             return False
         else:
             file_path = "var/vpc/" + vpc_name + "/spines/" + node_name
     elif (node_type == "l1_transit"):
         if not client_exists_l1_transit(node_name):
-            print("l1_transit does not exists")
+            log_service("l1_transit does not exists")
             return False
         else:
             file_path = "var/l1_transits/" + node_name
     elif (node_type == "l2_transit"):
         if not client_exists_l2_transit(node_name):
-            print("l2_transit does not exists")
+            log_service("l2_transit does not exists")
             return False
             file_path = "var/l2_transits/" + node_name
     else:
-        print("Wrong node type")
+        log_service("Wrong node type")
         return False
 
     do_json.json_write(client_node_data, file_path+".json")

@@ -6,9 +6,6 @@ import constants
 import ipaddress
 import hyp_utils
 from subprocess import Popen, PIPE
-#import logging
-#from logging import info as print
-#logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 """@params:
     param1 = vpc config file (required)
@@ -16,7 +13,7 @@ from subprocess import Popen, PIPE
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
-        print("Please give vpc config file")
+        raas_utils.log_service("Please give vpc config file")
         exit(1)
 
     vpc_config_file = sys.argv[1]
@@ -24,7 +21,7 @@ if __name__=="__main__":
     vpc_name = vpc_config_file.split('/')[-1].split('.')[0]
 
     if raas_utils.client_exists_vpc(vpc_name):
-        print("Vpc already exists")
+        raas_utils.log_service("Vpc already exists")
         exit(1)
 
     #Assumed customer always gives correct config file
@@ -35,7 +32,7 @@ if __name__=="__main__":
 
     hypervisor_ip = hyp_utils.get_hyp_ip(hypervisor)
 
-    #print("here1")
+    #raas_utils.log_service("here1")
 
     cid = None
     cid = hyp_utils.get_client_id()
@@ -68,10 +65,10 @@ if __name__=="__main__":
                     nid + " " + ve_h_nsm + " " + ve_nsm_h + " " + \
                     ve_nsm_b + " " + ve_b_nsm + " " + h_nsm_ip + \
                     " " + nsm_h_ip_arg + " " + b_ip + " " + dhcp_range + " " + hypervisor_arg + " " + nsm_h_route_arg
-            #print("here2")
+            #raas_utils.log_service("here2")
 
             try:
-                print("ansible-playbook logic/misc/create_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+                raas_utils.log_service("ansible-playbook logic/misc/create_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
                 #subprocess.call(["ansible-playbook", "logic/misc/create_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'"])
                 rc = os.system("ansible-playbook logic/misc/create_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
                 if (rc != 0):
@@ -81,8 +78,8 @@ if __name__=="__main__":
                 hyp_utils.add_mgmt_ns(hypervisor)
                 hyp_utils.add_nsm_br(b, hypervisor)
             except Exception:
-                print("create mgmt ns failed")
-                print("ansible-playbook logic/misc/delete_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+                raas_utils.log_service("create mgmt ns failed")
+                raas_utils.log_service("ansible-playbook logic/misc/delete_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
                 os.system("ansible-playbook logic/misc/delete_mgmt_ns.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
                 raise
 
@@ -95,4 +92,4 @@ if __name__=="__main__":
 
         raas_utils.client_add_vpc(hypervisor, vpc_name) 
     except Exception:
-        print ("create vpc failed")
+        raas_utils.log_service ("create vpc failed")

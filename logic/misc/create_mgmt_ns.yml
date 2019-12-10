@@ -25,5 +25,5 @@
       args:
         executable: /bin/bash
 
-    - name: configure static route
-      command: "ip route add {{ nid }} via {{ nsm_h_route }}"      
+        #    - name: configure static route
+        #command: "ip route add {{ nid }} via {{ nsm_h_route }}"      

@@ -2,9 +2,6 @@ import sys
 import do_json
 import constants
 import os
-#import logging
-#from logging import info as print
-#logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 def get_client_id():
     hypervisors_data = do_json.json_read(constants.hypervisors_file)
@@ -31,7 +28,7 @@ def get_hyp_ip(hypervisor):
     hyp_data = get_hyp_data(hypervisor)
 
     if hyp_data == None:
-        print("Hypervisor does not exist")
+        raas_utils.log_service("Hypervisor does not exist")
         return None
 
     hypervisor_ip = hyp_data["ip"]
@@ -172,6 +169,8 @@ def write_spines_data(spines_data, vpc, hypervisor):
 
 def get_spine_data(hypervisor, vpc, spine):
     spines_data = get_spines_data(hypervisor, vpc)
+    if spine not in spines_data:
+        return None
     spine_data = spines_data[spine]
     return spine_data
 
@@ -342,8 +341,10 @@ def hyp_add_l2_transit(hypervisor, cust_l2_transit_name, hyp_l2_transit_name):
 
 def get_hyp_spine_name(hypervisor, vpc, spine):
     spine_data = get_spine_data(hypervisor, vpc, spine)
-    hyp_spine_name = spine_data["name"]
-    return hyp_spine_name
+    if spine_data is not None:
+        hyp_spine_name = spine_data["name"]
+        return hyp_spine_name
+    return None
 
 def write_hyp_spine_name(hyp_spine_name, spine, vpc, hypervisor):
     spine_data = get_spine_data(hypervisor, vpc, spine)

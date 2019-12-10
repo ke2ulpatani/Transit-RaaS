@@ -6,7 +6,7 @@ import hyp_utils
 import constants
 import ipaddress
 #import logging
-#from logging import info as print
+#from logging import info as raas_utils.log_service
 #logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 """@params:
@@ -15,7 +15,7 @@ import ipaddress
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
-        print("Please give connection config file")
+        raas_utils.log_service("Please give connection config file")
         exit(1)
 
     connection_config_file = sys.argv[1]
@@ -23,7 +23,7 @@ if __name__=="__main__":
     cid = hyp_utils.get_client_id()
 
     connection_data = do_json.json_read(connection_config_file)
-    print(connection_data)
+    raas_utils.log_service(connection_data)
 
     
     cid = hyp_utils.get_client_id()
@@ -64,7 +64,7 @@ if __name__=="__main__":
             raas_utils.update_veth_subnet('l1t_l2t',new_subnet)
 
         except Exception as e:
-            print("l1 transit to l2 transit local failed",e)
+            raas_utils.log_service("l1 transit to l2 transit local failed"+str(e))
     else:
         #connect l1 transit to l2 transit remote
         try:
@@ -92,7 +92,7 @@ if __name__=="__main__":
 
                 raas_utils.run_playbook("ansible-playbook logic/transit/connect_transit_transit_remote.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
             except Exception as e:
-                print("Configure GRE on Level 1 Transit failed",e)
+                raas_utils.log_service("Configure GRE on Level 1 Transit failed"+str(e))
                 raise
             
             try:
@@ -106,8 +106,8 @@ if __name__=="__main__":
 
                 raas_utils.run_playbook("ansible-playbook logic/transit/connect_transit_transit_remote.yml -i logic/inventory/hosts.yml -v --extra-vars '" + extra_vars + "'") 
             except Exception as e:
-                print("Configure GRE on Level 2 Transit failed",e)
+                raas_utils.log_service("Configure GRE on Level 2 Transit failed"+str(e))
                 raise
         except Exception as e:
-            print("l1 transit to l2 transit remote failed",e)
+            raas_utils.log_service("l1 transit to l2 transit remote failed"+str(e))
 

@@ -6,7 +6,7 @@ import hyp_utils
 import constants
 import ipaddress
 #import logging
-#from logging import info as print
+#from logging import info as raas_utils.log_service
 #logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 """@params:
@@ -15,7 +15,7 @@ import ipaddress
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
-        print("Please give connection config file")
+        raas_utils.log_service("Please give connection config file")
         exit(1)
 
     connection_config_file = sys.argv[1]
@@ -23,7 +23,7 @@ if __name__=="__main__":
     cid = hyp_utils.get_client_id()
 
     connection_data = do_json.json_read(connection_config_file)
-    print(connection_data)
+    raas_utils.log_service(connection_data)
 
     # hypervisor = connection_data["hypervisor_name"]
     # hypervisor_arg = "hypervisor="+hypervisor
@@ -69,9 +69,9 @@ if __name__=="__main__":
             raas_utils.update_veth_subnet('l1t_l2t',new_subnet)
 
         except Exception as e:
-            print("l1 transit to l2 transit local failed",e)
+            raas_utils.log_service("l1 transit to l2 transit local failed"+e)
             raise
     else:
-        print("l1 and l2 transits exist in different hypervisor, GRE connect")
+        raas_utils.log_service("l1 and l2 transits exist in different hypervisor, GRE connect")
         exit(1)
 

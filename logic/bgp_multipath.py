@@ -5,9 +5,6 @@ import raas_utils
 import hyp_utils
 import constants
 import ipaddress
-#import logging
-#from logging import info as print
-#logging.basicConfig(filename='raas.log', filemode='a', format='%(asctime)s %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 
 """@params:
     param1 = bgp config file (required)
@@ -15,7 +12,7 @@ import ipaddress
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
-        print("Please give bgp config file")
+        raas_utils.log_service("Please give bgp config file")
         exit(1)
 
     multipath_file = sys.argv[1]
@@ -38,7 +35,7 @@ if __name__=="__main__":
     if (node_type == "spine"):
         vpc_name = multipath_data["vpc_name"]
         if not raas_utils.client_exists_vpc(vpc_name):
-            print("VPC does not exist")
+            raas_utils.log_service("VPC does not exist")
             exit(1)
 
     node_name = multipath_data["node_name"]
@@ -46,7 +43,7 @@ if __name__=="__main__":
     node_name_hyp_arg = "c_name="+node_name_hyp
 
     if not raas_utils.check_exists(node_type, node_name, vpc_name):
-        print("Node does not exists")
+        raas_utils.log_service("Node does not exists")
         exit(1)
 
     if (node_type == "spine"):
@@ -76,16 +73,16 @@ if __name__=="__main__":
                     node_name_hyp_arg + " " + self_as_arg +\
                     " " + hypervisor_arg + " " + activate_arg
 
-            print("ansible-playbook logic/bgp/bgp_multipath.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+            raas_utils.log_service("ansible-playbook logic/bgp/bgp_multipath.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             rc = raas_utils.run_playbook("ansible-playbook logic/bgp/bgp_multipath.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             if (rc != 0):
-                print ("bgp config failed playbook")
+                raas_utils.log_service ("bgp config failed playbook")
                 raise
                 
             raas_utils.write_client_node_data(node_type, node_name, vpc_name, "ecmp", True)
             raas_utils.write_client_node_data(node_type, node_name, vpc_name, "self_as", self_as)
         except:
-            print ("bgp config failed")
+            raas_utils.log_service ("bgp config failed")
             raise
     except:
-        print("create pc failed python failed")
+        raas_utils.log_service("create pc failed python failed")
