@@ -1,0 +1,7 @@
+{
+	"hypervisor_name": "h2" ,
+	"vpc_name": "vpc2b" ,
+	"spine_name": "v2_s3" ,
+	"capacity": "f1",
+	"self_as" : "3100"
+}

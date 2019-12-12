@@ -1,0 +1,7 @@
+{
+	"hypervisor_name": "h1",
+	"vpc_name": "vpc1",
+	"spine_name": "v1_s2",
+	"l1_transit_name": "l1t1",
+	"networks_advertised" : "2.0.0.0/24"
+}

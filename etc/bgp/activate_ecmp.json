@@ -1,7 +1,0 @@
-{
-    "hypervisor_name":"h1",
-	"node_name": "spine1",
-    "node_type": "spine",
-	"activate" : false,
-    "vpc_name": "vpc1"
-}

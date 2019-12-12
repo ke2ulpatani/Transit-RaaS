@@ -2,5 +2,6 @@
 	"hypervisor_name": "h1" ,
 	"vpc_name": "vpc2" ,
 	"spine_name": "v2_s2" ,
-	"capacity": "f1"
+	"capacity": "f1",
+	"self_as" : "4000"
 }

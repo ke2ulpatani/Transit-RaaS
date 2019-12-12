@@ -307,7 +307,7 @@ def check_exists(node_type, node_name, vpc_name):
     return True
 
 def get_client_node_data(node_type, node_name, vpc_name):
-    log_service("get client node data() ", node_type, node_name, vpc_name)
+    log_service("get client node data() "+ node_type + node_name + vpc_name)
     file_path = ""
     if (node_type == "spine"):
         if not client_exists_spine(vpc_name, node_name):

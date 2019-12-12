@@ -65,6 +65,7 @@ if [ $cmd == "checkpoint_restore" ]; then
 fi
 
 if [ $cmd == "conf_spine_bgp" ]; then
-        python3 logic/conf_spine_bgp.py $conf_file
+	echo conf spine bgp
+        python3 logic/conf_spine_bgp.py $config_file
 fi
 

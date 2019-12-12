@@ -1,6 +1,0 @@
-{
-    "l1t_hypervisor_name": "h1", 
-	"l1t_name": "transit1",
-	"l2t_hypervisor_name" : "h2",
-	"l2t_name" : "transit2"
-}

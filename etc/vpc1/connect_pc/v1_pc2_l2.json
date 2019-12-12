@@ -1,7 +1,0 @@
-{
-	"pc_hypervisor_name": "h1" ,
-	"pc_name": "v1_pc2" ,
-	"leaf_hypervisor_name": "h1" ,
-	"leaf_name": "v1_l2"  ,
-	"vpc_name": "vpc1"
-}

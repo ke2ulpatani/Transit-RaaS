@@ -44,8 +44,9 @@ if __name__=="__main__":
         raas_utils.log_service("Either Node does not exists")
         exit(1)
 
+
     spine_name_hyp = hyp_utils.get_hyp_spine_name(hypervisor, vpc_name, spine_name)
-    l1_transit_name_name_hyp = hyp_utils.get_hyp_l1_transit_name(hypervisor, l1_transit_name)
+    l1_transit_name_hyp = hyp_utils.get_hyp_l1_transit_name(hypervisor, l1_transit_name)
 
     spine_name_hyp_arg = "c_name="+spine_name_hyp
 
@@ -57,17 +58,17 @@ if __name__=="__main__":
     self_as = str(client_spine_data["self_as"])
     self_as_arg = "self_as="+ self_as
 
-    client_l1_transit_data = raas_utils.get_client_node_data("l1_transt", l1_transit_name, vpc_name)
+    client_l1_transit_data = raas_utils.get_client_node_data("l1_transit", l1_transit_name, vpc_name)
 
-    r_as = str(client_l1_transit_data["self_as"])
-    r_as_arg = "ras="+ self_as
+    ras = str(client_l1_transit_data["self_as"])
+    ras_arg = "ras="+ ras
 
-
-    ve_spine_l1t = "c" + hyp_utils.get_client_id() + \
+    ve_spine_l1t = "c" + hyp_utils.get_client_id() + "_" + spine_name_hyp.split('_')[-2] + \
             "ve" + \
             l1_transit_name_hyp.split('_')[-1] + \
             spine_name_hyp.split('_')[-1]
 
+    print(ve_spine_l1t)
     l1_transit_ip_arg = "rip="+ raas_utils.get_ns_ip(hypervisor, l1_transit_name_hyp, ve_spine_l1t)
 
     
@@ -77,7 +78,7 @@ if __name__=="__main__":
                 " " + hypervisor_arg + " " + advertise_arg + \
                 " " + l1_transit_ip_arg + " " + ras_arg
 
-        rc = raas_utils.run_playbook("ansible-playbook logic/bgp/conf_spine_bgp.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
+        rc = raas_utils.run_playbook("ansible-playbook logic/bgp/conf_spine_bgp.yml -i logic/inventory/hosts.yml -vvvv --extra-vars '"+extra_vars+"'")
         if (rc != 0):
             raas_utils.log_service ("bgp advertisement failed")
             raise

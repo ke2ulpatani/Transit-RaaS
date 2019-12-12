@@ -1,0 +1,8 @@
+{
+	"leaf1_vpc_name": "vpc2",
+	"leaf1_hypervisor_name": "h1",
+	"leaf1_name": "v2_l1",
+	"leaf2_vpc_name": "vpc2b",
+	"leaf2_hypervisor_name": "h2",
+	"leaf2_name": "v2_l2"
+}

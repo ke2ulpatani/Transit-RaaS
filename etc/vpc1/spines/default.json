@@ -1,7 +1,0 @@
-{
-	"hypervisor_name": "h1" ,
-	"vpc_name": "vpc1" ,
-	"spine_name": "spine1" ,
-	"capacity": "f1",
-	"self_as" : "70"
-}

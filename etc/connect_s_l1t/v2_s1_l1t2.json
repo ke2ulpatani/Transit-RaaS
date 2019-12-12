@@ -2,5 +2,5 @@
 	"hypervisor_name": "h1",
 	"vpc_name": "vpc2",
 	"spine_name": "v2_s1",
-	"l1_transit_name": "l1t1"
+	"l1_transit_name": "l1t2"
 }

@@ -1,9 +1,0 @@
-{
-	"hypervisor_name" : "h1",
-	"node_name" : "l1t1",
-	"node_type" : "l1_transit",
-	"path_choice" : "v1_s2",
-	"path_choice_type" : "spine",
-	"vpc_name":"vpc1",
-	"weight" :  "200"  
-}
