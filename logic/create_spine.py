@@ -13,6 +13,7 @@ import raas_utils
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
+        raas_utils.log_client("VPC config not provided")
         raas_utils.log_service("Please give vpc config file")
         exit(1)
 
@@ -33,10 +34,12 @@ if __name__=="__main__":
     vpc_name = spine_data["vpc_name"]
 
     if not raas_utils.client_exists_vpc(vpc_name):
+        raas_utils.log_client("VPC does not exist")
         raas_utils.log_service("VPC does not exist")
         exit(1)
 
     if raas_utils.client_exists_spine(vpc_name, spine_name):
+        raas_utils.log_client("Spine already exists")
         raas_utils.log_service("Spine already exists")
         exit(1)
     
@@ -55,6 +58,7 @@ if __name__=="__main__":
         vcpu = "1,3"
         mem = "4G"
     else:
+        raas_utils.log_client("Unknown flavor using default")
         raas_utils.log_service("Unknown flavor using default")
         vcpu = 1
         mem = "1G"
@@ -83,10 +87,13 @@ if __name__=="__main__":
             hyp_utils.write_spine_id(sid+1, vpc_name, hypervisor)
             hyp_utils.vpc_add_spine(hypervisor, vpc_name, spine_name, spine_name_ansible)
             raas_utils.client_add_spine(hypervisor, vpc_name, spine_name, spine_capacity, self_as)
-
+            raas_utils.log_client("Spine creation completed successfully")
+            raas_utils.log_service("Spine creation completed successfully")
         except:
             raas_utils.log_service("create spine failed")
+            raas_utils.log_client("create spine failed")
             os.system("ansible-playbook logic/misc/delete_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             raise
     except:
+        raas_utils.log_client("create spine failed")
         raas_utils.log_service("create spine failed python failed")

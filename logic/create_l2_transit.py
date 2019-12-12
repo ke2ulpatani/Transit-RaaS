@@ -16,6 +16,7 @@ import ipaddress
 if __name__=="__main__":
     if (len(sys.argv) < 2):
         raas_utils.log_service("Please give l2_transit config file")
+        raas_utils.log_client("Please give l2_transit config file")
         exit(1)
 
     l2_transit_config_file = sys.argv[1]
@@ -33,6 +34,7 @@ if __name__=="__main__":
     hypervisor_ip = hyp_utils.get_hyp_ip(hypervisor)
 
     if raas_utils.client_exists_l2_transit(l2_transit_name):
+        raas_utils.client_service("l2_transit already exists "+ l2_transit_name)
         raas_utils.log_service("l2_transit already exists "+ l2_transit_name)
         exit(1)
     
@@ -51,6 +53,7 @@ if __name__=="__main__":
         vcpu = "1,3"
         mem = "4G"
     else:
+        raas_utils.log_client("Unknown flavor using default")
         raas_utils.log_service("Unknown flavor using default")
         vcpu = "1,1"
         mem = "1G"
@@ -80,8 +83,9 @@ if __name__=="__main__":
             hyp_utils.write_l2_transit_id(l2id+1, hypervisor)
             hyp_utils.hyp_add_l2_transit(hypervisor, l2_transit_name, l2_transit_name_ansible)
             raas_utils.client_add_l2_transit(hypervisor, l2_transit_name, l2_transit_capacity, self_as)
-
+            
         except Exception as e:
+            raas_utils.log_client("create l2_transit failed")
             raas_utils.log_service("create l2_transit failed deleting transit"+ str(e))
             raas_utils.run_playbook("ansible-playbook logic/misc/delete_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             raise
@@ -125,9 +129,13 @@ if __name__=="__main__":
             subnet = t_loopback_ip.split('/')
             new_subnet = str(ipaddress.ip_address(subnet[0])+1) + '/' + subnet[1]
             raas_utils.update_veth_subnet('loopbacks',new_subnet)
+            raas_utils.log_client("l2 transit created successfully")
+            raas_utils.log_service("l2_transit created successfully")
 
         except Exception as e:
             raas_utils.log_service("create transit failed "+ str(e))
+            raas_utils.log_client("create transit failed")
             raise
     except Exception as e:
         raas_utils.log_service("create l2_transit failed python failed "+ str(e))
+        raas_utils.log_client("create l2_transit failed")

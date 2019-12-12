@@ -15,7 +15,8 @@ import ipaddress
 
 if __name__=="__main__":
     if (len(sys.argv) < 2):
-        raas_utils.log_service("Please give l1_transit config file")
+        raas_utils.log_client("Please give l1_transit config file.....aborting")
+        raas_utils.log_service("Please give l1_transit config file......aborting")
         exit(1)
 
     l1_transit_config_file = sys.argv[1]
@@ -33,7 +34,8 @@ if __name__=="__main__":
     hypervisor_ip = hyp_utils.get_hyp_ip(hypervisor)
 
     if raas_utils.client_exists_l1_transit(l1_transit_name):
-        raas_utils.log_service("l1_transit already exists "+ l1_transit_name)
+        raas_utils.log_service("l1_transit already exists "+ l1_transit_name +".....aborting")
+        raas_utils.log_client("l1_transit already exists "+ l1_transit_name+".....aborting")
         exit(1)
     
     #All prereq checks done at this point
@@ -83,6 +85,7 @@ if __name__=="__main__":
 
         except Exception as e:
             raas_utils.log_service("create l1_transit failed deleting transit"+ str(e))
+            raas_utils.log_client("create l1_transit failed....aborting")
             raas_utils.run_playbook("ansible-playbook logic/misc/delete_container.yml -i logic/inventory/hosts.yml -v --extra-vars '"+extra_vars+"'")
             raise
 
@@ -124,9 +127,12 @@ if __name__=="__main__":
             subnet = t_loopback_ip.split('/')
             new_subnet = str(ipaddress.ip_address(subnet[0])+1) + '/' + subnet[1]
             raas_utils.update_veth_subnet('loopbacks',new_subnet)
-
+            raas_utils.log_client("l1 transit created successfully")
+            raas_utils.log_service("l1_transit created successfully")
         except Exception as e:
+            raas_utils.log_client("create transit failed.......aborting")
             raas_utils.log_service("create transit failed "+ str(e))
             raise
     except Exception as e:
+        raas_utils.log_client("create l1_transit failed python failed......aborting")
         raas_utils.log_service("create l1_transit failed python failed "+ str(e))
